@@ -30,6 +30,18 @@ const router = createRouter({
       component: () => import('@/views/auth/RegisterView.vue'),
       meta: { title: 'Create Account | Formation Exceptionelle', guest: true }
     },
+    {
+      path: '/auth/forgot-password',
+      name: 'forgot-password',
+      component: () => import('@/views/auth/ForgotPasswordView.vue'),
+      meta: { title: 'Forgot Password | Formation Exceptionelle', guest: true }
+    },
+    {
+      path: '/auth/reset-password',
+      name: 'reset-password',
+      component: () => import('@/views/auth/ResetPasswordView.vue'),
+      meta: { title: 'Reset Password | Formation Exceptionelle', guest: true }
+    },
 
     // LMS
     {
@@ -157,6 +169,26 @@ const router = createRouter({
       name: 'admin-payments',
       component: () => import('@/views/admin/AdminPaymentsView.vue'),
       meta: { title: 'Payments | Admin', requiresAuth: true, requiresAdmin: true }
+    },
+
+    // Legal
+    {
+      path: '/terms',
+      name: 'terms',
+      component: () => import('@/views/legal/LegalView.vue'),
+      meta: { title: 'Terms of Service | Formation Exceptionelle', doc: 'terms' }
+    },
+    {
+      path: '/privacy',
+      name: 'privacy',
+      component: () => import('@/views/legal/LegalView.vue'),
+      meta: { title: 'Privacy Policy | Formation Exceptionelle', doc: 'privacy' }
+    },
+    {
+      path: '/cookies',
+      name: 'cookies',
+      component: () => import('@/views/legal/LegalView.vue'),
+      meta: { title: 'Cookie Policy | Formation Exceptionelle', doc: 'cookies' }
     },
 
     // 404

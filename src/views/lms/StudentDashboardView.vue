@@ -151,7 +151,7 @@
           <div class="bg-gradient-to-br from-purple-900 to-purple-700 p-1">
             <div class="bg-white m-1 rounded-2xl p-10 text-center relative">
               <div class="absolute inset-3 border-4 border-purple-100 rounded-xl pointer-events-none"></div>
-              <img src="@/assets/logo.jpeg" class="h-12 w-auto mx-auto mb-4 opacity-90" />
+              <img src="@/assets/logo.png" class="h-12 w-auto mx-auto mb-4" />
               <div class="text-gold-600 text-sm font-semibold tracking-widest uppercase mb-2">Certificate of Completion</div>
               <div class="text-gray-500 text-sm mb-4">This is to certify that</div>
               <h2 class="text-3xl font-bold font-serif text-purple-900 mb-2 border-b-2 border-gold-300 inline-block px-8 pb-2">{{ authStore.fullName }}</h2>

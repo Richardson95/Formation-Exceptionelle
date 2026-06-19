@@ -4,6 +4,7 @@
     <main>
       <HeroSection />
       <StatsSection />
+      <ClientsSection />
       <FeatureCardsSection />
       <ServicesSection />
       <FeaturedCoursesSection />
@@ -21,6 +22,7 @@ import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import HeroSection from '@/components/landing/HeroSection.vue'
 import StatsSection from '@/components/landing/StatsSection.vue'
+import ClientsSection from '@/components/landing/ClientsSection.vue'
 import FeatureCardsSection from '@/components/landing/FeatureCardsSection.vue'
 import ServicesSection from '@/components/landing/ServicesSection.vue'
 import FeaturedCoursesSection from '@/components/landing/FeaturedCoursesSection.vue'

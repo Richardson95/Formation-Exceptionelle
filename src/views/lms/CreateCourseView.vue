@@ -194,33 +194,37 @@
                   </div>
 
                   <!-- Lectures -->
-                  <div class="p-4 space-y-2">
+                  <div class="p-4 space-y-3">
                     <div
                       v-for="(lecture, li) in section.lectures"
                       :key="li"
-                      class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl"
+                      class="p-3 bg-gray-50 rounded-xl space-y-3"
                     >
-                      <select v-model="form.sections[si].lectures[li].type" class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white">
-                        <option value="video">Video</option>
-                        <option value="quiz">Quiz</option>
-                        <option value="assignment">Assignment</option>
-                      </select>
-                      <input v-model="form.sections[si].lectures[li].title" type="text" placeholder="Lecture title" class="flex-1 text-sm bg-transparent border-none focus:outline-none" />
-                      <input
+                      <!-- Row: meta -->
+                      <div class="flex items-center gap-3">
+                        <select v-model="form.sections[si].lectures[li].type" class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white">
+                          <option value="video">Video</option>
+                          <option value="quiz">Quiz</option>
+                          <option value="assignment">Assignment</option>
+                        </select>
+                        <input v-model="form.sections[si].lectures[li].title" type="text" placeholder="Lecture title" class="flex-1 text-sm bg-transparent border-none focus:outline-none" />
+                        <input v-model="form.sections[si].lectures[li].duration" type="text" placeholder="Duration" class="w-20 text-xs border border-gray-200 rounded-lg px-2 py-1.5" />
+                        <label class="flex items-center gap-1 text-xs text-gray-500">
+                          <input type="checkbox" v-model="form.sections[si].lectures[li].preview" class="rounded" />
+                          Preview
+                        </label>
+                        <button @click="form.sections[si].lectures.splice(li, 1)" class="text-gray-400 hover:text-red-500">
+                          <XMarkIcon class="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      <!-- Row: video upload (videos only) -->
+                      <VideoUploader
                         v-if="lecture.type === 'video'"
-                        v-model="form.sections[si].lectures[li].videoUrl"
-                        type="url"
-                        placeholder="Video URL"
-                        class="flex-1 text-xs border border-gray-200 rounded-lg px-2 py-1.5"
+                        v-model="form.sections[si].lectures[li].videoAsset"
+                        @update:modelValue="(asset) => onLectureVideo(si, li, asset)"
+                        @duration="(d) => onLectureDuration(si, li, d)"
                       />
-                      <input v-model="form.sections[si].lectures[li].duration" type="text" placeholder="Duration" class="w-20 text-xs border border-gray-200 rounded-lg px-2 py-1.5" />
-                      <label class="flex items-center gap-1 text-xs text-gray-500">
-                        <input type="checkbox" v-model="form.sections[si].lectures[li].preview" class="rounded" />
-                        Preview
-                      </label>
-                      <button @click="form.sections[si].lectures.splice(li, 1)" class="text-gray-400 hover:text-red-500">
-                        <XMarkIcon class="w-4 h-4" />
-                      </button>
                     </div>
 
                     <button @click="addLecture(si)" class="flex items-center gap-2 text-purple-700 text-sm font-medium hover:text-purple-800 transition-colors mt-2">
@@ -357,6 +361,8 @@ import { useAuthStore } from '@/stores/auth'
 import { toast } from 'vue3-toastify'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
+import VideoUploader from '@/components/lms/VideoUploader.vue'
+import { getPlaybackUrl } from '@/services/videoService'
 import {
   ArrowLeftIcon, ChevronRightIcon, ChevronLeftIcon, CheckIcon, PlusIcon,
   XMarkIcon, TrashIcon, PhotoIcon, GiftIcon, CurrencyDollarIcon,
@@ -409,8 +415,21 @@ function addSection() {
 
 function addLecture(si) {
   form.value.sections[si].lectures.push({
-    id: `l${Date.now()}`, title: '', type: 'video', duration: '', preview: false, videoUrl: ''
+    id: `l${Date.now()}`, title: '', type: 'video', duration: '', preview: false, videoUrl: '', videoAsset: null
   })
+}
+
+// Keep videoUrl (consumed by the player) in sync with the uploaded asset.
+function onLectureVideo(si, li, asset) {
+  const lecture = form.value.sections[si].lectures[li]
+  lecture.videoAsset = asset
+  lecture.videoUrl = asset ? getPlaybackUrl(asset) : ''
+}
+
+// Auto-fill the lecture duration from the uploaded video if it's still empty.
+function onLectureDuration(si, li, durationLabel) {
+  const lecture = form.value.sections[si].lectures[li]
+  if (!lecture.duration && durationLabel) lecture.duration = durationLabel
 }
 
 function handleThumbnail(e) {

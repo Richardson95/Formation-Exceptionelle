@@ -7,7 +7,7 @@
     >
       <!-- Logo -->
       <div class="px-4 py-5 border-b border-purple-800 flex items-center gap-3">
-        <img src="@/assets/logo.jpeg" alt="FE" class="w-8 h-8 rounded-lg object-contain brightness-0 invert flex-shrink-0" />
+        <img src="@/assets/logo.png" alt="FE" class="w-8 h-8 rounded-lg object-contain brightness-0 invert flex-shrink-0" />
         <span v-if="sidebarOpen" class="font-bold text-white text-sm truncate">FE Admin</span>
         <button @click="sidebarOpen = !sidebarOpen" class="ml-auto text-purple-400 hover:text-white transition-colors">
           <Bars3Icon class="w-5 h-5" />

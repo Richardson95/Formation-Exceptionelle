@@ -141,9 +141,9 @@ const form = ref({
 })
 
 const contactInfo = [
-  { icon: MapPinIcon, label: 'Office Address', value: '123 Victoria Island, Lagos, Nigeria' },
+  { icon: MapPinIcon, label: 'Office Address', value: '8/10 Broad Street, 16th Floor, Western House, Lagos Island, Lagos State' },
   { icon: EnvelopeIcon, label: 'Email Us', value: 'info@formationexceptionelle.com' },
-  { icon: PhoneIcon, label: 'Call Us', value: '+234 800 000 0000' },
+  { icon: PhoneIcon, label: 'Call Us', value: '09074830518' },
   { icon: ClockIcon, label: 'Business Hours', value: 'Mon–Fri: 9AM – 6PM WAT' },
 ]
 

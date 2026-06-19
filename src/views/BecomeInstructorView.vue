@@ -117,7 +117,7 @@
               <!-- Agreement -->
               <div class="flex items-start gap-3">
                 <input v-model="form.agree" type="checkbox" id="agree" required class="mt-1 rounded border-gray-300 text-purple-600" />
-                <label for="agree" class="text-sm text-gray-600">I confirm that I have the expertise claimed and agree to Formation Exceptionelle's <a href="#" class="text-purple-700 hover:underline">Instructor Agreement</a></label>
+                <label for="agree" class="text-sm text-gray-600">I confirm that I have the expertise claimed and agree to Formation Exceptionelle's <RouterLink to="/terms" class="text-purple-700 hover:underline">Instructor Agreement</RouterLink></label>
               </div>
 
               <button type="submit" :disabled="authStore.loading" class="btn-primary w-full py-4 text-base">

@@ -8,7 +8,7 @@
       </div>
       <!-- Logo -->
       <RouterLink to="/" class="relative z-10">
-        <img src="@/assets/logo.jpeg" alt="Formation Exceptionelle" class="h-14 w-auto brightness-0 invert" />
+        <img src="@/assets/logo.png" alt="Formation Exceptionelle" class="h-14 w-auto brightness-0 invert" />
       </RouterLink>
 
       <!-- Hero Content -->
@@ -46,7 +46,7 @@
         <!-- Mobile Logo -->
         <div class="lg:hidden mb-8 text-center">
           <RouterLink to="/">
-            <img src="@/assets/logo.jpeg" alt="Formation Exceptionelle" class="h-12 w-auto mx-auto" />
+            <img src="@/assets/logo.png" alt="Formation Exceptionelle" class="h-12 w-auto mx-auto" />
           </RouterLink>
         </div>
 
@@ -86,7 +86,7 @@
           <div>
             <div class="flex justify-between mb-2">
               <label class="text-sm font-medium text-gray-700">Password</label>
-              <a href="#" class="text-sm text-purple-700 hover:underline font-medium">Forgot password?</a>
+              <RouterLink to="/auth/forgot-password" class="text-sm text-purple-700 hover:underline font-medium">Forgot password?</RouterLink>
             </div>
             <div class="relative">
               <LockClosedIcon class="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -133,8 +133,8 @@
 
         <p class="text-center text-gray-500 text-sm mt-6">
           By signing in, you agree to our
-          <a href="#" class="text-purple-700 hover:underline">Terms of Service</a> and
-          <a href="#" class="text-purple-700 hover:underline">Privacy Policy</a>.
+          <RouterLink to="/terms" class="text-purple-700 hover:underline">Terms of Service</RouterLink> and
+          <RouterLink to="/privacy" class="text-purple-700 hover:underline">Privacy Policy</RouterLink>.
         </p>
       </div>
     </div>

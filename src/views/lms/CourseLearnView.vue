@@ -43,13 +43,28 @@
         <div class="bg-black relative">
           <div v-if="currentLecture?.type === 'video'" class="w-full aspect-video">
             <video
+              v-if="currentVideoSrc && !videoError"
               ref="videoEl"
-              :src="currentLecture.videoUrl"
+              :src="currentVideoSrc"
+              :poster="currentLecture.videoAsset?.thumbnail || undefined"
               class="w-full h-full"
               controls
               @ended="onVideoEnded"
               @timeupdate="onTimeUpdate"
+              @error="videoError = true"
             ></video>
+            <!-- Video unavailable (e.g. mock upload lost after a page reload) -->
+            <div v-else class="w-full h-full bg-gray-800 flex items-center justify-center p-8">
+              <div class="text-center text-white max-w-md">
+                <FilmIcon class="w-14 h-14 text-purple-400 mx-auto mb-4" />
+                <h3 class="text-lg font-bold mb-2">Video unavailable</h3>
+                <p class="text-gray-400 text-sm">
+                  This lesson's video can't be played right now. Uploaded preview videos are only
+                  available during the session they were added — once the backend is connected they'll
+                  stream reliably every time.
+                </p>
+              </div>
+            </div>
           </div>
 
           <!-- Quiz View -->
@@ -243,7 +258,7 @@
               <div class="absolute inset-3 border-4 border-purple-100 rounded-xl pointer-events-none"></div>
               <div class="absolute inset-5 border border-gold-200 rounded-xl pointer-events-none"></div>
 
-              <img src="@/assets/logo.jpeg" class="h-12 w-auto mx-auto mb-4 opacity-90" alt="FE" />
+              <img src="@/assets/logo.png" class="h-12 w-auto mx-auto mb-4" alt="Formation Exceptionelle" />
               <div class="text-gold-600 text-sm font-semibold tracking-widest uppercase mb-2">Certificate of Completion</div>
               <div class="text-gray-500 text-sm mb-4">This is to certify that</div>
               <h2 class="text-3xl font-bold font-serif text-purple-900 mb-2 border-b-2 border-gold-300 inline-block px-8 pb-2">
@@ -282,7 +297,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { useLMSStore } from '@/stores/lms'
 import { useAuthStore } from '@/stores/auth'
@@ -291,9 +306,10 @@ import { StarIcon as StarSolid } from '@heroicons/vue/24/solid'
 import {
   ArrowLeftIcon, Bars3Icon, TrophyIcon, ChevronLeftIcon, ChevronRightIcon,
   ChevronDownIcon, CheckIcon, PlayCircleIcon, QuestionMarkCircleIcon,
-  DocumentTextIcon, ArrowDownTrayIcon
+  DocumentTextIcon, ArrowDownTrayIcon, FilmIcon
 } from '@heroicons/vue/24/outline'
 import QuizComponent from '@/components/lms/QuizComponent.vue'
+import { getPlaybackUrl } from '@/services/videoService'
 
 const route = useRoute()
 const lmsStore = useLMSStore()
@@ -336,6 +352,18 @@ const hasReviewed = computed(() =>
 )
 
 const videoEl = ref(null)
+const videoError = ref(false)
+
+// Resolve the playable URL: prefer the uploaded asset (via the service, which
+// knows about session blobs / real backend URLs), then fall back to videoUrl.
+const currentVideoSrc = computed(() => {
+  const lecture = currentLecture.value
+  if (!lecture) return ''
+  return getPlaybackUrl(lecture.videoAsset) || lecture.videoUrl || ''
+})
+
+// Reset the error state whenever we switch lectures.
+watch(currentLecture, () => { videoError.value = false })
 
 const sampleQA = [
   { id: 1, user: 'James K.', question: 'What is the difference between let and const?', answer: 'Great question! "let" allows you to reassign the variable, while "const" creates a constant that cannot be reassigned. However, const objects can still have their properties modified.' },

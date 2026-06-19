@@ -7,7 +7,7 @@
         <div class="absolute bottom-20 left-10 w-60 h-60 bg-gold-400 rounded-full blur-3xl"></div>
       </div>
       <RouterLink to="/" class="relative z-10">
-        <img src="@/assets/logo.jpeg" alt="Formation Exceptionelle" class="h-14 w-auto brightness-0 invert" />
+        <img src="@/assets/logo.png" alt="Formation Exceptionelle" class="h-14 w-auto brightness-0 invert" />
       </RouterLink>
       <div class="relative z-10">
         <h1 class="text-4xl font-bold text-white mb-4 leading-tight">
@@ -39,7 +39,7 @@
     <div class="flex-1 flex items-center justify-center p-6 bg-white overflow-y-auto">
       <div class="w-full max-w-md py-8">
         <div class="lg:hidden mb-8 text-center">
-          <RouterLink to="/"><img src="@/assets/logo.jpeg" alt="Formation Exceptionelle" class="h-12 w-auto mx-auto" /></RouterLink>
+          <RouterLink to="/"><img src="@/assets/logo.png" alt="Formation Exceptionelle" class="h-12 w-auto mx-auto" /></RouterLink>
         </div>
 
         <div class="mb-8">
@@ -154,8 +154,8 @@
             <input v-model="form.agreeTerms" type="checkbox" id="terms" class="mt-1 rounded border-gray-300 text-purple-600 focus:ring-purple-500" required />
             <label for="terms" class="text-sm text-gray-600">
               I agree to Formation Exceptionelle's
-              <a href="#" class="text-purple-700 hover:underline font-medium">Terms of Service</a> and
-              <a href="#" class="text-purple-700 hover:underline font-medium">Privacy Policy</a>
+              <RouterLink to="/terms" class="text-purple-700 hover:underline font-medium">Terms of Service</RouterLink> and
+              <RouterLink to="/privacy" class="text-purple-700 hover:underline font-medium">Privacy Policy</RouterLink>
             </label>
           </div>
 

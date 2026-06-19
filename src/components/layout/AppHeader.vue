@@ -8,9 +8,10 @@
         <!-- Logo -->
         <RouterLink to="/" class="flex items-center gap-3 group">
           <img
-            src="@/assets/logo.jpeg"
+            src="@/assets/logo.png"
             alt="Formation Exceptionelle"
-            class="h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+            class="h-12 w-auto object-contain transition-all duration-300 group-hover:scale-105"
+            :class="scrolled ? '' : 'brightness-0 invert'"
           />
         </RouterLink>
 

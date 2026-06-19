@@ -170,9 +170,81 @@ export const useAuthStore = defineStore('auth', () => {
     return mockUsers.value.map(({ password: _, ...u }) => u)
   }
 
+  // Password reset (mock). A real backend emails a link; here we generate a
+  // token, store it locally, and hand it back so the demo can show the link.
+  const resetTokens = ref(JSON.parse(localStorage.getItem('fe_reset_tokens') || '{}'))
+
+  async function forgotPassword(email) {
+    loading.value = true
+    try {
+      await new Promise(resolve => setTimeout(resolve, 800))
+      const foundUser = mockUsers.value.find(u => u.email === email)
+
+      // Always behave the same way regardless of whether the email exists,
+      // so we don't leak which emails are registered.
+      let token = null
+      if (foundUser) {
+        token = `reset-${foundUser.id}-${Math.random().toString(36).slice(2, 10)}`
+        resetTokens.value[token] = {
+          email,
+          expiresAt: Date.now() + 1000 * 60 * 30, // 30 minutes
+        }
+        localStorage.setItem('fe_reset_tokens', JSON.stringify(resetTokens.value))
+      }
+
+      toast.success('If an account exists for that email, a reset link has been sent.')
+      // token is returned only so the frontend-only demo can display the link.
+      return { token }
+    } catch (err) {
+      toast.error('Something went wrong. Please try again.')
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  function verifyResetToken(token) {
+    const entry = resetTokens.value[token]
+    if (!entry) return { valid: false, reason: 'invalid' }
+    if (Date.now() > entry.expiresAt) return { valid: false, reason: 'expired' }
+    return { valid: true, email: entry.email }
+  }
+
+  async function resetPassword(token, newPassword) {
+    loading.value = true
+    try {
+      await new Promise(resolve => setTimeout(resolve, 800))
+      const check = verifyResetToken(token)
+      if (!check.valid) {
+        throw new Error(check.reason === 'expired'
+          ? 'This reset link has expired. Please request a new one.'
+          : 'This reset link is invalid. Please request a new one.')
+      }
+
+      const idx = mockUsers.value.findIndex(u => u.email === check.email)
+      if (idx === -1) throw new Error('Account not found.')
+
+      mockUsers.value[idx] = { ...mockUsers.value[idx], password: newPassword }
+      localStorage.setItem('fe_users', JSON.stringify(mockUsers.value))
+
+      // Consume the token so it can't be reused.
+      delete resetTokens.value[token]
+      localStorage.setItem('fe_reset_tokens', JSON.stringify(resetTokens.value))
+
+      toast.success('Password reset successfully. You can now sign in.')
+      return true
+    } catch (err) {
+      toast.error(err.message)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     user, token, loading,
     isAuthenticated, isAdmin, isInstructor, isParticipant, fullName, initials,
-    login, register, logout, updateProfile, becomeInstructor, getAllUsers
+    login, register, logout, updateProfile, becomeInstructor, getAllUsers,
+    forgotPassword, verifyResetToken, resetPassword
   }
 })

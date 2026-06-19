@@ -5,7 +5,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         <!-- Brand -->
         <div class="lg:col-span-1">
-          <img src="@/assets/logo.jpeg" alt="Formation Exceptionelle" class="h-14 w-auto mb-4 brightness-0 invert" />
+          <img src="@/assets/logo.png" alt="Formation Exceptionelle" class="h-14 w-auto mb-4 brightness-0 invert" />
           <p class="text-purple-300 text-sm leading-relaxed mb-6">
             Your partner in career development. Empowering professionals across Africa and beyond with world-class training, mentorship, and opportunities.
           </p>
@@ -61,7 +61,7 @@
           <div class="space-y-3 mb-6">
             <div class="flex items-start gap-3 text-sm text-purple-300">
               <MapPinIcon class="w-4 h-4 text-gold-400 mt-0.5 flex-shrink-0" />
-              <span>123 Victoria Island, Lagos, Nigeria</span>
+              <span>8/10 Broad Street, 16th Floor, Western House, Lagos Island, Lagos State</span>
             </div>
             <div class="flex items-center gap-3 text-sm text-purple-300">
               <EnvelopeIcon class="w-4 h-4 text-gold-400 flex-shrink-0" />
@@ -69,7 +69,7 @@
             </div>
             <div class="flex items-center gap-3 text-sm text-purple-300">
               <PhoneIcon class="w-4 h-4 text-gold-400 flex-shrink-0" />
-              <span>+234 800 000 0000</span>
+              <span>09074830518</span>
             </div>
           </div>
 
@@ -100,9 +100,9 @@
           &copy; {{ currentYear }} Formation Exceptionelle. All rights reserved.
         </p>
         <div class="flex items-center gap-6">
-          <a href="#" class="text-purple-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
-          <a href="#" class="text-purple-400 hover:text-white text-sm transition-colors">Terms of Service</a>
-          <a href="#" class="text-purple-400 hover:text-white text-sm transition-colors">Cookie Policy</a>
+          <RouterLink to="/privacy" class="text-purple-400 hover:text-white text-sm transition-colors">Privacy Policy</RouterLink>
+          <RouterLink to="/terms" class="text-purple-400 hover:text-white text-sm transition-colors">Terms of Service</RouterLink>
+          <RouterLink to="/cookies" class="text-purple-400 hover:text-white text-sm transition-colors">Cookie Policy</RouterLink>
         </div>
       </div>
     </div>
