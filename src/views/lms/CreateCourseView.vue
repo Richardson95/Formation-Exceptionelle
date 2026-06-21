@@ -46,7 +46,7 @@
               <div class="space-y-5">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Course Title *</label>
-                  <input v-model="form.title" type="text" placeholder="e.g. Complete Python Bootcamp 2024" class="input-field" required />
+                  <input v-model="form.title" type="text" placeholder="e.g. Corporate Governance & Board Effectiveness" class="input-field" required />
                   <p class="text-xs text-gray-400 mt-1">{{ form.title.length }}/120 characters</p>
                 </div>
                 <div>
@@ -83,7 +83,7 @@
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Tags (comma separated)</label>
-                    <input v-model="tagsInput" type="text" placeholder="JavaScript, React, Web Dev" class="input-field" />
+                    <input v-model="tagsInput" type="text" placeholder="Governance, Compliance, M&A" class="input-field" />
                   </div>
                 </div>
               </div>
@@ -377,13 +377,13 @@ const isEditing = computed(() => !!route.params.id)
 const currentStep = ref(0)
 
 const steps = ['Basic Info', 'Media', 'Curriculum', 'Pricing']
-const categories = ['Web Development', 'Data Science', 'Marketing', 'Business', 'Design', 'Finance', 'Leadership']
+const categories = ['Corporate Law', 'Finance & Capital Markets', 'Mergers & Acquisitions', 'Corporate Governance', 'Taxation', 'Energy & ESG', 'Dispute Resolution']
 const demoVideo = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
 const demoThumbs = [
-  'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&q=80',
-  'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400&q=80',
-  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80',
-  'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&q=80',
+  'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=400&q=80',
+  'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&q=80',
+  'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80',
+  'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=400&q=80',
 ]
 
 const form = ref({

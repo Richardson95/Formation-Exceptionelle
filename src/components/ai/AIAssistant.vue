@@ -144,10 +144,10 @@ const showSuggestions = ref(true)
 const messagesEl = ref(null)
 
 const quickSuggestions = [
-  'What courses are available?',
+  'What programs are available?',
   'How do I become an instructor?',
   'Find jobs for me',
-  'How does the LMS work?',
+  'How does the platform work?',
 ]
 
 const messages = ref([
@@ -165,19 +165,19 @@ const messages = ref([
 
 const aiResponses = {
   courses: {
-    response: 'We offer 200+ professional courses across Web Development, Data Science, Business, Marketing, Design, and Finance. All courses come with certificates, quizzes, and hands-on projects. Would you like to browse our course catalog?',
-    quickActions: [{ label: 'Browse All Courses', path: '/lms' }]
+    response: 'We offer expert-led professional programmes across Corporate Law, Finance & Capital Markets, Mergers & Acquisitions, Corporate Governance, Taxation, Energy & ESG, and Dispute Resolution. Every programme includes certificates, assessments and practical case studies. Would you like to browse the catalogue?',
+    quickActions: [{ label: 'Browse All Programs', path: '/lms' }]
   },
   jobs: {
-    response: 'We have 500+ active job listings including full-time positions, internships, and remote opportunities across tech, marketing, finance, and more. You can filter by location, salary, and job type.',
+    response: 'We feature active openings across legal, finance, compliance, corporate governance, tax and consulting — including full-time roles and internships. You can filter by location, salary and job type.',
     quickActions: [{ label: 'View Job Listings', path: '/jobs' }]
   },
   instructor: {
-    response: 'Becoming an instructor at Formation Exceptionelle is a great opportunity! You can create courses, upload videos, and earn from paid enrollments. You\'ll need to complete an application form, and we\'ll review your credentials.',
+    response: 'Joining our faculty is a great opportunity for experienced practitioners! You can create professional programmes, upload sessions, and earn from paid enrolments. Simply complete the application form and we\'ll review your credentials.',
     quickActions: [{ label: 'Apply to Teach', path: '/become-instructor' }]
   },
   lms: {
-    response: 'Our LMS is similar to Udemy! You can browse courses, add them to cart, pay securely, and start learning immediately. Features include HD videos, chapter navigation, quizzes, progress tracking, and automated certificate generation.',
+    response: 'Our learning platform lets you browse programmes, add them to cart, pay securely, and start learning immediately. Features include HD video sessions, chapter navigation, assessments, progress tracking, and automated certificate generation.',
     quickActions: [{ label: 'Start Learning', path: '/lms' }]
   },
   default: {

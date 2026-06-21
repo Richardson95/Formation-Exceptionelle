@@ -33,7 +33,7 @@
           </h1>
 
           <p data-aos="fade-up" data-aos-delay="200" class="text-lg text-purple-200 leading-relaxed mb-8 max-w-xl">
-            Join over <strong class="text-white">50,000+ professionals</strong> who have accelerated their careers with Formation Exceptionelle's world-class training programs, industry connections, and expert mentorship.
+            Join over <strong class="text-white">15,000+ professionals</strong> who have advanced their careers with Formation Exceptionelle's expert-led corporate, legal and finance training programmes, industry connections, and mentorship.
           </p>
 
           <!-- CTA Buttons -->
@@ -63,7 +63,7 @@
             <div class="flex items-center justify-between mb-6">
               <div>
                 <p class="text-white/60 text-sm">Learning in progress</p>
-                <h3 class="text-white font-bold text-lg">Web Development Bootcamp</h3>
+                <h3 class="text-white font-bold text-lg">Corporate Governance Masterclass</h3>
               </div>
               <div class="w-12 h-12 rounded-xl bg-gold-500/20 flex items-center justify-center">
                 <PlayCircleIcon class="w-8 h-8 text-gold-400" />
@@ -128,7 +128,7 @@
               </div>
               <div>
                 <p class="text-white text-xs font-bold">New Job Alert!</p>
-                <p class="text-white/60 text-xs">Senior Developer</p>
+                <p class="text-white/60 text-xs">Corporate Lawyer</p>
               </div>
             </div>
             <div class="flex items-center justify-between">
@@ -158,15 +158,15 @@ import {
 import { StarIcon as StarSolidIcon } from '@heroicons/vue/24/solid'
 
 const heroStats = [
-  { value: '50K+', label: 'Students Trained' },
-  { value: '200+', label: 'Expert Courses' },
-  { value: '95%', label: 'Job Placement' },
+  { value: '15K+', label: 'Professionals Trained' },
+  { value: '60+', label: 'Expert Programs' },
+  { value: '98%', label: 'Satisfaction Rate' },
 ]
 
 const previewChapters = [
-  { title: 'Introduction to HTML5', duration: '12 min', done: true },
-  { title: 'CSS3 & Flexbox Layout', duration: '28 min', done: false },
-  { title: 'JavaScript Fundamentals', duration: '45 min', done: false },
+  { title: 'Foundations of Board Governance', duration: '18 min', done: true },
+  { title: 'Strategy, Ethics & Stakeholders', duration: '31 min', done: false },
+  { title: 'Performance & Risk Oversight', duration: '27 min', done: false },
 ]
 
 const particles = Array.from({ length: 20 }, (_, i) => ({

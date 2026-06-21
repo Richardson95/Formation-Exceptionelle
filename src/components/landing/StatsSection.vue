@@ -26,9 +26,9 @@
 
 <script setup>
 const stats = [
-  { value: '50,000+', label: 'Professionals Trained', sublabel: 'Across 15 countries' },
-  { value: '200+', label: 'Expert Courses', sublabel: 'Updated regularly' },
-  { value: '95%', label: 'Employment Rate', sublabel: 'Within 6 months' },
+  { value: '15,000+', label: 'Professionals Trained', sublabel: 'Across 15 countries' },
+  { value: '60+', label: 'Expert Programs', sublabel: 'Updated regularly' },
+  { value: '98%', label: 'Satisfaction Rate', sublabel: 'Based on feedback' },
   { value: '150+', label: 'Industry Partners', sublabel: 'And growing' },
 ]
 </script>

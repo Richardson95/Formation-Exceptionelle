@@ -67,12 +67,22 @@
                 <span class="flex items-center gap-1"><StarIcon class="w-3.5 h-3.5 text-gold-400" /> {{ course.rating }}</span>
                 <span class="flex items-center gap-1"><CurrencyDollarIcon class="w-3.5 h-3.5" /> ${{ ((course.price || 0) * (course.enrolledCount || 0)).toLocaleString() }} earned</span>
               </div>
-              <div class="flex gap-2">
+              <div class="flex flex-wrap items-center gap-2">
                 <span class="badge text-xs" :class="course.price > 0 ? 'badge-purple' : 'bg-green-100 text-green-700'">
                   {{ course.price > 0 ? '$' + course.price : 'Free' }}
                 </span>
                 <span class="badge bg-gray-100 text-gray-600 text-xs">{{ course.level }}</span>
+                <span class="badge text-xs capitalize" :class="{
+                  'bg-green-100 text-green-700': (course.status || 'published') === 'published',
+                  'bg-amber-100 text-amber-700': course.status === 'pending',
+                  'bg-red-100 text-red-700': course.status === 'rejected',
+                }">
+                  {{ (course.status || 'published') === 'published' ? 'Live' : course.status === 'pending' ? 'Pending review' : 'Rejected' }}
+                </span>
               </div>
+              <p v-if="course.status === 'rejected' && course.rejectionReason" class="text-xs text-red-500 mt-1.5">
+                Reviewer note: {{ course.rejectionReason }}
+              </p>
             </div>
             <div class="flex flex-col items-end gap-2 flex-shrink-0">
               <RouterLink :to="{ name: 'edit-course', params: { id: course.id } }" class="btn-secondary text-xs px-3 py-1.5">

@@ -26,7 +26,7 @@
 
       <div class="text-center mt-10" data-aos="fade-up">
         <RouterLink to="/lms" class="btn-primary text-base px-8 py-4">
-          Explore All 200+ Courses
+          Explore All Programs
           <ArrowRightIcon class="w-5 h-5 ml-2" />
         </RouterLink>
       </div>

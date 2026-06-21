@@ -159,16 +159,16 @@ const showPassword = ref(false)
 const error = ref('')
 
 const features = [
-  'Access 200+ professional courses',
+  'Access 60+ professional programs',
   'Track your learning progress',
   'Earn industry certificates',
   'Discover job opportunities',
 ]
 
 const stats = [
-  { value: '50K+', label: 'Students' },
-  { value: '200+', label: 'Courses' },
-  { value: '95%', label: 'Placed' },
+  { value: '15K+', label: 'Professionals' },
+  { value: '60+', label: 'Programs' },
+  { value: '98%', label: 'Satisfaction' },
 ]
 
 async function handleLogin() {

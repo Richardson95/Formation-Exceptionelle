@@ -35,6 +35,9 @@ export const useAdminStore = defineStore('admin', () => {
       totalJobs: jobsStore.totalJobs,
       totalApplications: jobsStore.totalApplications,
       internships: jobsStore.internships.length,
+      pendingCourses: lmsStore.pendingCourses.length,
+      pendingJobs: jobsStore.pendingJobs.length,
+      pendingApprovals: lmsStore.pendingCourses.length + jobsStore.pendingJobs.length,
       pageViews: 48239,
       weeklyVisitors: 12847,
       conversionRate: 3.2,
@@ -66,13 +69,13 @@ export const useAdminStore = defineStore('admin', () => {
 
   function generateRecentActivity() {
     return [
-      { id: 1, type: 'enrollment', message: 'New student enrolled in Web Development Bootcamp', time: '2 minutes ago', icon: 'book' },
-      { id: 2, type: 'job', message: 'New job posted: Senior Frontend Developer at TechNova', time: '15 minutes ago', icon: 'briefcase' },
-      { id: 3, type: 'application', message: 'Application received for Data Analyst Intern position', time: '32 minutes ago', icon: 'document' },
-      { id: 4, type: 'payment', message: 'Payment of $89.99 received for Python course', time: '1 hour ago', icon: 'currency' },
-      { id: 5, type: 'user', message: 'New instructor registered: Dr. Amara Nwosu', time: '2 hours ago', icon: 'user' },
-      { id: 6, type: 'certificate', message: 'Certificate generated for Leadership Excellence course', time: '3 hours ago', icon: 'badge' },
-      { id: 7, type: 'review', message: 'New 5-star review on Digital Marketing Masterclass', time: '4 hours ago', icon: 'star' },
+      { id: 1, type: 'enrollment', message: 'New participant enrolled in Company Secretarial Practice', time: '2 minutes ago', icon: 'book' },
+      { id: 2, type: 'job', message: 'New job posted: Corporate / Commercial Lawyer at Adebayo & Okonkwo LP', time: '15 minutes ago', icon: 'briefcase' },
+      { id: 3, type: 'application', message: 'Application received for Legal & Compliance Intern position', time: '32 minutes ago', icon: 'document' },
+      { id: 4, type: 'payment', message: 'Payment of $280 received for Capital Market course', time: '1 hour ago', icon: 'currency' },
+      { id: 5, type: 'user', message: 'New faculty registered: Dr. Ngozi Eze', time: '2 hours ago', icon: 'user' },
+      { id: 6, type: 'certificate', message: 'Certificate generated for Strategic Leadership & Corporate Governance', time: '3 hours ago', icon: 'badge' },
+      { id: 7, type: 'review', message: 'New 5-star review on The New Tax Laws', time: '4 hours ago', icon: 'star' },
     ]
   }
 

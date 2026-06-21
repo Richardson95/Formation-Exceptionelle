@@ -252,10 +252,20 @@ Course {
   sections: Section[],          // nested curriculum (see below)
   isPaid: boolean,
   featured: boolean,            // shown on landing page / featured carousels
-  status: 'draft' | 'published',  // NEW (CreateCourse has "Save Draft" vs "Publish")
+  status: 'draft' | 'pending' | 'published' | 'rejected',  // moderation state (see below)
+  submittedAt: ISODate | null,  // when the instructor submitted for review
+  rejectionReason: string,      // admin's note when status === 'rejected'
   createdAt: ISODate,
   updatedAt: ISODate
 }
+```
+**Course moderation workflow (BUILT in the frontend):** instructor-created courses are **not** public
+immediately. On submit they get `status: 'pending'`; an admin must **approve** (→ `published`, goes live)
+or **reject** (→ `rejected` with `rejectionReason`, shown back to the instructor). Only `published`
+courses appear in public listings/catalog/featured. Seeded demo courses are `published`. (`draft` is
+reserved for the "Save Draft" action.)
+```js
+// Section and Lecture are embedded sub-documents inside course.sections[]
 
 Section {
   id: string,
@@ -274,7 +284,7 @@ Lecture {
   videoAsset: VideoAsset | null // the upload result object (see §8)
 }
 ```
-**CATEGORIES** (course): `Web Development, Data Science, Marketing, Business, Design, Finance, Leadership`
+**CATEGORIES** (course): `Corporate Law, Finance & Capital Markets, Mergers & Acquisitions, Corporate Governance, Taxation, Energy & ESG, Dispute Resolution`
 **LEVELS**: `Beginner, Intermediate, Advanced, All Levels`
 
 ### 5.3 Enrollment
@@ -341,13 +351,21 @@ Job {
   postedBy: string,             // user id
   applications: number,         // count (increment on apply)
   views: number,
-  isActive: boolean,            // default true
+  isActive: boolean,            // visible publicly; false while pending/closed
   isFeatured: boolean,          // default false
+  status: 'pending' | 'approved' | 'rejected',  // moderation state (see below)
+  submittedAt: ISODate | null,
+  rejectionReason: string,
   createdAt: ISODate,
   updatedAt: ISODate
 }
 ```
-**JOB_CATEGORIES**: `Technology, Data Science, Marketing, Human Resources, Finance, Design, Business`
+**Job moderation workflow (BUILT in the frontend):** employer-posted jobs are **not** public
+immediately — on submit they get `status: 'pending'` and `isActive: false`. An admin must **approve**
+(→ `status: 'approved'`, `isActive: true`) or **reject** (→ `rejected` + `rejectionReason`). Only active,
+approved jobs appear in public listings. Seeded demo jobs are `approved`.
+
+**JOB_CATEGORIES**: `Legal, Finance, Compliance & Risk, Corporate Governance, Tax, Energy & Resources, Consulting`
 **JOB_TYPES**: `Full-time, Part-time, Internship, Contract, Freelance`
 **LOCATION_TYPES**: `Remote, On-site, Hybrid`
 
@@ -523,10 +541,10 @@ default to array to stay drop-in compatible — or update the stores accordingly
 ### 7.2 Courses — `/api/courses`
 | Method | Path | Auth | Notes |
 |---|---|---|---|
-| GET | `/` | public/auth | List/search/filter. Query: `q, category, level, sort` (sort: `popular|rating|newest|price-low|price-high`). Returns courses array. |
-| GET | `/featured` | public | `featured === true`. |
+| GET | `/` | public/auth | List/search/filter. **Only returns `status: 'published'` courses.** Query: `q, category, level, sort` (sort: `popular|rating|newest|price-low|price-high`). Returns courses array. |
+| GET | `/featured` | public | `featured === true` **AND `status === 'published'`**. |
 | GET | `/:id` | auth | Single course (full, with sections/lectures). |
-| POST | `/` | instructor | Create course (from CreateCourse form). Sets `instructorId`, defaults `enrolledCount:0, rating:0, reviewCount:0, featured:false`. Returns created course. |
+| POST | `/` | instructor | Create/submit course (from CreateCourse form). Sets `instructorId`, `status:'pending'`, `submittedAt`, defaults `enrolledCount:0, rating:0, reviewCount:0, featured:false`. **The course is NOT public until an admin approves it** (see §7.10). Returns created course. |
 | PATCH | `/:id` | instructor (owner) or admin | Update course; bump `lastUpdated`. |
 | DELETE | `/:id` | instructor (owner) or admin | Delete/unpublish. |
 | GET | `/instructor/:instructorId` | auth | Courses by instructor (matches `instructor.id` OR `instructorId`). |
@@ -564,11 +582,11 @@ cross-device sync. If you persist:
 ### 7.5 Jobs — `/api/jobs`
 | Method | Path | Auth | Notes |
 |---|---|---|---|
-| GET | `/` | auth | List active jobs. Query: `q, type, category, location, sort` (sort: `newest|popular|salary-high`). `q` matches title, company, any skill, category. Only `isActive`. |
+| GET | `/` | auth | List active jobs. Query: `q, type, category, location, sort` (sort: `newest|popular|salary-high`). `q` matches title, company, any skill, category. **Only `isActive && status==='approved'`.** |
 | GET | `/featured` | auth | `isFeatured && isActive`, first 6. |
 | GET | `/internships` | auth | `type === 'Internship' && isActive`. |
 | GET | `/:id` | auth | Single job. Increment `views`. |
-| POST | `/` | auth | Post a job (PostJob form). Sets `postedBy`, `applications:0, views:0, isActive:true, isFeatured:false, postedAt: today`. |
+| POST | `/` | auth | Submit a job (PostJob form). Sets `postedBy`, `applications:0, views:0, isActive:false, isFeatured:false, status:'pending', submittedAt, postedAt: today`. **Not public until an admin approves it** (see §7.10). |
 | PATCH | `/:id` | owner or admin | Edit job (activate/deactivate, feature). |
 | DELETE | `/:id` | owner or admin | Remove job. |
 
@@ -590,7 +608,7 @@ cross-device sync. If you persist:
 | GET | `/:assetId` | auth | Poll asset status `{ assetId, status, playbackUrl, thumbnail, duration, durationLabel }`. |
 
 ### 7.8 Quizzes — `/api/quizzes` (NEW — see QuizComponent)
-Currently the quiz questions are **hardcoded** in `QuizComponent.vue` (3 sample HTML/CSS/JS
+Currently the quiz questions are **hardcoded** in `QuizComponent.vue` (3 sample corporate governance / law / M&A
 questions, pass mark **70%**). For a real backend, store quizzes per lecture/course:
 | Method | Path | Auth | Notes |
 |---|---|---|---|
@@ -606,22 +624,433 @@ Question shape: `{ question: string, options: string[], correct: number }`.
 | GET | `/:id` | public | Public verification + PDF link. |
 
 ### 7.10 Admin — `/api/admin`
-All require `adminOnly`.
-| Method | Path | Notes |
+
+**All admin endpoints require a valid JWT AND `req.user.role === 'admin'` (`adminOnly` middleware).**
+Non-admins get `403 { error: { message: 'Admin access required', code: 'FORBIDDEN' } }`.
+Unauthenticated requests get `401 { error: { message: 'Authentication required', code: 'UNAUTHENTICATED' } }`.
+
+Quick index:
+| Method | Path | Purpose |
 |---|---|---|
-| GET | `/stats` | The full dashboard stats object (see §13.6 for exact shape — totals, revenueByMonth, enrollmentsByMonth, topCourses, recentActivity, pageViews, etc.). |
-| GET | `/users` | All users (safe). Supports `?q=&role=`. |
-| GET | `/users/:id` | Single user detail. |
-| PATCH | `/users/:id` | Change role / suspend (`{ role }` or `{ status }`). UI has "Change Role" + "Suspend". |
-| DELETE | `/users/:id` | Remove user. |
-| GET | `/courses` | All courses (incl. drafts) for management. |
-| PATCH | `/courses/:id` | Feature/unfeature, publish/unpublish. |
-| DELETE | `/courses/:id` | Remove course. |
-| GET | `/jobs` | All jobs (incl. inactive). |
-| PATCH | `/jobs/:id` | Approve/feature/deactivate. |
-| DELETE | `/jobs/:id` | Remove job. |
-| GET | `/payments` | Orders/transactions list for AdminPayments. |
-| GET | `/analytics` | Time-series data for AdminAnalytics charts. |
+| GET | `/api/admin/stats` | Dashboard summary (AdminDashboardView) |
+| GET | `/api/admin/users` | List/search users (AdminUsersView) |
+| GET | `/api/admin/users/:id` | Single user detail (modal) |
+| PATCH | `/api/admin/users/:id` | Change role / suspend / reactivate |
+| DELETE | `/api/admin/users/:id` | Remove user |
+| GET | `/api/admin/courses` | List all courses incl. drafts/pending (AdminCoursesView) |
+| POST | `/api/admin/courses/:id/approve` | **Approve a pending course → publish it** |
+| POST | `/api/admin/courses/:id/reject` | **Reject a pending course (with reason)** |
+| PATCH | `/api/admin/courses/:id` | Edit pricing / feature / publish / unpublish |
+| DELETE | `/api/admin/courses/:id` | Remove course |
+| GET | `/api/admin/jobs` | List all jobs incl. inactive/pending (AdminJobsView) |
+| POST | `/api/admin/jobs/:id/approve` | **Approve a pending job → publish it** |
+| POST | `/api/admin/jobs/:id/reject` | **Reject a pending job (with reason)** |
+| PATCH | `/api/admin/jobs/:id` | Edit salary / feature / activate / deactivate |
+| DELETE | `/api/admin/jobs/:id` | Remove job |
+| GET | `/api/admin/payments` | Transactions list + summary (AdminPaymentsView) |
+| GET | `/api/admin/payments/export` | CSV export ("Export CSV" button) |
+| PATCH | `/api/admin/payments/:id` | Update order status (e.g. confirm bank transfer, refund) |
+| GET | `/api/admin/analytics` | Chart data (AdminAnalyticsView) |
+
+---
+
+#### GET `/api/admin/stats`
+Powers AdminDashboardView. No body. See §13.6 for the canonical shape — repeated here as a full example response.
+
+**Response `200`:**
+```json
+{
+  "totalUsers": 1530,
+  "totalInstructors": 152,
+  "totalParticipants": 1377,
+  "totalCourses": 6,
+  "totalEnrollments": 4820,
+  "totalRevenue": 124580.50,
+  "paidStudents": 1284,
+  "totalJobs": 5,
+  "totalApplications": 508,
+  "internships": 2,
+  "pendingCourses": 2,
+  "pendingJobs": 1,
+  "pendingApprovals": 3,
+  "pageViews": 48239,
+  "weeklyVisitors": 12847,
+  "conversionRate": 3.2,
+  "avgCourseRating": 4.7,
+  "revenueByMonth": [
+    { "month": "Jan", "revenue": 23000 }, { "month": "Feb", "revenue": 26000 }
+    /* ...12 entries total, Jan..Dec */
+  ],
+  "enrollmentsByMonth": [
+    { "month": "Jan", "count": 230 }, { "month": "Feb", "count": 260 }
+    /* ...12 entries total */
+  ],
+  "topCourses": [
+    { "id": "c001", "title": "Financing, M&A and ADR: Advanced Practice", "enrolledCount": 4200,
+      "rating": 4.9, "price": 320, "thumbnail": "https://..." }
+    /* top 5 by enrolledCount; full course objects are also acceptable */
+  ],
+  "recentActivity": [
+    { "id": 1, "type": "enrollment", "message": "New participant enrolled in Company Secretarial Practice",
+      "time": "2 minutes ago", "icon": "book" },
+    { "id": 4, "type": "payment", "message": "Payment of $280 received for Capital Market course",
+      "time": "1 hour ago", "icon": "currency" }
+  ]
+}
+```
+- `type` ∈ `enrollment|job|application|payment|user|certificate|review`.
+- `icon` ∈ `book|briefcase|document|currency|user|badge|star`.
+- `time`: send a human label ("2 minutes ago") OR an ISO timestamp and let the frontend format — be consistent.
+- Compute totals from real collections; `pageViews/weeklyVisitors/conversionRate` can come from an analytics
+  source or be stored counters (the mock hardcodes them).
+
+---
+
+#### GET `/api/admin/users`
+Powers AdminUsersView table + stat row. Returns **safe users** (never include `password`).
+
+**Query params:** `q` (matches firstName, lastName, email — case-insensitive), `role`
+(`admin|instructor|participant`), optional `page`, `limit`.
+
+**Response `200`** (array form keeps the current frontend drop-in; switch to `{ data, total }` only if you
+also update the store):
+```json
+[
+  {
+    "id": "user-1718800000000",
+    "firstName": "Chioma", "lastName": "Eze",
+    "email": "chioma@email.com",
+    "role": "participant",
+    "avatar": null,
+    "profession": "Corporate Lawyer",
+    "phone": "+234 800 000 0000",
+    "bio": "",
+    "status": "active",
+    "enrolledCourses": ["c001"],
+    "completedCourses": [],
+    "createdAt": "2026-02-22T09:14:00.000Z"
+  }
+]
+```
+> The view derives its stat cards client-side (Total Users / Instructors / Participants) by counting this
+> array, so returning the full filtered list is sufficient. If you paginate, also return counts.
+
+---
+
+#### GET `/api/admin/users/:id`
+Single safe user for the detail modal (shows id, joined date, profession).
+
+**Response `200`:** one safe-user object (same shape as above).
+**Errors:** `404 { error: { message: 'User not found', code: 'NOT_FOUND' } }`.
+
+---
+
+#### PATCH `/api/admin/users/:id`
+Backs the "Change Role" and "Suspend" actions (currently stubbed in the UI). Partial update.
+
+**Request body** (any subset):
+```json
+{ "role": "instructor", "status": "suspended" }
+```
+- `role` ∈ `participant|instructor|admin`.
+- `status` ∈ `active|suspended` (a suspended user should be blocked at login).
+- Guard rails: prevent an admin from demoting/suspending **themselves**; consider preventing removal of the
+  last remaining admin.
+
+**Response `200`:** the updated safe user.
+**Errors:** `400` invalid enum, `403` self-demotion attempt, `404` not found.
+
+---
+
+#### DELETE `/api/admin/users/:id`
+**Response `200`:** `{ "success": true, "id": "user-1718800000000" }`
+- Soft-delete recommended (or cascade: remove their enrollments/progress/applications, or reassign).
+- Block deleting yourself / the last admin (`403`).
+
+---
+
+#### GET `/api/admin/courses`
+Powers AdminCoursesView. Returns **all** courses including `pending`, `draft` and `rejected` (unlike the
+public `GET /api/courses` which returns only `published`). The view shows a pending-approvals banner +
+status badge per course.
+
+**Query params:** `q`, `category`, `status` (`draft|pending|published|rejected`), `featured` (`true|false`), `page`, `limit`.
+
+**Response `200`:** array of full course objects (see §5.2), each additionally carrying management fields:
+```json
+[
+  {
+    "id": "c001",
+    "title": "Financing, M&A and ADR: Advanced Practice, Procedure & Negotiation",
+    "instructor": { "id": "inst-001", "name": "Barr. (Mrs.) Adaeze Okafor, SAN" },
+    "category": "Dispute Resolution",
+    "price": 320,
+    "enrolledCount": 4200,
+    "rating": 4.9,
+    "status": "published",
+    "featured": true,
+    "lastUpdated": "2026-01-15",
+    "thumbnail": "https://..."
+  }
+]
+```
+
+---
+
+#### POST `/api/admin/courses/:id/approve`
+Approve a `pending` course submitted by an instructor — makes it publicly visible. Powers the
+"Approve" button in the AdminCoursesView pending-approvals banner & table.
+
+**Request body:** none. **Response `200`:** the updated course (`status: 'published'`, `rejectionReason` cleared).
+**Side effects:** the course now appears in public listings; optionally email the instructor.
+**Errors:** `404` not found; `409` if not in an approvable state.
+
+#### POST `/api/admin/courses/:id/reject`
+Reject a `pending` course with feedback for the instructor.
+
+**Request body:** `{ "reason": "Please add learning objectives and improve audio quality." }`
+**Response `200`:** the updated course (`status: 'rejected'`, `rejectionReason` set). The instructor sees the
+reason on their dashboard. Optionally email them. **Errors:** `404` not found.
+
+#### PATCH `/api/admin/courses/:id`
+Feature/unfeature, publish/unpublish, **and control pricing** from the admin table. The admin Course
+Management page ("Edit Pricing" modal) lets an admin override a course's price, original price and
+free/paid status — so this endpoint MUST accept pricing fields, not just status flags.
+
+**Request body** (any subset):
+```json
+{ "isPaid": true, "price": 320, "originalPrice": 480, "featured": true, "status": "published" }
+```
+- `isPaid` boolean — when `false`, the backend should force `price` and `originalPrice` to `0`.
+- `price` number ≥ 0 (USD). The amount students pay.
+- `originalPrice` number ≥ `price` (the strike-through reference price).
+- `featured` boolean (controls landing-page carousels).
+- `status` ∈ `draft|published`.
+- **Server-side validation:** clamp negatives to 0; if `isPaid === false` set both prices to 0; ensure
+  `originalPrice >= price`. Pricing is authoritative on the server and is the figure used at checkout —
+  never trust a client-sent price during payment (see §9), only this admin/instructor-managed value.
+
+**Response `200`:** the updated course. **Errors:** `400` invalid value, `404` not found.
+
+> **Who can set price:** both the **instructor** (via `PATCH /api/courses/:id`, owner-only — the
+> CreateCourse pricing step) and the **admin** (here, any course) can set/override pricing. The admin
+> value wins. The frontend `lms.js` exposes `updateCourse` (price/featured) and `deleteCourse`, used by
+> both the instructor dashboard and the admin panel.
+
+---
+
+#### DELETE `/api/admin/courses/:id`
+**Response `200`:** `{ "success": true, "id": "c001" }`
+- Consider blocking hard-delete if the course has enrollments; prefer unpublish. If deleting, decide on
+  cascade for enrollments/progress/reviews.
+
+---
+
+#### GET `/api/admin/jobs`
+Powers AdminJobsView. Returns **all** jobs including `isActive: false`.
+
+**Query params:** `q`, `category`, `type`, `isActive` (`true|false`), `isFeatured`, `page`, `limit`.
+
+**Response `200`:** array of full job objects (see §5.6), e.g.:
+```json
+[
+  {
+    "id": "j001",
+    "title": "Corporate / Commercial Lawyer",
+    "company": "Adebayo & Okonkwo LP",
+    "category": "Legal",
+    "type": "Full-time",
+    "location": "Lagos, Nigeria",
+    "applications": 47,
+    "views": 892,
+    "isActive": true,
+    "isFeatured": true,
+    "postedBy": "user-hr-001",
+    "postedAt": "2026-02-20",
+    "deadline": "2026-03-31"
+  }
+]
+```
+
+---
+
+#### POST `/api/admin/jobs/:id/approve`
+Approve a `pending` job posted by an employer — sets `status: 'approved'`, `isActive: true` so it
+appears in public listings. Powers the "Approve" button in AdminJobsView.
+
+**Request body:** none. **Response `200`:** the updated job. Optionally email the employer. **Errors:** `404`.
+
+#### POST `/api/admin/jobs/:id/reject`
+Reject a `pending` job with feedback.
+
+**Request body:** `{ "reason": "Listing is incomplete or violates posting guidelines." }`
+**Response `200`:** the updated job (`status: 'rejected'`, `isActive: false`, `rejectionReason` set). **Errors:** `404`.
+
+#### PATCH `/api/admin/jobs/:id`
+Approve / feature / activate / deactivate **and adjust the salary amount**. The admin Job Management
+page ("Edit" modal) lets an admin override the salary range, pay period and status — so this endpoint
+must accept the `salary` object too.
+
+**Request body** (any subset):
+```json
+{
+  "salary": { "min": 450000, "max": 750000, "currency": "NGN", "period": "monthly" },
+  "isActive": false,
+  "isFeatured": true
+}
+```
+- `salary.min` ≥ 0, `salary.max` ≥ `salary.min` (validate/clamp server-side).
+- `salary.period` ∈ `monthly|yearly|hourly`; `currency` defaults to `NGN`.
+- `isActive` / `isFeatured` booleans.
+
+**Response `200`:** the updated job. **Errors:** `400` invalid salary range, `404` not found.
+
+> Like courses, both the **poster/employer** (`PATCH /api/jobs/:id`, owner-only) and the **admin**
+> (here) can edit a job's amounts/status. Frontend `jobs.js` exposes `updateJob` and `deleteJob`.
+
+---
+
+#### DELETE `/api/admin/jobs/:id`
+**Response `200`:** `{ "success": true, "id": "j001" }`
+- Prefer setting `isActive: false`; if hard-deleting, decide on cascade for that job's applications.
+
+---
+
+#### GET `/api/admin/payments`
+Powers AdminPaymentsView (summary cards + transactions table). Derive from the `Order` collection
+(§5.8) but **map to the exact shape the table renders**.
+
+**Query params:** `q` (student name/email), `status` (`completed|pending|refunded`), `from`, `to` (dates),
+`page`, `limit`.
+
+**Response `200`:**
+```json
+{
+  "summary": {
+    "totalRevenue": 124580.00,
+    "paidStudents": 1284,
+    "avgOrderValue": 76.40,
+    "thisMonth": 58200.00
+  },
+  "transactions": [
+    {
+      "id": "TXN-001-2026",
+      "student": "Chioma Eze",
+      "email": "chioma@email.com",
+      "course": "Financing, M&A and ADR: Advanced Practice",
+      "amount": "320",
+      "date": "2026-06-14",
+      "status": "completed"
+    }
+  ]
+}
+```
+- **`status` mapping:** the Order model uses `paid|pending|failed|refunded`; the table expects
+  `completed|pending|refunded`. Map `paid → completed` (and either omit `failed` or surface it as `refunded`/
+  a new badge). `amount` is rendered with a `$` prefix as a string. `course` is the first/primary item title
+  (an order may contain multiple items — show the first or a "+N more").
+- If you keep it simple, returning just `transactions` (array) is acceptable since the current UI hardcodes
+  the summary cards — but returning `summary` lets you make those cards real.
+
+---
+
+#### GET `/api/admin/payments/export`
+Backs the "Export CSV" button. Returns `text/csv` with
+`Content-Disposition: attachment; filename="transactions.csv"`. Columns:
+`Transaction ID, Student, Email, Course, Amount, Date, Status`. Honors the same query filters as
+`GET /api/admin/payments`.
+
+---
+
+#### PATCH `/api/admin/payments/:id`
+Update an order's status — e.g. confirm a manual **bank transfer** (`pending → paid`, which then triggers
+enrollment fulfillment) or process a **refund**.
+
+**Request body:**
+```json
+{ "status": "paid" }
+```
+- `status` ∈ `pending|paid|failed|refunded`.
+- On `paid`: create enrollments for each item, increment course `enrolledCount`, send confirmation email
+  (idempotent — don't double-fulfill).
+- On `refunded`: optionally revoke enrollment(s) and trigger the gateway refund.
+
+**Response `200`:** the updated order. **Errors:** `400` invalid transition, `404` not found.
+
+---
+
+#### GET `/api/admin/analytics`
+Powers AdminAnalyticsView charts. Return precomputed series matching what the view renders.
+
+**Query params:** `range` (e.g. `12m` default, `30d`, `7d`).
+
+**Response `200`:**
+```json
+{
+  "keyMetrics": {
+    "pageViews":      { "value": 48239, "change": 18 },
+    "uniqueVisitors": { "value": 12847, "change": 12 },
+    "newEnrollments": { "value": 1284,  "change": 23 },
+    "revenueMTD":     { "value": 58200, "change": 15 }
+  },
+  "enrollmentTrend": [
+    { "month": "Jan", "count": 120 }, { "month": "Feb", "count": 180 }
+    /* ...12 entries */
+  ],
+  "revenueByCategory": [
+    { "name": "Mergers & Acquisitions", "pct": 28 },
+    { "name": "Corporate Governance", "pct": 24 },
+    { "name": "Finance & Capital Markets", "pct": 20 },
+    { "name": "Taxation", "pct": 16 },
+    { "name": "Energy & ESG", "pct": 12 }
+  ],
+  "trafficSources": [
+    { "name": "Organic Search", "pct": 42 },
+    { "name": "Social Media", "pct": 28 },
+    { "name": "Direct", "pct": 18 },
+    { "name": "Referral", "pct": 12 }
+  ],
+  "demographics": [
+    { "country": "Nigeria", "pct": 45 },
+    { "country": "Ghana", "pct": 18 },
+    { "country": "Kenya", "pct": 14 },
+    { "country": "South Africa", "pct": 12 },
+    { "country": "Others", "pct": 11 }
+  ],
+  "funnel": [
+    { "label": "Visitors", "value": 48239 },
+    { "label": "Sign Ups", "value": 12847 },
+    { "label": "Course Views", "value": 6420 },
+    { "label": "Add to Cart", "value": 2840 },
+    { "label": "Purchases", "value": 1284 }
+  ]
+}
+```
+- `change` is a percentage delta vs. the previous period (UI renders it as a green `+N%` badge).
+- `pct` values are percentages (the bars are widths). `change` colors are computed client-side.
+- `trafficSources`/`demographics`/`funnel` require real analytics instrumentation; until that exists you may
+  return reasonable computed approximations (e.g. funnel from users/enrollments/orders counts).
+
+---
+
+**Admin error & validation conventions (all admin routes):**
+- `400` invalid/missing fields → `{ error: { message, code: 'VALIDATION', fields?: {...} } }`
+- `401` no/invalid token, `403` not admin, `404` resource missing.
+- Validate every enum (`role`, `status`, `featured`, etc.) and reject unknown values.
+- Consider an **audit log** entry for every mutating admin action (who/what/when) — see optional model below.
+
+#### (Optional) AdminAuditLog model
+```js
+AdminAuditLog {
+  id: string,
+  adminId: string,          // who performed it
+  action: string,           // 'user.role.update' | 'course.delete' | 'payment.refund' | ...
+  targetType: string,       // 'user' | 'course' | 'job' | 'order'
+  targetId: string,
+  changes: object,          // before/after diff
+  createdAt: ISODate
+}
+```
 
 ---
 
@@ -735,13 +1164,14 @@ within the app.
 - `POST /api/assistant/chat` — `{ messages: [{role, content}], context? }` →
   `{ reply: string, quickActions?: [{ label, path }] }`.
 - Implement with the **LLM provider API** (`@your-llm/sdk`). Use a system prompt describing
-  Formation Exceptionelle (it's a career platform: 200+ courses, 500+ jobs, instructor program, LMS like
-  Udemy, certificates, payments) and instruct the model to optionally suggest in-app navigation
-  (`/lms`, `/jobs`, `/become-instructor`) as quick actions.
+  Formation Exceptionelle (a professional corporate/legal/finance training & career platform: expert-led
+  programmes in corporate law, finance & capital markets, M&A, governance, tax, energy/ESG and dispute
+  resolution; a jobs board; an instructor/faculty program; certificates; payments) and instruct the model
+  to optionally suggest in-app navigation (`/lms`, `/jobs`, `/become-instructor`) as quick actions.
 - Recommended model: **`your-fast-model`** for low-latency/cheap chat, or **`your-large-model`** for
   best quality. Stream tokens if you want the typing effect.
 - Optionally ground answers with real data (call your own courses/jobs endpoints, or use tool-use) so it
-  can answer "what Python courses do you have?" accurately.
+  can answer "what M&A or tax courses do you have?" accurately.
 - Keep the existing canned responses as a **fallback** when the API key is missing.
 
 > If you keep it simple for v1, a stateless endpoint that proxies the LLM with a good system prompt is enough.
@@ -833,7 +1263,9 @@ automatically** when `VITE_API_BASE_URL` is set.
 The frontend shows specific toasts; your API error messages should be human-readable and the store
 should surface them. Key strings already in use: `"Invalid email or password"`,
 `"An account with this email already exists"`, `"Successfully enrolled in course!"`,
-`"You have already applied for this job"`, `"Course published successfully!"`, etc.
+`"You have already applied for this job"`, `"Course submitted for review! An admin will approve it
+shortly."`, `"Job submitted for review! An admin will approve it shortly."`, `"Course approved and
+published!"`, `"Course removed successfully"`, etc.
 
 ### 13.6 Admin stats object (exact shape expected by AdminDashboard via `admin.js`)
 ```js
@@ -841,6 +1273,7 @@ should surface them. Key strings already in use: `"Invalid email or password"`,
   totalUsers, totalInstructors, totalParticipants,
   totalCourses, totalEnrollments, totalRevenue, paidStudents,
   totalJobs, totalApplications, internships,
+  pendingCourses, pendingJobs, pendingApprovals,   // moderation queue counts (sum shown on dashboard alert)
   pageViews, weeklyVisitors, conversionRate, avgCourseRating,
   revenueByMonth: [{ month: 'Jan', revenue: number }, ...12],
   enrollmentsByMonth: [{ month: 'Jan', count: number }, ...12],
@@ -992,14 +1425,21 @@ role: admin
 bio: 'Platform Administrator'
 ```
 
-**Demo courses (6):** Port `MOCK_COURSES` from `src/stores/lms.js` verbatim (ids `c001`–`c006`):
-Web Dev Bootcamp, Python for Data Science, Digital Marketing Masterclass (free), Leadership &
-Management, UI/UX with Figma, Financial Literacy. They include full nested sections/lectures with
-sample video URLs (Google sample bucket) — keep them for a populated demo.
+**Demo courses (9):** Port `MOCK_COURSES` from `src/stores/lms.js` verbatim (ids `c001`–`c009`) —
+professional corporate/legal/finance programmes: Financing, M&A & ADR; Company Secretarial Practice;
+Strategic Leadership & Corporate Governance; Navigating Law & Digital Innovation (AI, Fintech & Data
+Protection); Capital Market: Corporate Financing, Regulations & Compliance; Project Structuring &
+Financing with ESG Integration; Mergers & Acquisitions: Regulations & Risk; Due Diligence & Contractual
+Risk Management; The New Tax Laws. They include full nested sections/lectures with sample video URLs
+(Google sample bucket) — keep them for a populated demo. Prices are in USD ($180–$360).
 
 **Demo jobs (5):** Port `MOCK_JOBS` from `src/stores/jobs.js` (ids `j001`–`j005`):
-Senior Frontend Developer, Data Analyst Intern, Digital Marketing Manager, HR Business Partner,
-Software Engineering Intern.
+Corporate/Commercial Lawyer, Legal & Compliance Intern, Company Secretary/Governance Officer,
+Tax Manager, Investment/Capital Markets Analyst Intern.
+
+> **Seed-version note:** the frontend stores re-seed cached `localStorage` data when a version key
+> changes (`fe_courses_version`, `fe_jobs_version`). The real backend doesn't need this, but it's why
+> the catalog shapes/categories below are authoritative.
 
 > These exact mock arrays are in the frontend files referenced — copy them so the live app looks
 > identical to the demo on day one.
@@ -1050,12 +1490,12 @@ Software Engineering Intern.
 ### Appendix A — Complete enum/constant reference (copy into a `constants.js`)
 ```
 ROLES               = ['participant', 'instructor', 'admin']
-COURSE_CATEGORIES   = ['Web Development','Data Science','Marketing','Business','Design','Finance','Leadership']
+COURSE_CATEGORIES   = ['Corporate Law','Finance & Capital Markets','Mergers & Acquisitions','Corporate Governance','Taxation','Energy & ESG','Dispute Resolution']
 COURSE_LEVELS       = ['Beginner','Intermediate','Advanced','All Levels']
 COURSE_LANGUAGES    = ['English','French','Yoruba','Hausa','Igbo']
 LECTURE_TYPES       = ['video','quiz','assignment']
 COURSE_SORTS        = ['popular','rating','newest','price-low','price-high']
-JOB_CATEGORIES      = ['Technology','Data Science','Marketing','Human Resources','Finance','Design','Business']
+JOB_CATEGORIES      = ['Legal','Finance','Compliance & Risk','Corporate Governance','Tax','Energy & Resources','Consulting']
 JOB_TYPES           = ['Full-time','Part-time','Internship','Contract','Freelance']
 JOB_LOCATION_TYPES  = ['Remote','On-site','Hybrid']
 JOB_LEVELS          = ['Entry','Mid-level','Senior','Manager']

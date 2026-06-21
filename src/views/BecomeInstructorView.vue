@@ -15,12 +15,12 @@
           Share Your Expertise,<br/><span class="text-gold-400">Earn & Inspire</span>
         </h1>
         <p class="text-purple-200 text-xl max-w-2xl mx-auto mb-8">
-          Join 150+ expert instructors who are earning income while empowering thousands of students on Formation Exceptionelle.
+          Join our faculty of expert practitioners who are earning income while empowering thousands of professionals on Formation Exceptionelle.
         </p>
         <div class="flex flex-wrap gap-6 justify-center text-white">
-          <div class="text-center"><div class="text-3xl font-bold">150+</div><div class="text-purple-200 text-sm">Active Instructors</div></div>
-          <div class="text-center"><div class="text-3xl font-bold">$2.5K</div><div class="text-purple-200 text-sm">Avg. Monthly Earnings</div></div>
-          <div class="text-center"><div class="text-3xl font-bold">50K+</div><div class="text-purple-200 text-sm">Students to Reach</div></div>
+          <div class="text-center"><div class="text-3xl font-bold">60+</div><div class="text-purple-200 text-sm">Expert Faculty</div></div>
+          <div class="text-center"><div class="text-3xl font-bold">$3K</div><div class="text-purple-200 text-sm">Avg. Monthly Earnings</div></div>
+          <div class="text-center"><div class="text-3xl font-bold">15K+</div><div class="text-purple-200 text-sm">Professionals to Reach</div></div>
         </div>
       </div>
     </div>
@@ -76,7 +76,7 @@
 
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Your Expertise / Professional Title *</label>
-                <input v-model="form.title" type="text" placeholder="e.g. Senior Software Engineer, Data Scientist" class="input-field" required />
+                <input v-model="form.title" type="text" placeholder="e.g. Senior Advocate, Chartered Secretary, Tax Consultant" class="input-field" required />
               </div>
 
               <div>
@@ -161,21 +161,21 @@ import {
 
 const authStore = useAuthStore()
 const submitted = ref(false)
-const categories = ['Web Development', 'Data Science', 'Business', 'Marketing', 'Design', 'Finance', 'Leadership']
+const categories = ['Corporate Law', 'Finance & Capital Markets', 'Mergers & Acquisitions', 'Corporate Governance', 'Taxation', 'Energy & ESG', 'Dispute Resolution']
 
 const form = ref({
   title: '', experience: '3-5 years', courseTopic: '',
-  category: 'Web Development', linkedin: '', bio: '', motivation: '', agree: false
+  category: 'Corporate Law', linkedin: '', bio: '', motivation: '', agree: false
 })
 
 const benefits = [
   {
     icon: CurrencyDollarIcon, title: 'Earn Revenue',
-    desc: 'Earn up to 70% of every course sale. Top instructors earn $5,000+ per month.',
+    desc: 'Earn up to 70% of every programme sale. Top faculty earn $5,000+ per month.',
     bg: '#d1fae5', color: '#059669'
   },
   {
-    icon: UsersIcon, title: 'Reach 50K+ Students',
+    icon: UsersIcon, title: 'Reach 15K+ Professionals',
     desc: 'Access our growing community of professionals eager to learn from experts like you.',
     bg: '#ede9fe', color: '#7c3aed'
   },

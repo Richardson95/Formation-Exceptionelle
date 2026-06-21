@@ -75,30 +75,30 @@ const services = [
   {
     icon: AcademicCapIcon,
     title: 'Professional Certification Programs',
-    description: 'Industry-recognized certifications across technology, business, finance, and creative fields.',
+    description: 'Industry-recognized certifications across corporate law, finance, governance, taxation and dispute resolution.',
   },
   {
     icon: UserGroupIcon,
-    title: 'Corporate Training Solutions',
-    description: 'Customized training programs designed specifically for organizations to upskill their workforce.',
+    title: 'Corporate & In-House Training',
+    description: 'Customized programmes designed for boards, legal teams and organisations to upskill their workforce.',
   },
   {
     icon: BriefcaseIcon,
-    title: 'Career Placement & Mentorship',
-    description: 'Dedicated career advisors and industry mentors to help you land your dream job.',
+    title: 'Executive Mentorship & Advisory',
+    description: 'Dedicated advisers and industry mentors to support your professional growth and leadership journey.',
   },
   {
     icon: GlobeAltIcon,
     title: 'International Partnership Programs',
-    description: 'Collaborations with global institutions for internationally recognized qualifications.',
+    description: 'Collaborations with global institutions for internationally recognized professional qualifications.',
   },
 ]
 
 const statsCards = [
   {
     icon: UserGroupIcon,
-    value: '50,000+',
-    label: 'Students Trained',
+    value: '15,000+',
+    label: 'Professionals Trained',
     desc: 'Across 15 countries',
     bg: '#ede9fe',
     color: '#7c3aed',
@@ -113,17 +113,17 @@ const statsCards = [
   },
   {
     icon: AcademicCapIcon,
-    value: '200+',
-    label: 'Expert Courses',
+    value: '60+',
+    label: 'Expert Programs',
     desc: 'Updated regularly',
     bg: '#d1fae5',
     color: '#059669',
   },
   {
     icon: ChartBarIcon,
-    value: '95%',
-    label: 'Placement Rate',
-    desc: 'Within 6 months',
+    value: '98%',
+    label: 'Satisfaction Rate',
+    desc: 'Based on feedback',
     bg: '#fee2e2',
     color: '#dc2626',
   },

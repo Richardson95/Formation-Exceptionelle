@@ -71,18 +71,18 @@ const emit = defineEmits(['complete'])
 
 const questions = [
   {
-    question: 'What does HTML stand for?',
-    options: ['HyperText Markup Language', 'High Technology Modern Language', 'HyperText Modern Links', 'Home Tool Markup Language'],
+    question: 'In corporate governance, to whom does the board of directors owe its primary fiduciary duty?',
+    options: ['The company as a whole', 'The chief executive officer', 'The majority shareholder only', 'The external auditors'],
     correct: 0
   },
   {
-    question: 'Which CSS property is used to change text color?',
-    options: ['font-color', 'text-color', 'color', 'background-color'],
-    correct: 2
+    question: 'Which of the following is a form of Alternative Dispute Resolution (ADR)?',
+    options: ['Litigation in open court', 'Arbitration', 'Criminal prosecution', 'Legislative drafting'],
+    correct: 1
   },
   {
-    question: 'Which JavaScript method adds an element to the end of an array?',
-    options: ['append()', 'push()', 'add()', 'insert()'],
+    question: 'In an M&A transaction, "due diligence" primarily refers to:',
+    options: ['Marketing the merged brand', 'Investigating the target before completion', 'Filing annual tax returns', 'Appointing a company secretary'],
     correct: 1
   },
 ]

@@ -120,9 +120,9 @@ const sent = ref(false)
 const demoToken = ref(null)
 
 const stats = [
-  { value: '50K+', label: 'Students' },
-  { value: '200+', label: 'Courses' },
-  { value: '95%', label: 'Placed' },
+  { value: '15K+', label: 'Professionals' },
+  { value: '60+', label: 'Programs' },
+  { value: '98%', label: 'Satisfaction' },
 ]
 
 const demoLink = computed(() =>

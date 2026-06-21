@@ -5,35 +5,35 @@ import { toast } from 'vue3-toastify'
 const MOCK_JOBS = [
   {
     id: 'j001',
-    title: 'Senior Frontend Developer',
-    company: 'TechNova Solutions',
+    title: 'Corporate / Commercial Lawyer',
+    company: 'Adebayo & Okonkwo LP',
     companyLogo: null,
     location: 'Lagos, Nigeria',
-    locationType: 'Remote',
+    locationType: 'On-site',
     type: 'Full-time',
-    category: 'Technology',
-    salary: { min: 250000, max: 450000, currency: 'NGN', period: 'monthly' },
+    category: 'Legal',
+    salary: { min: 450000, max: 750000, currency: 'NGN', period: 'monthly' },
     experience: '3-5 years',
     level: 'Senior',
-    description: 'We are looking for a talented Senior Frontend Developer to join our growing team at TechNova Solutions. You will be responsible for building and maintaining high-quality web applications using modern technologies.',
+    description: 'A leading commercial law firm seeks an experienced Corporate/Commercial Lawyer to advise clients on transactions, financing, mergers and acquisitions, and regulatory compliance.',
     responsibilities: [
-      'Develop and maintain scalable frontend applications using Vue.js/React',
-      'Collaborate with UI/UX designers to implement pixel-perfect designs',
-      'Optimize applications for maximum speed and scalability',
-      'Mentor junior developers and conduct code reviews',
-      'Participate in architectural decisions'
+      'Advise clients on corporate and commercial transactions',
+      'Draft, review and negotiate agreements',
+      'Support M&A and financing deals end-to-end',
+      'Conduct legal due diligence',
+      'Ensure regulatory and statutory compliance'
     ],
     requirements: [
-      '3+ years of experience with Vue.js or React',
-      'Strong understanding of HTML5, CSS3, and JavaScript ES6+',
-      'Experience with REST APIs and GraphQL',
-      'Proficiency with Git version control',
-      'Excellent problem-solving skills'
+      'Called to the Nigerian Bar with 3+ years post-call experience',
+      'Strong background in corporate/commercial law',
+      'Experience with transactions and due diligence',
+      'Excellent drafting and negotiation skills',
+      'Sound knowledge of company and securities law'
     ],
-    benefits: ['Health insurance', 'Remote work', '13th month salary', 'Professional development budget', 'Stock options'],
-    skills: ['Vue.js', 'React', 'TypeScript', 'CSS', 'REST APIs'],
-    deadline: '2024-03-31',
-    postedAt: '2024-02-20',
+    benefits: ['Health insurance', '13th month salary', 'Professional development budget', 'Performance bonus', 'Pension'],
+    skills: ['Corporate Law', 'Contract Drafting', 'Due Diligence', 'M&A', 'Negotiation'],
+    deadline: '2026-07-31',
+    postedAt: '2026-06-12',
     postedBy: 'user-hr-001',
     applications: 47,
     views: 892,
@@ -42,33 +42,33 @@ const MOCK_JOBS = [
   },
   {
     id: 'j002',
-    title: 'Data Analyst Intern',
-    company: 'AfriData Analytics',
+    title: 'Legal & Compliance Intern',
+    company: 'Meridian Capital Partners',
     companyLogo: null,
     location: 'Abuja, Nigeria',
     locationType: 'Hybrid',
     type: 'Internship',
-    category: 'Data Science',
-    salary: { min: 80000, max: 120000, currency: 'NGN', period: 'monthly' },
+    category: 'Compliance & Risk',
+    salary: { min: 120000, max: 180000, currency: 'NGN', period: 'monthly' },
     experience: '0-1 year',
     level: 'Entry',
-    description: 'Join AfriData Analytics as a Data Analyst Intern and gain hands-on experience working with real-world data. Perfect for recent graduates or students looking to start their data career.',
+    description: 'Join Meridian Capital Partners as a Legal & Compliance Intern and gain hands-on experience in regulatory compliance, governance and risk within a fast-paced financial services firm.',
     responsibilities: [
-      'Assist in collecting and cleaning datasets',
-      'Create visualizations and reports using Power BI/Tableau',
-      'Support senior analysts in data modeling',
-      'Document findings and prepare presentations'
+      'Assist with compliance monitoring and reporting',
+      'Support the review of policies and procedures',
+      'Help maintain statutory and regulatory records',
+      'Prepare research memos and presentations'
     ],
     requirements: [
-      'Currently pursuing or recently completed degree in Statistics, Mathematics, CS or related field',
-      'Basic knowledge of Python or R',
-      'Familiarity with Excel/Google Sheets',
-      'Analytical mindset'
+      'Recent law, finance or related graduate',
+      'Interest in compliance, governance and risk',
+      'Strong research and writing skills',
+      'Attention to detail'
     ],
     benefits: ['Mentorship program', 'Certificate of completion', 'Opportunity for full-time employment', 'Flexible hours'],
-    skills: ['Python', 'Excel', 'Power BI', 'SQL', 'Statistics'],
-    deadline: '2024-03-15',
-    postedAt: '2024-02-18',
+    skills: ['Compliance', 'Legal Research', 'Risk', 'Governance', 'Reporting'],
+    deadline: '2026-07-15',
+    postedAt: '2026-06-10',
     postedBy: 'user-hr-002',
     applications: 128,
     views: 1456,
@@ -77,35 +77,34 @@ const MOCK_JOBS = [
   },
   {
     id: 'j003',
-    title: 'Digital Marketing Manager',
-    company: 'GrowthHive Africa',
+    title: 'Company Secretary / Governance Officer',
+    company: 'Sterling Holdings Plc',
     companyLogo: null,
-    location: 'Remote',
-    locationType: 'Remote',
+    location: 'Lagos, Nigeria',
+    locationType: 'On-site',
     type: 'Full-time',
-    category: 'Marketing',
-    salary: { min: 180000, max: 300000, currency: 'NGN', period: 'monthly' },
-    experience: '2-4 years',
-    level: 'Mid-level',
-    description: 'Lead our digital marketing efforts and drive growth across all digital channels. You will be responsible for developing and executing comprehensive digital marketing strategies.',
+    category: 'Corporate Governance',
+    salary: { min: 400000, max: 650000, currency: 'NGN', period: 'monthly' },
+    experience: '4-6 years',
+    level: 'Senior',
+    description: 'Sterling Holdings Plc seeks a Company Secretary/Governance Officer to administer the board, ensure statutory compliance and advise on corporate governance best practice.',
     responsibilities: [
-      'Develop and implement digital marketing strategies',
-      'Manage social media accounts and campaigns',
-      'Oversee SEO/SEM campaigns',
-      'Analyze campaign performance and optimize ROI',
-      'Manage marketing budget'
+      'Administer board and committee meetings and minutes',
+      'Maintain statutory registers and manage filings',
+      'Advise the board on governance and compliance',
+      'Coordinate annual general meetings',
+      'Monitor changes in relevant regulation'
     ],
     requirements: [
-      '2+ years in digital marketing',
-      'Experience with Google Ads and Meta Ads',
-      'Strong analytical skills',
-      'SEO/SEM expertise',
-      'Excellent communication skills'
+      'ICSAN / chartered secretary qualification (or working towards)',
+      '4+ years in company secretarial or governance roles',
+      'Strong knowledge of company law and governance codes',
+      'Excellent organisation and communication skills'
     ],
-    benefits: ['Performance bonuses', 'Remote work flexibility', 'Health insurance', 'Annual retreat'],
-    skills: ['SEO', 'Google Ads', 'Social Media', 'Content Marketing', 'Analytics'],
-    deadline: '2024-03-20',
-    postedAt: '2024-02-15',
+    benefits: ['Performance bonus', 'Health insurance', 'Pension', 'Annual retreat'],
+    skills: ['Company Secretarial', 'Corporate Governance', 'Compliance', 'Board Administration', 'Company Law'],
+    deadline: '2026-07-20',
+    postedAt: '2026-06-08',
     postedBy: 'user-hr-003',
     applications: 83,
     views: 1120,
@@ -114,35 +113,34 @@ const MOCK_JOBS = [
   },
   {
     id: 'j004',
-    title: 'Human Resources Business Partner',
-    company: 'Pinnacle Corp Nigeria',
+    title: 'Tax Manager',
+    company: 'Harcourt Advisory',
     companyLogo: null,
     location: 'Lagos, Nigeria',
-    locationType: 'On-site',
+    locationType: 'Hybrid',
     type: 'Full-time',
-    category: 'Human Resources',
-    salary: { min: 200000, max: 380000, currency: 'NGN', period: 'monthly' },
-    experience: '4-6 years',
-    level: 'Senior',
-    description: 'Partner with business leaders to develop and implement HR strategies that support organizational objectives. Drive talent management, employee engagement, and cultural initiatives.',
+    category: 'Tax',
+    salary: { min: 500000, max: 850000, currency: 'NGN', period: 'monthly' },
+    experience: '5-8 years',
+    level: 'Manager',
+    description: 'Harcourt Advisory is hiring a Tax Manager to lead tax advisory and compliance engagements, advise clients on the new tax laws and develop tax-efficient strategies.',
     responsibilities: [
-      'Partner with leadership on HR strategy',
-      'Lead talent acquisition and retention programs',
-      'Manage employee relations and conflict resolution',
-      'Develop learning and development programs',
-      'Drive performance management processes'
+      'Lead tax compliance and advisory engagements',
+      'Advise clients on the implications of new tax laws',
+      'Develop tax-efficient structures and strategies',
+      'Manage relationships with tax authorities',
+      'Review filings and supervise junior associates'
     ],
     requirements: [
-      '4+ years HR experience',
-      'CIPM, SHRM or equivalent certification preferred',
-      'Strong knowledge of Nigerian labor law',
-      'Experience with HRIS systems',
-      'Excellent interpersonal skills'
+      'ACA/ACCA/CITN qualification',
+      '5+ years in tax advisory or compliance',
+      'Strong knowledge of current tax legislation',
+      'Excellent analytical and client-management skills'
     ],
-    benefits: ['Competitive salary', 'Health & dental insurance', 'Pension', 'Professional development', 'Company car'],
-    skills: ['HR Strategy', 'Talent Management', 'Employee Relations', 'Performance Management', 'Labor Law'],
-    deadline: '2024-03-25',
-    postedAt: '2024-02-22',
+    benefits: ['Competitive salary', 'Health & dental insurance', 'Pension', 'Professional development', 'Performance bonus'],
+    skills: ['Taxation', 'Tax Planning', 'Compliance', 'Advisory', 'Tax Law'],
+    deadline: '2026-07-25',
+    postedAt: '2026-06-14',
     postedBy: 'user-hr-004',
     applications: 35,
     views: 678,
@@ -151,33 +149,33 @@ const MOCK_JOBS = [
   },
   {
     id: 'j005',
-    title: 'Software Engineering Intern',
-    company: 'StartupHub Technologies',
+    title: 'Investment / Capital Markets Analyst Intern',
+    company: 'Apex Securities Limited',
     companyLogo: null,
     location: 'Port Harcourt, Nigeria',
     locationType: 'Hybrid',
     type: 'Internship',
-    category: 'Technology',
-    salary: { min: 60000, max: 100000, currency: 'NGN', period: 'monthly' },
+    category: 'Finance',
+    salary: { min: 100000, max: 160000, currency: 'NGN', period: 'monthly' },
     experience: '0 years',
     level: 'Entry',
-    description: 'Exciting opportunity for passionate software engineering students and fresh graduates to work on real products in a startup environment.',
+    description: 'An exciting opportunity for finance graduates to gain hands-on experience in capital markets, investment analysis and corporate financing at a leading securities firm.',
     responsibilities: [
-      'Develop features for our web and mobile applications',
-      'Write clean, maintainable code',
-      'Participate in daily standups and sprint reviews',
-      'Learn from senior engineers'
+      'Support investment research and financial analysis',
+      'Assist with capital raising and transaction documentation',
+      'Build and maintain financial models',
+      'Prepare investment presentations and reports'
     ],
     requirements: [
-      'Currently studying or recently graduated in Computer Science or related field',
-      'Basic knowledge of any programming language',
-      'Enthusiasm for learning',
-      'Team player'
+      'Recent finance, economics or accounting graduate',
+      'Strong quantitative and Excel skills',
+      'Interest in capital markets and investments',
+      'Eagerness to learn'
     ],
-    benefits: ['Mentorship', 'Flexible hours', 'Modern equipment', 'Potential full-time offer', 'Equity options'],
-    skills: ['JavaScript', 'Python', 'Git', 'Problem Solving'],
-    deadline: '2024-03-10',
-    postedAt: '2024-02-10',
+    benefits: ['Mentorship', 'Flexible hours', 'Professional development', 'Potential full-time offer'],
+    skills: ['Financial Modelling', 'Capital Markets', 'Investment Analysis', 'Excel', 'Valuation'],
+    deadline: '2026-07-10',
+    postedAt: '2026-06-05',
     postedBy: 'user-hr-005',
     applications: 215,
     views: 2340,
@@ -185,6 +183,15 @@ const MOCK_JOBS = [
     isFeatured: true,
   },
 ]
+
+// Re-seed cached jobs when the listings change (bump this on content updates).
+// Seeded jobs are 'approved' & active; employer-posted jobs start 'pending' and
+// must be approved by an admin before they appear publicly.
+const JOBS_SEED_VERSION = '2026-06-professional-jobs-v2'
+if (localStorage.getItem('fe_jobs_version') !== JOBS_SEED_VERSION) {
+  localStorage.setItem('fe_jobs', JSON.stringify(MOCK_JOBS.map(j => ({ ...j, status: 'approved' }))))
+  localStorage.setItem('fe_jobs_version', JOBS_SEED_VERSION)
+}
 
 export const useJobsStore = defineStore('jobs', () => {
   const jobs = ref(JSON.parse(localStorage.getItem('fe_jobs') || JSON.stringify(MOCK_JOBS)))
@@ -197,7 +204,7 @@ export const useJobsStore = defineStore('jobs', () => {
   const sortBy = ref('newest')
 
   const types = ['All', 'Full-time', 'Part-time', 'Internship', 'Contract', 'Freelance']
-  const categories = ['All', 'Technology', 'Data Science', 'Marketing', 'Human Resources', 'Finance', 'Design', 'Business']
+  const categories = ['All', 'Legal', 'Finance', 'Compliance & Risk', 'Corporate Governance', 'Tax', 'Energy & Resources', 'Consulting']
   const locationTypes = ['All', 'Remote', 'On-site', 'Hybrid']
 
   const filteredJobs = computed(() => {
@@ -292,14 +299,17 @@ export const useJobsStore = defineStore('jobs', () => {
         postedBy: userId,
         applications: 0,
         views: 0,
-        isActive: true,
+        isActive: false,            // hidden until an admin approves it
         isFeatured: false,
+        status: 'pending',          // awaits admin approval
+        submittedAt: new Date().toISOString(),
+        rejectionReason: '',
         postedAt: new Date().toISOString().split('T')[0],
       }
 
       jobs.value.push(job)
       localStorage.setItem('fe_jobs', JSON.stringify(jobs.value))
-      toast.success('Job posted successfully!')
+      toast.success('Job submitted for review! An admin will approve it shortly.')
       return job
     } catch (err) {
       toast.error('Failed to post job')
@@ -309,15 +319,84 @@ export const useJobsStore = defineStore('jobs', () => {
     }
   }
 
+  async function updateJob(jobId, data) {
+    loading.value = true
+    try {
+      await new Promise(r => setTimeout(r, 400))
+      const idx = jobs.value.findIndex(j => j.id === jobId)
+      if (idx !== -1) {
+        jobs.value[idx] = { ...jobs.value[idx], ...data }
+        localStorage.setItem('fe_jobs', JSON.stringify(jobs.value))
+        toast.success('Job updated successfully!')
+      }
+    } catch (err) {
+      toast.error('Failed to update job')
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function deleteJob(jobId) {
+    loading.value = true
+    try {
+      await new Promise(r => setTimeout(r, 400))
+      jobs.value = jobs.value.filter(j => j.id !== jobId)
+      localStorage.setItem('fe_jobs', JSON.stringify(jobs.value))
+      toast.success('Job removed successfully')
+    } catch (err) {
+      toast.error('Failed to remove job')
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Admin moderation: approve a pending job (makes it live & active).
+  async function approveJob(jobId) {
+    loading.value = true
+    try {
+      await new Promise(r => setTimeout(r, 400))
+      const idx = jobs.value.findIndex(j => j.id === jobId)
+      if (idx !== -1) {
+        jobs.value[idx] = { ...jobs.value[idx], status: 'approved', isActive: true, rejectionReason: '' }
+        localStorage.setItem('fe_jobs', JSON.stringify(jobs.value))
+        toast.success('Job approved and published!')
+      }
+    } catch (err) {
+      toast.error('Failed to approve job')
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Admin moderation: reject a pending job with an optional reason.
+  async function rejectJob(jobId, reason = '') {
+    loading.value = true
+    try {
+      await new Promise(r => setTimeout(r, 400))
+      const idx = jobs.value.findIndex(j => j.id === jobId)
+      if (idx !== -1) {
+        jobs.value[idx] = { ...jobs.value[idx], status: 'rejected', isActive: false, rejectionReason: reason }
+        localStorage.setItem('fe_jobs', JSON.stringify(jobs.value))
+        toast.info('Job rejected. The employer has been notified.')
+      }
+    } catch (err) {
+      toast.error('Failed to reject job')
+    } finally {
+      loading.value = false
+    }
+  }
+
   const totalJobs = computed(() => jobs.value.filter(j => j.isActive).length)
   const totalApplications = computed(() => applications.value.length)
   const internships = computed(() => jobs.value.filter(j => j.type === 'Internship' && j.isActive))
+  const pendingJobs = computed(() => jobs.value.filter(j => j.status === 'pending'))
 
   return {
     jobs, applications, loading,
     searchQuery, selectedType, selectedCategory, selectedLocation, sortBy,
     types, categories, locationTypes,
-    filteredJobs, featuredJobs, totalJobs, totalApplications, internships,
-    getJobById, hasApplied, getUserApplications, applyForJob, postJob
+    filteredJobs, featuredJobs, totalJobs, totalApplications, internships, pendingJobs,
+    getJobById, hasApplied, getUserApplications, applyForJob, postJob, updateJob, deleteJob,
+    approveJob, rejectJob
   }
 })

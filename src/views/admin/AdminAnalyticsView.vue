@@ -125,11 +125,11 @@ const enrollmentData = [
 const maxEnrollment = Math.max(...enrollmentData.map(d => d.count))
 
 const categoryRevenue = [
-  { name: 'Web Development', pct: 35, color: '#7c3aed' },
-  { name: 'Data Science', pct: 22, color: '#d97706' },
-  { name: 'Business', pct: 18, color: '#059669' },
-  { name: 'Design', pct: 14, color: '#dc2626' },
-  { name: 'Marketing', pct: 11, color: '#0284c7' },
+  { name: 'Mergers & Acquisitions', pct: 28, color: '#7c3aed' },
+  { name: 'Corporate Governance', pct: 24, color: '#d97706' },
+  { name: 'Finance & Capital Markets', pct: 20, color: '#059669' },
+  { name: 'Taxation', pct: 16, color: '#dc2626' },
+  { name: 'Energy & ESG', pct: 12, color: '#0284c7' },
 ]
 
 const trafficSources = [

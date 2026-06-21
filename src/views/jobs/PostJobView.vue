@@ -16,7 +16,7 @@
               <div class="space-y-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Job Title *</label>
-                  <input v-model="form.title" type="text" placeholder="e.g. Senior Frontend Developer" class="input-field" required />
+                  <input v-model="form.title" type="text" placeholder="e.g. Corporate / Commercial Lawyer" class="input-field" required />
                 </div>
                 <div class="grid md:grid-cols-2 gap-4">
                   <div>
@@ -107,7 +107,7 @@
 
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Skills (comma separated)</label>
-                  <input v-model="skillsInput" type="text" placeholder="JavaScript, React, Node.js" class="input-field" />
+                  <input v-model="skillsInput" type="text" placeholder="Corporate Law, Compliance, Negotiation" class="input-field" />
                 </div>
 
                 <div>
@@ -164,7 +164,7 @@ const submitted = ref(false)
 const skillsInput = ref('')
 const benefitsInput = ref('')
 
-const categories = ['Technology', 'Data Science', 'Marketing', 'Human Resources', 'Finance', 'Design', 'Business']
+const categories = ['Legal', 'Finance', 'Compliance & Risk', 'Corporate Governance', 'Tax', 'Energy & Resources', 'Consulting']
 
 const form = ref({
   title: '', company: '', category: '', type: 'Full-time',

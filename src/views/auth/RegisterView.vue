@@ -14,7 +14,7 @@
           Start Your Journey<br/>
           <span class="text-gold-400">Towards Excellence</span>
         </h1>
-        <p class="text-purple-200 text-lg mb-10">Join 50,000+ professionals who transformed their careers with Formation Exceptionelle.</p>
+        <p class="text-purple-200 text-lg mb-10">Join 15,000+ professionals who advanced their careers with Formation Exceptionelle.</p>
         <div class="space-y-4">
           <div v-for="perk in perks" :key="perk.title" class="flex items-start gap-3">
             <div class="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -100,7 +100,7 @@
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Profession / Current Role</label>
-            <input v-model="form.profession" type="text" placeholder="e.g. Software Developer" class="input-field" />
+            <input v-model="form.profession" type="text" placeholder="e.g. Corporate Lawyer, Company Secretary" class="input-field" />
           </div>
 
           <div>
@@ -208,14 +208,14 @@ const roles = [
 ]
 
 const perks = [
-  { icon: SparklesIcon, title: 'Free Forever', desc: 'No credit card required to get started' },
-  { icon: TrophyIcon, title: 'Industry Certificates', desc: 'Earn recognized certifications' },
-  { icon: BriefcaseIcon, title: 'Job Connections', desc: 'Access to 500+ job opportunities' },
+  { icon: SparklesIcon, title: 'Free to Join', desc: 'No credit card required to get started' },
+  { icon: TrophyIcon, title: 'Industry Certificates', desc: 'Earn recognized professional certifications' },
+  { icon: BriefcaseIcon, title: 'Career Connections', desc: 'Access curated professional opportunities' },
 ]
 
 const stats = [
-  { value: '50K+', label: 'Members' },
-  { value: '200+', label: 'Courses' },
+  { value: '15K+', label: 'Members' },
+  { value: '60+', label: 'Programs' },
   { value: 'Free', label: 'To Join' },
 ]
 

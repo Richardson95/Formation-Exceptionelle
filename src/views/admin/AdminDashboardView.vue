@@ -1,5 +1,21 @@
 <template>
   <AdminLayout>
+    <!-- Pending Approvals Alert -->
+    <RouterLink
+      v-if="stats.pendingApprovals > 0"
+      :to="stats.pendingCourses >= stats.pendingJobs ? '/admin/courses' : '/admin/jobs'"
+      class="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 hover:bg-amber-100/70 transition-colors"
+    >
+      <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+        <ClockIcon class="w-5 h-5 text-amber-600" />
+      </div>
+      <div class="flex-1">
+        <p class="font-bold text-amber-800 text-sm">{{ stats.pendingApprovals }} item{{ stats.pendingApprovals > 1 ? 's' : '' }} awaiting approval</p>
+        <p class="text-amber-700 text-xs">{{ stats.pendingCourses }} course{{ stats.pendingCourses === 1 ? '' : 's' }} · {{ stats.pendingJobs }} job{{ stats.pendingJobs === 1 ? '' : 's' }} — review and publish them.</p>
+      </div>
+      <ArrowRightIcon class="w-5 h-5 text-amber-600" />
+    </RouterLink>
+
     <!-- Stats Grid -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       <div
@@ -149,7 +165,8 @@ import { useJobsStore } from '@/stores/jobs'
 import {
   UsersIcon, AcademicCapIcon, BriefcaseIcon, CurrencyDollarIcon,
   ChartBarIcon, ShieldCheckIcon, PlusIcon, ChevronRightIcon,
-  BookOpenIcon, StarIcon, DocumentCheckIcon, BellIcon
+  BookOpenIcon, StarIcon, DocumentCheckIcon, BellIcon,
+  ClockIcon, ArrowRightIcon
 } from '@heroicons/vue/24/outline'
 
 const adminStore = useAdminStore()

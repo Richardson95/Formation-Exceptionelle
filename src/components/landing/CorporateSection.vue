@@ -110,8 +110,8 @@ const highlights = [
 const coreValues = [
   {
     icon: LightBulbIcon,
-    title: 'Innovation-Driven Learning',
-    description: 'We continuously evolve our curriculum to match industry demands and emerging technologies.',
+    title: 'Practice-Driven Learning',
+    description: 'We continuously evolve our curriculum to match industry demands, regulatory change and emerging best practice.',
   },
   {
     icon: StarIcon,
@@ -125,5 +125,5 @@ const coreValues = [
   },
 ]
 
-const partners = ['Google', 'Microsoft', 'Interswitch', 'MTN', 'Access Bank', 'Flutterwave', 'Andela']
+const partners = ['SEC Nigeria', 'NGX Group', 'ICSAN', 'CITN', 'Access Bank', 'Dangote Group', 'NBA']
 </script>

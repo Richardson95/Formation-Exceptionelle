@@ -71,11 +71,11 @@ const paymentStats = [
 ]
 
 const transactions = [
-  { id: 'TXN-001-2024', student: 'Chioma Eze', email: 'chioma@email.com', course: 'Complete Web Development Bootcamp', amount: '89.99', date: '2024-02-22', status: 'completed' },
-  { id: 'TXN-002-2024', student: 'James Adeyemi', email: 'james@email.com', course: 'Python for Data Science', amount: '79.99', date: '2024-02-21', status: 'completed' },
-  { id: 'TXN-003-2024', student: 'Fatima Hassan', email: 'fatima@email.com', course: 'Leadership & Management', amount: '69.99', date: '2024-02-20', status: 'completed' },
-  { id: 'TXN-004-2024', student: 'Emmanuel Osei', email: 'emmanuel@email.com', course: 'UI/UX Design Masterclass', amount: '74.99', date: '2024-02-19', status: 'pending' },
-  { id: 'TXN-005-2024', student: 'Ngozi Iweala', email: 'ngozi@email.com', course: 'Financial Literacy', amount: '59.99', date: '2024-02-18', status: 'completed' },
-  { id: 'TXN-006-2024', student: 'Kwame Mensah', email: 'kwame@email.com', course: 'Complete Web Development Bootcamp', amount: '89.99', date: '2024-02-17', status: 'refunded' },
+  { id: 'TXN-001-2026', student: 'Chioma Eze', email: 'chioma@email.com', course: 'Financing, M&A and ADR: Advanced Practice', amount: '320', date: '2026-06-14', status: 'completed' },
+  { id: 'TXN-002-2026', student: 'James Adeyemi', email: 'james@email.com', course: 'Capital Market: Corporate Financing & Compliance', amount: '280', date: '2026-06-13', status: 'completed' },
+  { id: 'TXN-003-2026', student: 'Fatima Hassan', email: 'fatima@email.com', course: 'Strategic Leadership & Corporate Governance', amount: '260', date: '2026-06-12', status: 'completed' },
+  { id: 'TXN-004-2026', student: 'Emmanuel Osei', email: 'emmanuel@email.com', course: 'Mergers & Acquisitions: Regulations & Risk', amount: '300', date: '2026-06-11', status: 'pending' },
+  { id: 'TXN-005-2026', student: 'Ngozi Iweala', email: 'ngozi@email.com', course: 'The New Tax Laws: Strategic Implications', amount: '200', date: '2026-06-10', status: 'completed' },
+  { id: 'TXN-006-2026', student: 'Kwame Mensah', email: 'kwame@email.com', course: 'Project Structuring, Financing & ESG', amount: '360', date: '2026-06-09', status: 'refunded' },
 ]
 </script>
