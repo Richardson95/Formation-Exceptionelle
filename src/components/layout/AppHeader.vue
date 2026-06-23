@@ -1,7 +1,7 @@
 <template>
   <header
     class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-    :class="scrolled ? 'bg-white/95 backdrop-blur-md shadow-md' : 'bg-transparent'"
+    :class="solid ? 'bg-white/95 backdrop-blur-md shadow-md' : 'bg-transparent'"
   >
     <div class="container-custom">
       <div class="flex items-center justify-between h-20">
@@ -11,7 +11,7 @@
             src="@/assets/logo.png"
             alt="Formation Exceptionelle"
             class="h-12 w-auto object-contain transition-all duration-300 group-hover:scale-105"
-            :class="scrolled ? '' : 'brightness-0 invert'"
+            :class="solid ? '' : 'brightness-0 invert'"
           />
         </RouterLink>
 
@@ -22,7 +22,7 @@
             :key="item.path"
             :to="item.path"
             class="nav-link"
-            :class="scrolled ? 'text-gray-700 hover:text-purple-700' : 'text-white/90 hover:text-white'"
+            :class="solid ? 'text-gray-700 hover:text-purple-700' : 'text-white/90 hover:text-white'"
           >
             {{ item.label }}
           </RouterLink>
@@ -30,7 +30,7 @@
             href="#services"
             @click.prevent="scrollTo('#services')"
             class="nav-link cursor-pointer"
-            :class="scrolled ? 'text-gray-700 hover:text-purple-700' : 'text-white/90 hover:text-white'"
+            :class="solid ? 'text-gray-700 hover:text-purple-700' : 'text-white/90 hover:text-white'"
           >
             Services
           </a>
@@ -38,7 +38,7 @@
             href="#contact"
             @click.prevent="scrollTo('#contact')"
             class="nav-link cursor-pointer"
-            :class="scrolled ? 'text-gray-700 hover:text-purple-700' : 'text-white/90 hover:text-white'"
+            :class="solid ? 'text-gray-700 hover:text-purple-700' : 'text-white/90 hover:text-white'"
           >
             Contact
           </a>
@@ -51,7 +51,7 @@
             v-if="authStore.isAuthenticated"
             to="/lms/cart"
             class="relative p-2 rounded-xl transition-colors"
-            :class="scrolled ? 'text-gray-600 hover:text-purple-700 hover:bg-purple-50' : 'text-white/90 hover:text-white'"
+            :class="solid ? 'text-gray-600 hover:text-purple-700 hover:bg-purple-50' : 'text-white/90 hover:text-white'"
           >
             <ShoppingCartIcon class="w-6 h-6" />
             <span
@@ -77,12 +77,12 @@
             <button
               @click="userMenuOpen = !userMenuOpen"
               class="flex items-center gap-2 p-1.5 rounded-xl transition-all"
-              :class="scrolled ? 'hover:bg-purple-50' : 'hover:bg-white/10'"
+              :class="solid ? 'hover:bg-purple-50' : 'hover:bg-white/10'"
             >
               <div class="w-9 h-9 rounded-full bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center text-white font-bold text-sm shadow-fe">
                 {{ authStore.initials }}
               </div>
-              <ChevronDownIcon class="w-4 h-4" :class="scrolled ? 'text-gray-600' : 'text-white/80'" />
+              <ChevronDownIcon class="w-4 h-4" :class="solid ? 'text-gray-600' : 'text-white/80'" />
             </button>
 
             <!-- Dropdown -->
@@ -131,7 +131,7 @@
             <RouterLink
               to="/auth/login"
               class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
-              :class="scrolled
+              :class="solid
                 ? 'text-purple-700 hover:bg-purple-50 border border-purple-200'
                 : 'text-white/90 hover:text-white border border-white/30 hover:border-white/60'"
             >
@@ -150,7 +150,7 @@
         <button
           @click="mobileMenuOpen = !mobileMenuOpen"
           class="lg:hidden p-2 rounded-xl transition-colors"
-          :class="scrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10'"
+          :class="solid ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10'"
         >
           <Bars3Icon v-if="!mobileMenuOpen" class="w-6 h-6" />
           <XMarkIcon v-else class="w-6 h-6" />
@@ -203,8 +203,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useCartStore } from '@/stores/cart'
 import { onClickOutside } from '@vueuse/core'
@@ -226,8 +226,14 @@ import {
 const authStore = useAuthStore()
 const cartStore = useCartStore()
 const router = useRouter()
+const route = useRoute()
 
 const scrolled = ref(false)
+
+// The transparent / white-text header only works over a dark hero (flagged via
+// route meta). On every other page, or once scrolled, render the solid light header
+// so the logo and nav links stay visible.
+const solid = computed(() => scrolled.value || !route.meta.heroHeader)
 const userMenuOpen = ref(false)
 const mobileMenuOpen = ref(false)
 const userMenuRef = ref(null)
@@ -250,8 +256,6 @@ const userMenuItems = computed(() => {
   items.push({ path: '/become-instructor', label: 'Become an Instructor', icon: AcademicCapIcon })
   return items
 })
-
-import { computed } from 'vue'
 
 function scrollTo(selector) {
   const el = document.querySelector(selector)

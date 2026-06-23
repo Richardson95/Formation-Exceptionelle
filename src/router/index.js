@@ -14,7 +14,7 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: () => import('@/views/HomeView.vue'),
-      meta: { title: 'Formation Exceptionelle | Your Partner In Career Development' }
+      meta: { title: 'Formation Exceptionelle | Your Partner In Career Development', heroHeader: true }
     },
 
     // Auth
@@ -48,13 +48,13 @@ const router = createRouter({
       path: '/lms',
       name: 'lms',
       component: () => import('@/views/lms/LMSView.vue'),
-      meta: { title: 'Courses | Formation Exceptionelle', requiresAuth: true }
+      meta: { title: 'Courses | Formation Exceptionelle', requiresAuth: true, heroHeader: true }
     },
     {
       path: '/lms/course/:id',
       name: 'course-detail',
       component: () => import('@/views/lms/CourseDetailView.vue'),
-      meta: { title: 'Course Details | Formation Exceptionelle', requiresAuth: true }
+      meta: { title: 'Course Details | Formation Exceptionelle', requiresAuth: true, heroHeader: true }
     },
     {
       path: '/lms/learn/:id',
@@ -104,7 +104,7 @@ const router = createRouter({
       path: '/jobs',
       name: 'jobs',
       component: () => import('@/views/jobs/JobsView.vue'),
-      meta: { title: 'Jobs & Internships | Formation Exceptionelle', requiresAuth: true }
+      meta: { title: 'Jobs & Internships | Formation Exceptionelle', requiresAuth: true, heroHeader: true }
     },
     {
       path: '/jobs/:id',
@@ -148,7 +148,7 @@ const router = createRouter({
       path: '/become-instructor',
       name: 'become-instructor',
       component: () => import('@/views/BecomeInstructorView.vue'),
-      meta: { title: 'Become an Instructor | Formation Exceptionelle', requiresAuth: true }
+      meta: { title: 'Become an Instructor | Formation Exceptionelle', requiresAuth: true, heroHeader: true }
     },
 
     // Admin Panel
@@ -194,19 +194,19 @@ const router = createRouter({
       path: '/terms',
       name: 'terms',
       component: () => import('@/views/legal/LegalView.vue'),
-      meta: { title: 'Terms of Service | Formation Exceptionelle', doc: 'terms' }
+      meta: { title: 'Terms of Service | Formation Exceptionelle', doc: 'terms', heroHeader: true }
     },
     {
       path: '/privacy',
       name: 'privacy',
       component: () => import('@/views/legal/LegalView.vue'),
-      meta: { title: 'Privacy Policy | Formation Exceptionelle', doc: 'privacy' }
+      meta: { title: 'Privacy Policy | Formation Exceptionelle', doc: 'privacy', heroHeader: true }
     },
     {
       path: '/cookies',
       name: 'cookies',
       component: () => import('@/views/legal/LegalView.vue'),
-      meta: { title: 'Cookie Policy | Formation Exceptionelle', doc: 'cookies' }
+      meta: { title: 'Cookie Policy | Formation Exceptionelle', doc: 'cookies', heroHeader: true }
     },
 
     // 404
