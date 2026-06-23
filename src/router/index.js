@@ -124,6 +124,24 @@ const router = createRouter({
       component: () => import('@/views/jobs/ApplyJobView.vue'),
       meta: { title: 'Apply for Job | Formation Exceptionelle', requiresAuth: true }
     },
+    {
+      path: '/jobs/my-applications',
+      name: 'my-applications',
+      component: () => import('@/views/jobs/MyApplicationsView.vue'),
+      meta: { title: 'My Applications | Formation Exceptionelle', requiresAuth: true }
+    },
+    {
+      path: '/jobs/manage',
+      name: 'manage-jobs',
+      component: () => import('@/views/jobs/ManageJobsView.vue'),
+      meta: { title: 'My Job Postings | Formation Exceptionelle', requiresAuth: true }
+    },
+    {
+      path: '/jobs/edit/:id',
+      name: 'edit-job',
+      component: () => import('@/views/jobs/PostJobView.vue'),
+      meta: { title: 'Edit Job | Formation Exceptionelle', requiresAuth: true }
+    },
 
     // Become Instructor
     {

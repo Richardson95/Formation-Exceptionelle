@@ -219,6 +219,8 @@ import {
   BookOpenIcon,
   BriefcaseIcon,
   AcademicCapIcon,
+  DocumentTextIcon,
+  ClipboardDocumentListIcon,
 } from '@heroicons/vue/24/outline'
 
 const authStore = useAuthStore()
@@ -239,6 +241,8 @@ const userMenuItems = computed(() => {
   const items = [
     { path: '/lms/my-learning', label: 'My Learning', icon: BookOpenIcon },
     { path: '/jobs', label: 'Browse Jobs', icon: BriefcaseIcon },
+    { path: '/jobs/my-applications', label: 'My Applications', icon: DocumentTextIcon },
+    { path: '/jobs/manage', label: 'My Job Postings', icon: ClipboardDocumentListIcon },
   ]
   if (authStore.isInstructor) {
     items.push({ path: '/lms/instructor', label: 'Instructor Dashboard', icon: AcademicCapIcon })

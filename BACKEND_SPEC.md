@@ -388,6 +388,7 @@ Application {
   cvUrl: string | null,         // NEW: uploaded CV file URL
   status: 'pending' | 'reviewed' | 'shortlisted' | 'rejected' | 'accepted',  // default 'pending'
   appliedAt: ISODate,
+  reviewedAt: ISODate | null,   // set when the employer/admin changes status
   // unique compound index on (userId, jobId) — a user applies once per job
 }
 ```
@@ -587,18 +588,39 @@ cross-device sync. If you persist:
 | GET | `/internships` | auth | `type === 'Internship' && isActive`. |
 | GET | `/:id` | auth | Single job. Increment `views`. |
 | POST | `/` | auth | Submit a job (PostJob form). Sets `postedBy`, `applications:0, views:0, isActive:false, isFeatured:false, status:'pending', submittedAt, postedAt: today`. **Not public until an admin approves it** (see §7.10). |
-| PATCH | `/:id` | owner or admin | Edit job (activate/deactivate, feature). |
+| PATCH | `/:id` | owner or admin | **Full edit of a job by its poster** (or admin). Powers `/jobs/edit/:id` (the PostJob form in edit mode) — accepts the same body as `POST /` (title, company, category, type, locationType, level, location, description, responsibilities, requirements, skills, benefits, salary, deadline) plus the lighter admin toggles (activate/deactivate, feature). **Authorize: `job.postedBy === req.user.id` OR admin.** Editing keeps the current `status` (it does not reset to `pending`); if you want material edits to require re-approval, set `status:'pending', isActive:false` server-side — note the frontend currently does NOT re-trigger approval on edit. |
 | DELETE | `/:id` | owner or admin | Remove job. |
 
 ### 7.6 Applications — `/api/applications`
+
+**Candidate-review workflow (BUILT in the frontend).** Reviewer model = **employer (who posted the job)
++ admin oversight**. Three pages now exist and consume these endpoints:
+- **`/jobs/my-applications`** (`MyApplicationsView`) — the candidate tracks their own applications + status.
+- **`/jobs/manage`** (`ManageJobsView`) — the **employer** sees the jobs they posted, can **edit each listing**
+  (→ `/jobs/edit/:id`, the PostJob form in edit mode), expands each to review applicants (CV, cover letter,
+  contact, links) and moves them through the pipeline.
+- **Admin → Job Management** — an "Applicants (N)" button per job opens a modal with the same review UI,
+  giving admin oversight of **every** job's applicants.
+- Shared component: `src/components/jobs/ApplicantList.vue`. Store (`jobs.js`) exposes
+  `getUserApplications`, `getJobApplications`, `getPostedJobs`, `getPosterApplications`,
+  `updateApplicationStatus`.
+
+**Application status pipeline:** `pending → reviewed → shortlisted → accepted | rejected` (the candidate
+sees `pending` as "Under review").
+
 | Method | Path | Auth | Notes |
 |---|---|---|---|
 | POST | `/` | auth | `{ jobId, fullName, email, phone, location?, linkedin?, portfolio?, experience, coverLetter, cvName }` + optional CV file upload. Rejects duplicate (already applied → message `"You have already applied for this job"`). Sets `status:'pending'`. Increments job `applications`. |
-| GET | `/me` | auth | Current user's applications, each merged with its `job` (powers application tracking). |
+| GET | `/me` | auth | Current user's applications, each merged with its `job` (powers `/jobs/my-applications`). |
 | GET | `/check?jobId=` | auth | `{ applied: boolean }`. |
-| GET | `/job/:jobId` | owner(employer) or admin | Applications for a job (employer review). |
-| PATCH | `/:id/status` | owner(employer) or admin | `{ status }`. |
+| GET | `/job/:jobId` | owner(employer) or admin | Applications for one job (powers the employer page & admin modal). Returns the full application objects incl. coverLetter, cvUrl, links, status. |
+| GET | `/posted-by-me` | auth | All applications across jobs the current user posted, each merged with `job` (employer dashboard stats). Backend must scope to `job.postedBy === req.user.id`. |
+| PATCH | `/:id/status` | owner(employer) or admin | `{ status }` where status ∈ `pending\|reviewed\|shortlisted\|accepted\|rejected`. Authorize: the job's poster OR an admin. Optionally email the candidate on change. |
 | POST | `/upload-cv` | auth | multipart CV upload → `{ cvUrl, cvName }` (PDF/DOC/DOCX, max 5MB per UI). |
+
+> **Authorization note:** `GET /job/:jobId` and `PATCH /:id/status` must verify the requester is either an
+> **admin** or the **employer who posted that job** (`job.postedBy`). A candidate may only read their own
+> applications via `/me`.
 
 ### 7.7 Videos — `/api/videos` (see §8 for full detail)
 | Method | Path | Auth | Notes |

@@ -140,8 +140,8 @@
             <p class="text-gray-600 mb-2">Your application for <strong>{{ job?.title }}</strong> at <strong>{{ job?.company }}</strong> has been submitted successfully.</p>
             <p class="text-gray-500 text-sm mb-8">The hiring team will review your application and contact you within 5-7 business days.</p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
-              <RouterLink to="/jobs" class="btn-primary px-8 py-3">Browse More Jobs</RouterLink>
-              <RouterLink to="/lms" class="btn-outline px-8 py-3">Enhance Your Skills</RouterLink>
+              <RouterLink to="/jobs/my-applications" class="btn-primary px-8 py-3">Track My Applications</RouterLink>
+              <RouterLink to="/jobs" class="btn-outline px-8 py-3">Browse More Jobs</RouterLink>
             </div>
           </div>
         </div>

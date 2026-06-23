@@ -250,6 +250,47 @@ export const useJobsStore = defineStore('jobs', () => {
       .filter(a => a.job)
   }
 
+  // Applicants for a single job (employer/admin review).
+  function getJobApplications(jobId) {
+    return applications.value
+      .filter(a => a.jobId === jobId)
+      .sort((a, b) => new Date(b.appliedAt) - new Date(a.appliedAt))
+  }
+
+  // Jobs posted by a given user (their own listings).
+  function getPostedJobs(userId) {
+    return jobs.value.filter(j => j.postedBy === userId)
+  }
+
+  // All applications across the jobs a user has posted (employer dashboard).
+  function getPosterApplications(userId) {
+    const myJobIds = new Set(jobs.value.filter(j => j.postedBy === userId).map(j => j.id))
+    return applications.value
+      .filter(a => myJobIds.has(a.jobId))
+      .map(a => ({ ...a, job: getJobById(a.jobId) }))
+      .sort((a, b) => new Date(b.appliedAt) - new Date(a.appliedAt))
+  }
+
+  // Employer/admin moves a candidate through the selection pipeline.
+  // status: 'pending' | 'reviewed' | 'shortlisted' | 'accepted' | 'rejected'
+  async function updateApplicationStatus(applicationId, status) {
+    loading.value = true
+    try {
+      await new Promise(r => setTimeout(r, 300))
+      const idx = applications.value.findIndex(a => a.id === applicationId)
+      if (idx !== -1) {
+        applications.value[idx] = { ...applications.value[idx], status, reviewedAt: new Date().toISOString() }
+        localStorage.setItem('fe_applications', JSON.stringify(applications.value))
+        const labels = { reviewed: 'marked as reviewed', shortlisted: 'shortlisted', accepted: 'accepted', rejected: 'rejected', pending: 'reset to pending' }
+        toast.success(`Candidate ${labels[status] || ('set to ' + status)}`)
+      }
+    } catch (err) {
+      toast.error('Failed to update application')
+    } finally {
+      loading.value = false
+    }
+  }
+
   async function applyForJob(userId, jobId, applicationData) {
     loading.value = true
     try {
@@ -397,6 +438,7 @@ export const useJobsStore = defineStore('jobs', () => {
     types, categories, locationTypes,
     filteredJobs, featuredJobs, totalJobs, totalApplications, internships, pendingJobs,
     getJobById, hasApplied, getUserApplications, applyForJob, postJob, updateJob, deleteJob,
-    approveJob, rejectJob
+    approveJob, rejectJob,
+    getJobApplications, getPostedJobs, getPosterApplications, updateApplicationStatus
   }
 })

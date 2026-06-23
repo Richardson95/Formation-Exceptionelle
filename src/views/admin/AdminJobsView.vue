@@ -75,6 +75,7 @@
               <td class="px-5 py-4">
                 <div class="flex gap-2">
                   <RouterLink :to="{ name: 'job-detail', params: { id: job.id } }" class="text-xs text-purple-700 hover:underline font-medium">View</RouterLink>
+                  <button @click="viewingApplicants = job" class="text-xs text-indigo-600 hover:underline font-medium">Applicants ({{ jobsStore.getJobApplications(job.id).length }})</button>
                   <button v-if="job.status !== 'approved' && job.status !== undefined" @click="jobsStore.approveJob(job.id)" class="text-xs text-green-600 hover:underline font-medium">Approve</button>
                   <button v-if="job.status === 'pending'" @click="openReject(job)" class="text-xs text-orange-600 hover:underline font-medium">Reject</button>
                   <button @click="openEditor(job)" class="text-xs text-blue-600 hover:underline font-medium">Edit</button>
@@ -137,6 +138,24 @@
       </div>
     </Transition>
 
+    <!-- Applicants Review Modal -->
+    <Transition name="modal">
+      <div v-if="viewingApplicants" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl max-h-[85vh] flex flex-col">
+          <div class="flex items-start justify-between p-6 border-b border-gray-100">
+            <div>
+              <h3 class="text-lg font-bold text-gray-900">Applicants</h3>
+              <p class="text-gray-500 text-sm line-clamp-1">{{ viewingApplicants.title }} · {{ viewingApplicants.company }}</p>
+            </div>
+            <button @click="viewingApplicants = null" class="text-gray-400 hover:text-gray-600"><XMarkIcon class="w-5 h-5" /></button>
+          </div>
+          <div class="p-6 overflow-y-auto">
+            <ApplicantList :job-id="viewingApplicants.id" />
+          </div>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Reject Reason Modal -->
     <Transition name="modal">
       <div v-if="rejecting" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
@@ -182,6 +201,7 @@ import AdminLayout from '@/components/admin/AdminLayout.vue'
 import { useJobsStore } from '@/stores/jobs'
 import { RouterLink } from 'vue-router'
 import { MagnifyingGlassIcon, XMarkIcon, TrashIcon, ClockIcon } from '@heroicons/vue/24/outline'
+import ApplicantList from '@/components/jobs/ApplicantList.vue'
 
 const jobsStore = useJobsStore()
 const search = ref('')
@@ -190,6 +210,7 @@ const editing = ref(null)
 const removing = ref(null)
 const rejecting = ref(null)
 const rejectReason = ref('')
+const viewingApplicants = ref(null)
 const form = ref({ min: 0, max: 0, period: 'monthly', isFeatured: false, isActive: true })
 
 const filteredJobs = computed(() => {
