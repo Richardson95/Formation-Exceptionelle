@@ -201,13 +201,13 @@
                       class="p-3 bg-gray-50 rounded-xl space-y-3"
                     >
                       <!-- Row: meta -->
-                      <div class="flex items-center gap-3">
+                      <div class="flex flex-wrap items-center gap-3">
                         <select v-model="form.sections[si].lectures[li].type" class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white">
                           <option value="video">Video</option>
                           <option value="quiz">Quiz</option>
                           <option value="assignment">Assignment</option>
                         </select>
-                        <input v-model="form.sections[si].lectures[li].title" type="text" placeholder="Lecture title" class="flex-1 text-sm bg-transparent border-none focus:outline-none" />
+                        <input v-model="form.sections[si].lectures[li].title" type="text" placeholder="Lecture title" class="flex-1 min-w-[120px] text-sm bg-transparent border-none focus:outline-none" />
                         <input v-model="form.sections[si].lectures[li].duration" type="text" placeholder="Duration" class="w-20 text-xs border border-gray-200 rounded-lg px-2 py-1.5" />
                         <label class="flex items-center gap-1 text-xs text-gray-500">
                           <input type="checkbox" v-model="form.sections[si].lectures[li].preview" class="rounded" />

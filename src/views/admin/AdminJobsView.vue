@@ -1,17 +1,17 @@
 <template>
   <AdminLayout>
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
       <div>
         <h2 class="text-xl font-bold text-gray-900">Job Management</h2>
         <p class="text-gray-500 text-sm">{{ jobsStore.totalJobs }} active job listings</p>
       </div>
       <div class="relative">
         <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-        <input v-model="search" type="text" placeholder="Search jobs..." class="pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+        <input v-model="search" type="text" placeholder="Search jobs..." class="w-full sm:w-auto pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
       </div>
     </div>
 
-    <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <div class="stat-card py-4"><div class="text-2xl font-bold text-purple-700">{{ jobsStore.totalJobs }}</div><div class="text-sm text-gray-500">Active Jobs</div></div>
       <div class="stat-card py-4"><div class="text-2xl font-bold text-gold-600">{{ jobsStore.internships.length }}</div><div class="text-sm text-gray-500">Internships</div></div>
       <div class="stat-card py-4"><div class="text-2xl font-bold text-green-600">{{ jobsStore.totalApplications }}</div><div class="text-sm text-gray-500">Applications</div></div>
@@ -25,15 +25,17 @@
         <h3 class="font-bold text-amber-800">{{ jobsStore.pendingJobs.length }} job{{ jobsStore.pendingJobs.length > 1 ? 's' : '' }} awaiting your approval</h3>
       </div>
       <div class="space-y-3">
-        <div v-for="job in jobsStore.pendingJobs" :key="job.id" class="bg-white rounded-xl p-3 flex items-center gap-3 border border-amber-100">
+        <div v-for="job in jobsStore.pendingJobs" :key="job.id" class="bg-white rounded-xl p-3 flex flex-wrap items-center gap-3 border border-amber-100">
           <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center font-bold text-purple-700 flex-shrink-0">{{ job.company[0] }}</div>
-          <div class="flex-1 min-w-0">
+          <div class="flex-1 min-w-[140px]">
             <p class="font-semibold text-gray-900 text-sm line-clamp-1">{{ job.title }}</p>
-            <p class="text-gray-400 text-xs">{{ job.company }} · {{ job.type }} · {{ job.location }}</p>
+            <p class="text-gray-400 text-xs line-clamp-1">{{ job.company }} · {{ job.type }} · {{ job.location }}</p>
           </div>
-          <RouterLink :to="{ name: 'job-detail', params: { id: job.id } }" class="text-xs text-purple-700 hover:underline font-medium">Review</RouterLink>
-          <button @click="jobsStore.approveJob(job.id)" :disabled="jobsStore.loading" class="text-xs font-medium bg-green-500 hover:bg-green-600 text-white rounded-lg px-3 py-1.5 transition-colors">Approve</button>
-          <button @click="openReject(job)" :disabled="jobsStore.loading" class="text-xs font-medium bg-white border border-red-300 text-red-500 hover:bg-red-50 rounded-lg px-3 py-1.5 transition-colors">Reject</button>
+          <div class="flex items-center gap-2 ml-auto">
+            <RouterLink :to="{ name: 'job-detail', params: { id: job.id } }" class="text-xs text-purple-700 hover:underline font-medium">Review</RouterLink>
+            <button @click="jobsStore.approveJob(job.id)" :disabled="jobsStore.loading" class="text-xs font-medium bg-green-500 hover:bg-green-600 text-white rounded-lg px-3 py-1.5 transition-colors">Approve</button>
+            <button @click="openReject(job)" :disabled="jobsStore.loading" class="text-xs font-medium bg-white border border-red-300 text-red-500 hover:bg-red-50 rounded-lg px-3 py-1.5 transition-colors">Reject</button>
+          </div>
         </div>
       </div>
     </div>

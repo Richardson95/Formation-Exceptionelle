@@ -185,9 +185,17 @@
         </div>
       </div>
 
+      <!-- Mobile overlay behind the curriculum drawer -->
+      <div
+        v-if="sidebarOpen"
+        class="fixed inset-0 bg-black/50 z-20 lg:hidden"
+        style="top: 61px"
+        @click="sidebarOpen = false"
+      ></div>
+
       <!-- Sidebar - Course Content -->
       <div
-        class="fixed right-0 top-0 bottom-0 w-96 bg-white border-l border-gray-200 z-30 flex flex-col overflow-hidden transition-transform duration-300"
+        class="fixed right-0 top-0 bottom-0 w-full sm:w-96 bg-white border-l border-gray-200 z-30 flex flex-col overflow-hidden transition-transform duration-300"
         :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full'"
         style="top: 61px"
       >
@@ -318,7 +326,8 @@ const authStore = useAuthStore()
 const course = computed(() => lmsStore.getCourseById(route.params.id))
 const progress = computed(() => lmsStore.getProgress(authStore.user?.id, route.params.id))
 
-const sidebarOpen = ref(true)
+// Open by default on desktop, closed on phones so it doesn't cover the video.
+const sidebarOpen = ref(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true)
 const showCertificate = ref(false)
 const activeTab = ref('Overview')
 const notes = ref('')

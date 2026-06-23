@@ -1,16 +1,16 @@
 <template>
   <AdminLayout>
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
       <div>
         <h2 class="text-xl font-bold text-gray-900">Course Management</h2>
         <p class="text-gray-500 text-sm">{{ lmsStore.totalCourses }} courses on the platform</p>
       </div>
-      <div class="flex gap-2">
+      <div class="flex flex-col sm:flex-row gap-2">
         <div class="relative">
           <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input v-model="search" type="text" placeholder="Search courses..." class="pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+          <input v-model="search" type="text" placeholder="Search courses..." class="w-full sm:w-auto pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
         </div>
-        <select v-model="categoryFilter" class="px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none">
+        <select v-model="categoryFilter" class="w-full sm:w-auto px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none">
           <option value="">All Categories</option>
           <option v-for="cat in lmsStore.categories.filter(c => c !== 'All')" :key="cat">{{ cat }}</option>
         </select>
@@ -18,7 +18,7 @@
     </div>
 
     <!-- Stats -->
-    <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <div class="stat-card py-4">
         <div class="text-2xl font-bold text-purple-700">{{ lmsStore.totalCourses }}</div>
         <div class="text-sm text-gray-500">Total Courses</div>
@@ -44,15 +44,17 @@
         <h3 class="font-bold text-amber-800">{{ lmsStore.pendingCourses.length }} course{{ lmsStore.pendingCourses.length > 1 ? 's' : '' }} awaiting your approval</h3>
       </div>
       <div class="space-y-3">
-        <div v-for="course in lmsStore.pendingCourses" :key="course.id" class="bg-white rounded-xl p-3 flex items-center gap-3 border border-amber-100">
+        <div v-for="course in lmsStore.pendingCourses" :key="course.id" class="bg-white rounded-xl p-3 flex flex-wrap items-center gap-3 border border-amber-100">
           <img :src="course.thumbnail" class="w-14 h-9 object-cover rounded-lg flex-shrink-0" />
-          <div class="flex-1 min-w-0">
+          <div class="flex-1 min-w-[140px]">
             <p class="font-semibold text-gray-900 text-sm line-clamp-1">{{ course.title }}</p>
-            <p class="text-gray-400 text-xs">{{ course.instructor?.name }} · {{ course.category }} · {{ course.price > 0 ? '$' + course.price : 'Free' }}</p>
+            <p class="text-gray-400 text-xs line-clamp-1">{{ course.instructor?.name }} · {{ course.category }} · {{ course.price > 0 ? '$' + course.price : 'Free' }}</p>
           </div>
-          <RouterLink :to="{ name: 'course-detail', params: { id: course.id } }" class="text-xs text-purple-700 hover:underline font-medium">Review</RouterLink>
-          <button @click="lmsStore.approveCourse(course.id)" :disabled="lmsStore.loading" class="text-xs font-medium bg-green-500 hover:bg-green-600 text-white rounded-lg px-3 py-1.5 transition-colors">Approve</button>
-          <button @click="openReject(course)" :disabled="lmsStore.loading" class="text-xs font-medium bg-white border border-red-300 text-red-500 hover:bg-red-50 rounded-lg px-3 py-1.5 transition-colors">Reject</button>
+          <div class="flex items-center gap-2 ml-auto">
+            <RouterLink :to="{ name: 'course-detail', params: { id: course.id } }" class="text-xs text-purple-700 hover:underline font-medium">Review</RouterLink>
+            <button @click="lmsStore.approveCourse(course.id)" :disabled="lmsStore.loading" class="text-xs font-medium bg-green-500 hover:bg-green-600 text-white rounded-lg px-3 py-1.5 transition-colors">Approve</button>
+            <button @click="openReject(course)" :disabled="lmsStore.loading" class="text-xs font-medium bg-white border border-red-300 text-red-500 hover:bg-red-50 rounded-lg px-3 py-1.5 transition-colors">Reject</button>
+          </div>
         </div>
       </div>
     </div>
