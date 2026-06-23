@@ -19,20 +19,14 @@
       <div class="grid lg:grid-cols-2 gap-12 items-center">
         <!-- Left Content -->
         <div>
-          <!-- Badge -->
-          <div data-aos="fade-down" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium mb-6">
-            <SparklesIcon class="w-4 h-4 text-gold-400" />
-            Africa's Premier Career Development Platform
-          </div>
-
           <!-- Main Heading -->
-          <h1 data-aos="fade-up" data-aos-delay="100" class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6 text-shadow">
+          <h1 data-aos="fade-up" data-aos-delay="100" class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6 text-shadow">
             Transform Your
             <span class="block text-gold-400">Career Journey</span>
             With Excellence
           </h1>
 
-          <p data-aos="fade-up" data-aos-delay="200" class="text-lg text-purple-200 leading-relaxed mb-8 max-w-xl">
+          <p data-aos="fade-up" data-aos-delay="200" class="text-base sm:text-lg text-purple-200 leading-relaxed mb-8 max-w-xl">
             Join over <strong class="text-white">15,000+ professionals</strong> who have advanced their careers with Formation Exceptionelle's expert-led corporate, legal and finance training programmes, industry connections, and mentorship.
           </p>
 
@@ -152,7 +146,7 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import {
-  SparklesIcon, ArrowRightIcon, PlayCircleIcon, PlayIcon,
+  ArrowRightIcon, PlayCircleIcon, PlayIcon,
   CheckIcon, TrophyIcon, BriefcaseIcon
 } from '@heroicons/vue/24/outline'
 import { StarIcon as StarSolidIcon } from '@heroicons/vue/24/solid'
