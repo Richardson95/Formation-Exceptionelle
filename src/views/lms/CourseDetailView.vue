@@ -2,9 +2,9 @@
   <div class="min-h-screen bg-white">
     <AppHeader />
 
-    <div v-if="course" class="pt-20">
-      <!-- Hero Banner -->
-      <div class="bg-gray-900 py-10">
+    <div v-if="course">
+      <!-- Hero Banner (dark bg extends behind the transparent header) -->
+      <div class="bg-gray-900 pt-28 pb-10">
         <div class="container-custom">
           <div class="grid lg:grid-cols-3 gap-8">
             <!-- Course Info -->
