@@ -9,6 +9,8 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100%;
   }
 
   /* Scale the root font size down on mobile so text AND rem-based spacing
@@ -29,6 +31,8 @@
   body {
     @apply font-sans text-gray-900 bg-white;
     overflow-x: hidden;
+    max-width: 100%;
+    position: relative;
   }
 
   h1, h2, h3, h4, h5, h6 {

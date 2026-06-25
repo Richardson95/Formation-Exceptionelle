@@ -113,12 +113,6 @@ const router = createRouter({
       meta: { title: 'Job Details | Formation Exceptionelle', requiresAuth: true }
     },
     {
-      path: '/jobs/post',
-      name: 'post-job',
-      component: () => import('@/views/jobs/PostJobView.vue'),
-      meta: { title: 'Post a Job | Formation Exceptionelle', requiresAuth: true }
-    },
-    {
       path: '/jobs/apply/:id',
       name: 'apply-job',
       component: () => import('@/views/jobs/ApplyJobView.vue'),
@@ -129,18 +123,6 @@ const router = createRouter({
       name: 'my-applications',
       component: () => import('@/views/jobs/MyApplicationsView.vue'),
       meta: { title: 'My Applications | Formation Exceptionelle', requiresAuth: true }
-    },
-    {
-      path: '/jobs/manage',
-      name: 'manage-jobs',
-      component: () => import('@/views/jobs/ManageJobsView.vue'),
-      meta: { title: 'My Job Postings | Formation Exceptionelle', requiresAuth: true }
-    },
-    {
-      path: '/jobs/edit/:id',
-      name: 'edit-job',
-      component: () => import('@/views/jobs/PostJobView.vue'),
-      meta: { title: 'Edit Job | Formation Exceptionelle', requiresAuth: true }
     },
 
     // Become Instructor
@@ -175,6 +157,18 @@ const router = createRouter({
       name: 'admin-jobs',
       component: () => import('@/views/admin/AdminJobsView.vue'),
       meta: { title: 'Job Management | Admin', requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '/admin/jobs/new',
+      name: 'admin-post-job',
+      component: () => import('@/views/admin/AdminPostJobView.vue'),
+      meta: { title: 'Post a Job | Admin', requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '/admin/jobs/edit/:id',
+      name: 'admin-edit-job',
+      component: () => import('@/views/admin/AdminPostJobView.vue'),
+      meta: { title: 'Edit Job | Admin', requiresAuth: true, requiresAdmin: true }
     },
     {
       path: '/admin/analytics',

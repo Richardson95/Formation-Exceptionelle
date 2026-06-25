@@ -5,9 +5,14 @@
         <h2 class="text-xl font-bold text-gray-900">Job Management</h2>
         <p class="text-gray-500 text-sm">{{ jobsStore.totalJobs }} active job listings</p>
       </div>
-      <div class="relative">
-        <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-        <input v-model="search" type="text" placeholder="Search jobs..." class="w-full sm:w-auto pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+      <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+        <div class="relative">
+          <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input v-model="search" type="text" placeholder="Search jobs..." class="w-full sm:w-auto pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+        </div>
+        <RouterLink :to="{ name: 'admin-post-job' }" class="btn-primary text-sm py-2.5 px-4 flex items-center justify-center gap-2 whitespace-nowrap">
+          <PlusIcon class="w-4 h-4" /> Post New Job
+        </RouterLink>
       </div>
     </div>
 
@@ -80,7 +85,7 @@
                   <button @click="viewingApplicants = job" class="text-xs text-indigo-600 hover:underline font-medium">Applicants ({{ jobsStore.getJobApplications(job.id).length }})</button>
                   <button v-if="job.status !== 'approved' && job.status !== undefined" @click="jobsStore.approveJob(job.id)" class="text-xs text-green-600 hover:underline font-medium">Approve</button>
                   <button v-if="job.status === 'pending'" @click="openReject(job)" class="text-xs text-orange-600 hover:underline font-medium">Reject</button>
-                  <button @click="openEditor(job)" class="text-xs text-blue-600 hover:underline font-medium">Edit</button>
+                  <RouterLink :to="{ name: 'admin-edit-job', params: { id: job.id } }" class="text-xs text-blue-600 hover:underline font-medium">Edit</RouterLink>
                   <button @click="toggleFeature(job)" class="text-xs font-medium" :class="job.isFeatured ? 'text-gold-600' : 'text-gray-500 hover:text-gold-600'">{{ job.isFeatured ? 'Unfeature' : 'Feature' }}</button>
                   <button @click="toggleActive(job)" class="text-xs font-medium" :class="job.isActive ? 'text-gray-500 hover:text-gray-700' : 'text-green-600'">{{ job.isActive ? 'Close' : 'Reopen' }}</button>
                   <button @click="confirmRemove(job)" class="text-xs text-red-500 hover:underline font-medium">Remove</button>
@@ -91,54 +96,6 @@
         </table>
       </div>
     </div>
-
-    <!-- Salary / Status Editor -->
-    <Transition name="modal">
-      <div v-if="editing" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
-          <div class="flex items-start justify-between mb-5">
-            <div>
-              <h3 class="text-lg font-bold text-gray-900">Manage Listing</h3>
-              <p class="text-gray-500 text-sm line-clamp-1 max-w-xs">{{ editing.title }} · {{ editing.company }}</p>
-            </div>
-            <button @click="editing = null" class="text-gray-400 hover:text-gray-600"><XMarkIcon class="w-5 h-5" /></button>
-          </div>
-
-          <div class="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Min Salary (₦)</label>
-              <input v-model.number="form.min" type="number" min="0" step="1000" class="input-field" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Max Salary (₦)</label>
-              <input v-model.number="form.max" type="number" min="0" step="1000" class="input-field" />
-            </div>
-          </div>
-          <div class="mb-5">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Pay Period</label>
-            <select v-model="form.period" class="input-field">
-              <option>monthly</option><option>yearly</option><option>hourly</option>
-            </select>
-          </div>
-
-          <div class="flex gap-4 mb-6">
-            <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
-              <input type="checkbox" v-model="form.isFeatured" class="rounded border-gray-300 text-purple-600 focus:ring-purple-500" /> Featured
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
-              <input type="checkbox" v-model="form.isActive" class="rounded border-gray-300 text-purple-600 focus:ring-purple-500" /> Active
-            </label>
-          </div>
-
-          <div v-if="form.max && form.min > form.max" class="text-xs text-red-500 mb-4">Min salary should not exceed max salary.</div>
-
-          <div class="flex gap-2">
-            <button @click="saveEditor" :disabled="jobsStore.loading" class="btn-primary flex-1 text-sm py-2.5">{{ jobsStore.loading ? 'Saving...' : 'Save Changes' }}</button>
-            <button @click="editing = null" class="btn-secondary flex-1 text-sm py-2.5">Cancel</button>
-          </div>
-        </div>
-      </div>
-    </Transition>
 
     <!-- Applicants Review Modal -->
     <Transition name="modal">
@@ -202,18 +159,16 @@ import { ref, computed } from 'vue'
 import AdminLayout from '@/components/admin/AdminLayout.vue'
 import { useJobsStore } from '@/stores/jobs'
 import { RouterLink } from 'vue-router'
-import { MagnifyingGlassIcon, XMarkIcon, TrashIcon, ClockIcon } from '@heroicons/vue/24/outline'
+import { MagnifyingGlassIcon, XMarkIcon, TrashIcon, ClockIcon, PlusIcon } from '@heroicons/vue/24/outline'
 import ApplicantList from '@/components/jobs/ApplicantList.vue'
 
 const jobsStore = useJobsStore()
 const search = ref('')
 
-const editing = ref(null)
 const removing = ref(null)
 const rejecting = ref(null)
 const rejectReason = ref('')
 const viewingApplicants = ref(null)
-const form = ref({ min: 0, max: 0, period: 'monthly', isFeatured: false, isActive: true })
 
 const filteredJobs = computed(() => {
   if (!search.value) return jobsStore.jobs
@@ -227,28 +182,6 @@ function toggleFeature(job) {
 
 function toggleActive(job) {
   jobsStore.updateJob(job.id, { isActive: !job.isActive })
-}
-
-function openEditor(job) {
-  editing.value = job
-  form.value = {
-    min: job.salary?.min || 0,
-    max: job.salary?.max || 0,
-    period: job.salary?.period || 'monthly',
-    isFeatured: !!job.isFeatured,
-    isActive: !!job.isActive,
-  }
-}
-
-async function saveEditor() {
-  const min = Math.max(0, Number(form.value.min) || 0)
-  const max = Math.max(min, Number(form.value.max) || 0)
-  await jobsStore.updateJob(editing.value.id, {
-    salary: { ...editing.value.salary, min, max, currency: editing.value.salary?.currency || 'NGN', period: form.value.period },
-    isFeatured: form.value.isFeatured,
-    isActive: form.value.isActive,
-  })
-  editing.value = null
 }
 
 function confirmRemove(job) {

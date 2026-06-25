@@ -7,14 +7,11 @@
       <div class="container-custom text-center">
         <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">Find Your Dream Job</h1>
         <p class="text-purple-200 mb-6">{{ jobsStore.totalJobs }}+ active opportunities from top employers</p>
-        <div class="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto">
+        <div class="max-w-2xl mx-auto">
           <div class="relative flex-1">
             <MagnifyingGlassIcon class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input v-model="jobsStore.searchQuery" type="text" placeholder="Job title, company, or skills..." class="w-full pl-12 pr-4 py-4 rounded-2xl text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-gold-400 shadow-lg" />
           </div>
-          <RouterLink to="/jobs/post" class="btn-gold text-base px-6 py-4 flex-shrink-0">
-            Post a Job
-          </RouterLink>
         </div>
       </div>
     </div>
@@ -104,7 +101,6 @@ import { useJobsStore } from '@/stores/jobs'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import JobCard from '@/components/jobs/JobCard.vue'
-import { RouterLink } from 'vue-router'
 import { MagnifyingGlassIcon, BriefcaseIcon } from '@heroicons/vue/24/outline'
 
 const jobsStore = useJobsStore()

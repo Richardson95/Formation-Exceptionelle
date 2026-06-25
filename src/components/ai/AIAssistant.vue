@@ -4,8 +4,7 @@
     <Transition name="slide-up">
       <div
         v-if="isOpen"
-        class="mb-4 w-80 md:w-96 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col"
-        style="height: 520px"
+        class="mb-4 w-[min(20rem,calc(100vw-3rem))] md:w-96 h-[520px] max-h-[calc(100vh-7rem)] bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col"
       >
         <!-- Header -->
         <div class="bg-gradient-fe px-5 py-4 flex items-center justify-between flex-shrink-0">

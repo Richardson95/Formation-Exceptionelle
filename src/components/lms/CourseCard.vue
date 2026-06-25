@@ -5,6 +5,7 @@
   >
     <!-- Thumbnail -->
     <div class="relative overflow-hidden h-44">
+      
       <img
         :src="course.thumbnail"
         :alt="course.title"

@@ -14,6 +14,7 @@
       <ContactSection />
     </main>
     <AppFooter />
+    <IntroModal />
   </div>
 </template>
 
@@ -30,4 +31,5 @@ import FacultySection from '@/components/landing/FacultySection.vue'
 import CorporateSection from '@/components/landing/CorporateSection.vue'
 import TestimonialsSection from '@/components/landing/TestimonialsSection.vue'
 import ContactSection from '@/components/landing/ContactSection.vue'
+import IntroModal from '@/components/common/IntroModal.vue'
 </script>

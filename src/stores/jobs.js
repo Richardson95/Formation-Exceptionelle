@@ -329,6 +329,7 @@ export const useJobsStore = defineStore('jobs', () => {
     }
   }
 
+  // Jobs are posted by an admin from the admin panel, so they go live immediately.
   async function postJob(data, userId) {
     loading.value = true
     try {
@@ -340,9 +341,9 @@ export const useJobsStore = defineStore('jobs', () => {
         postedBy: userId,
         applications: 0,
         views: 0,
-        isActive: false,            // hidden until an admin approves it
+        isActive: true,             // published immediately (admin-posted)
         isFeatured: false,
-        status: 'pending',          // awaits admin approval
+        status: 'approved',
         submittedAt: new Date().toISOString(),
         rejectionReason: '',
         postedAt: new Date().toISOString().split('T')[0],
@@ -350,7 +351,7 @@ export const useJobsStore = defineStore('jobs', () => {
 
       jobs.value.push(job)
       localStorage.setItem('fe_jobs', JSON.stringify(jobs.value))
-      toast.success('Job submitted for review! An admin will approve it shortly.')
+      toast.success('Job published successfully!')
       return job
     } catch (err) {
       toast.error('Failed to post job')

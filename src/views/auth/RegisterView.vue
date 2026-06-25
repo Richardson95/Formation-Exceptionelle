@@ -49,27 +49,6 @@
           </p>
         </div>
 
-        <!-- Role Selection -->
-        <div class="mb-6">
-          <label class="block text-sm font-medium text-gray-700 mb-3">I want to join as:</label>
-          <div class="grid grid-cols-2 gap-3">
-            <button
-              v-for="role in roles"
-              :key="role.value"
-              type="button"
-              @click="form.role = role.value"
-              class="flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all"
-              :class="form.role === role.value
-                ? 'border-purple-600 bg-purple-50 text-purple-700'
-                : 'border-gray-200 hover:border-purple-300 text-gray-600'"
-            >
-              <component :is="role.icon" class="w-6 h-6" />
-              <span class="text-sm font-semibold">{{ role.label }}</span>
-              <span class="text-xs text-center opacity-70">{{ role.desc }}</span>
-            </button>
-          </div>
-        </div>
-
         <form @submit.prevent="handleRegister" class="space-y-4">
           <div class="grid grid-cols-2 gap-4">
             <div>
@@ -186,8 +165,8 @@ import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import {
   EnvelopeIcon, LockClosedIcon, PhoneIcon, EyeIcon, EyeSlashIcon,
-  ExclamationCircleIcon, AcademicCapIcon, BriefcaseIcon,
-  UserGroupIcon, BuildingOfficeIcon, SparklesIcon, TrophyIcon
+  ExclamationCircleIcon, BriefcaseIcon,
+  UserGroupIcon, SparklesIcon, TrophyIcon
 } from '@heroicons/vue/24/outline'
 
 const authStore = useAuthStore()
@@ -201,11 +180,6 @@ const form = ref({
   profession: '', password: '', confirmPassword: '',
   role: 'participant', agreeTerms: false
 })
-
-const roles = [
-  { value: 'participant', label: 'Learner', icon: AcademicCapIcon, desc: 'Enroll in courses & find jobs' },
-  { value: 'participant', label: 'Employer', icon: BuildingOfficeIcon, desc: 'Post jobs & hire talent' },
-]
 
 const perks = [
   { icon: SparklesIcon, title: 'Free to Join', desc: 'No credit card required to get started' },
