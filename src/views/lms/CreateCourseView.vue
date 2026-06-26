@@ -302,8 +302,8 @@
             <div class="flex items-center gap-2">
               <span v-if="!form.isPaid" class="text-green-600 font-bold text-lg">Free</span>
               <template v-else>
-                <span class="font-bold text-gray-900 text-lg">${{ form.price || '0' }}</span>
-                <span v-if="form.originalPrice" class="text-gray-400 text-sm line-through">${{ form.originalPrice }}</span>
+                <span class="font-bold text-gray-900 text-lg">₦{{ Number(form.price || 0).toLocaleString() }}</span>
+                <span v-if="form.originalPrice" class="text-gray-400 text-sm line-through">₦{{ Number(form.originalPrice).toLocaleString() }}</span>
               </template>
             </div>
 

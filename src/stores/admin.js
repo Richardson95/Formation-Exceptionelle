@@ -55,7 +55,7 @@ export const useAdminStore = defineStore('admin', () => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     return months.map((month, i) => ({
       month,
-      revenue: Math.floor(Math.random() * 50000) + 20000 + (i * 3000),
+      revenue: Math.floor(Math.random() * 5000000) + 2000000 + (i * 300000),
     }))
   }
 
@@ -72,7 +72,7 @@ export const useAdminStore = defineStore('admin', () => {
       { id: 1, type: 'enrollment', message: 'New participant enrolled in Company Secretarial Practice', time: '2 minutes ago', icon: 'book' },
       { id: 2, type: 'job', message: 'New job posted: Corporate / Commercial Lawyer at Adebayo & Okonkwo LP', time: '15 minutes ago', icon: 'briefcase' },
       { id: 3, type: 'application', message: 'Application received for Legal & Compliance Intern position', time: '32 minutes ago', icon: 'document' },
-      { id: 4, type: 'payment', message: 'Payment of $280 received for Capital Market course', time: '1 hour ago', icon: 'currency' },
+      { id: 4, type: 'payment', message: 'Payment of ₦30,000 received for Capital Market course', time: '1 hour ago', icon: 'currency' },
       { id: 5, type: 'user', message: 'New faculty registered: Dr. Ngozi Eze', time: '2 hours ago', icon: 'user' },
       { id: 6, type: 'certificate', message: 'Certificate generated for Strategic Leadership & Corporate Governance', time: '3 hours ago', icon: 'badge' },
       { id: 7, type: 'review', message: 'New 5-star review on The New Tax Laws', time: '4 hours ago', icon: 'star' },

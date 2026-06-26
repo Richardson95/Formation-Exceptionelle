@@ -48,7 +48,7 @@
           <img :src="course.thumbnail" class="w-14 h-9 object-cover rounded-lg flex-shrink-0" />
           <div class="flex-1 min-w-[140px]">
             <p class="font-semibold text-gray-900 text-sm line-clamp-1">{{ course.title }}</p>
-            <p class="text-gray-400 text-xs line-clamp-1">{{ course.instructor?.name }} · {{ course.category }} · {{ course.price > 0 ? '$' + course.price : 'Free' }}</p>
+            <p class="text-gray-400 text-xs line-clamp-1">{{ course.instructor?.name }} · {{ course.category }} · {{ course.price > 0 ? '₦' + course.price.toLocaleString() : 'Free' }}</p>
           </div>
           <div class="flex items-center gap-2 ml-auto">
             <RouterLink :to="{ name: 'course-detail', params: { id: course.id } }" class="text-xs text-purple-700 hover:underline font-medium">Review</RouterLink>
@@ -99,8 +99,8 @@
                 <div class="flex items-center gap-2">
                   <span v-if="course.price === 0" class="badge bg-green-100 text-green-700 text-xs">Free</span>
                   <template v-else>
-                    <span class="font-semibold text-gray-900 text-sm">${{ course.price }}</span>
-                    <span v-if="course.originalPrice > course.price" class="text-gray-400 text-xs line-through">${{ course.originalPrice }}</span>
+                    <span class="font-semibold text-gray-900 text-sm">₦{{ course.price.toLocaleString() }}</span>
+                    <span v-if="course.originalPrice > course.price" class="text-gray-400 text-xs line-through">₦{{ course.originalPrice.toLocaleString() }}</span>
                   </template>
                   <span v-if="course.featured" class="badge bg-gold-100 text-gold-700 text-xs">Featured</span>
                 </div>

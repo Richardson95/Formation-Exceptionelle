@@ -104,7 +104,7 @@
               <h3 class="font-bold text-gray-900 text-sm line-clamp-2 mb-1">{{ item.title }}</h3>
               <p class="text-gray-500 text-xs mb-3">{{ item.instructor }}</p>
               <div class="flex items-center justify-between">
-                <span class="font-bold text-purple-700">${{ item.price }}</span>
+                <span class="font-bold text-purple-700">₦{{ item.price.toLocaleString() }}</span>
                 <button @click="cartStore.addToCart(item)" class="btn-primary text-xs px-3 py-1.5">Add to Cart</button>
               </div>
             </div>

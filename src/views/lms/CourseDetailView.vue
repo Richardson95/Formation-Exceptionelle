@@ -236,8 +236,8 @@
                   <div class="flex items-center gap-3 mb-2">
                     <span v-if="course.price === 0" class="text-3xl font-bold text-green-600">Free</span>
                     <template v-else>
-                      <span class="text-3xl font-bold text-gray-900">${{ course.price }}</span>
-                      <span class="text-lg text-gray-400 line-through">${{ course.originalPrice }}</span>
+                      <span class="text-3xl font-bold text-gray-900">₦{{ course.price.toLocaleString() }}</span>
+                      <span class="text-lg text-gray-400 line-through">₦{{ course.originalPrice.toLocaleString() }}</span>
                       <span class="badge bg-red-100 text-red-600 text-xs font-bold">{{ discount }}% off</span>
                     </template>
                   </div>

@@ -19,7 +19,7 @@
         </p>
         <div class="flex flex-wrap gap-6 justify-center text-white">
           <div class="text-center"><div class="text-3xl font-bold">60+</div><div class="text-purple-200 text-sm">Expert Faculty</div></div>
-          <div class="text-center"><div class="text-3xl font-bold">$3K</div><div class="text-purple-200 text-sm">Avg. Monthly Earnings</div></div>
+          <div class="text-center"><div class="text-3xl font-bold">₦750K</div><div class="text-purple-200 text-sm">Avg. Monthly Earnings</div></div>
           <div class="text-center"><div class="text-3xl font-bold">15K+</div><div class="text-purple-200 text-sm">Professionals to Reach</div></div>
         </div>
       </div>
@@ -171,7 +171,7 @@ const form = ref({
 const benefits = [
   {
     icon: CurrencyDollarIcon, title: 'Earn Revenue',
-    desc: 'Earn up to 70% of every programme sale. Top faculty earn $5,000+ per month.',
+    desc: 'Earn up to 70% of every programme sale. Top faculty earn ₦2,500,000+ per month.',
     bg: '#d1fae5', color: '#059669'
   },
   {

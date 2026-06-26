@@ -42,7 +42,7 @@
               <td class="px-5 py-4 text-sm text-gray-600 max-w-xs">
                 <p class="line-clamp-1">{{ tx.course }}</p>
               </td>
-              <td class="px-5 py-4 font-bold text-gray-900">${{ tx.amount }}</td>
+              <td class="px-5 py-4 font-bold text-gray-900">₦{{ Number(tx.amount).toLocaleString() }}</td>
               <td class="px-5 py-4 text-sm text-gray-600">{{ tx.date }}</td>
               <td class="px-5 py-4">
                 <span class="badge text-xs" :class="{
@@ -64,18 +64,18 @@ import AdminLayout from '@/components/admin/AdminLayout.vue'
 import { CurrencyDollarIcon, UsersIcon, ArrowTrendingUpIcon, ChartBarIcon } from '@heroicons/vue/24/outline'
 
 const paymentStats = [
-  { icon: CurrencyDollarIcon, label: 'Total Revenue', value: '$124,580', bg: '#d1fae5', color: '#059669' },
+  { icon: CurrencyDollarIcon, label: 'Total Revenue', value: '₦12,458,000', bg: '#d1fae5', color: '#059669' },
   { icon: UsersIcon, label: 'Paid Students', value: '1,284', bg: '#ede9fe', color: '#7c3aed' },
-  { icon: ChartBarIcon, label: 'Avg. Order Value', value: '$76.40', bg: '#fef3c7', color: '#d97706' },
-  { icon: CurrencyDollarIcon, label: 'This Month', value: '$58,200', bg: '#fee2e2', color: '#dc2626' },
+  { icon: ChartBarIcon, label: 'Avg. Order Value', value: '₦31,500', bg: '#fef3c7', color: '#d97706' },
+  { icon: CurrencyDollarIcon, label: 'This Month', value: '₦5,820,000', bg: '#fee2e2', color: '#dc2626' },
 ]
 
 const transactions = [
-  { id: 'TXN-001-2026', student: 'Chioma Eze', email: 'chioma@email.com', course: 'Financing, M&A and ADR: Advanced Practice', amount: '320', date: '2026-06-14', status: 'completed' },
-  { id: 'TXN-002-2026', student: 'James Adeyemi', email: 'james@email.com', course: 'Capital Market: Corporate Financing & Compliance', amount: '280', date: '2026-06-13', status: 'completed' },
-  { id: 'TXN-003-2026', student: 'Fatima Hassan', email: 'fatima@email.com', course: 'Strategic Leadership & Corporate Governance', amount: '260', date: '2026-06-12', status: 'completed' },
-  { id: 'TXN-004-2026', student: 'Emmanuel Osei', email: 'emmanuel@email.com', course: 'Mergers & Acquisitions: Regulations & Risk', amount: '300', date: '2026-06-11', status: 'pending' },
-  { id: 'TXN-005-2026', student: 'Ngozi Iweala', email: 'ngozi@email.com', course: 'The New Tax Laws: Strategic Implications', amount: '200', date: '2026-06-10', status: 'completed' },
-  { id: 'TXN-006-2026', student: 'Kwame Mensah', email: 'kwame@email.com', course: 'Project Structuring, Financing & ESG', amount: '360', date: '2026-06-09', status: 'refunded' },
+  { id: 'TXN-001-2026', student: 'Chioma Eze', email: 'chioma@email.com', course: 'Financing, M&A and ADR: Advanced Practice', amount: '35000', date: '2026-06-14', status: 'completed' },
+  { id: 'TXN-002-2026', student: 'James Adeyemi', email: 'james@email.com', course: 'Capital Market: Corporate Financing & Compliance', amount: '30000', date: '2026-06-13', status: 'completed' },
+  { id: 'TXN-003-2026', student: 'Fatima Hassan', email: 'fatima@email.com', course: 'Strategic Leadership & Corporate Governance', amount: '28000', date: '2026-06-12', status: 'completed' },
+  { id: 'TXN-004-2026', student: 'Emmanuel Osei', email: 'emmanuel@email.com', course: 'Mergers & Acquisitions: Regulations & Risk', amount: '32000', date: '2026-06-11', status: 'pending' },
+  { id: 'TXN-005-2026', student: 'Ngozi Iweala', email: 'ngozi@email.com', course: 'The New Tax Laws: Strategic Implications', amount: '22000', date: '2026-06-10', status: 'completed' },
+  { id: 'TXN-006-2026', student: 'Kwame Mensah', email: 'kwame@email.com', course: 'Project Structuring, Financing & ESG', amount: '40000', date: '2026-06-09', status: 'refunded' },
 ]
 </script>

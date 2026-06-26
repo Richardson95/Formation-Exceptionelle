@@ -27,8 +27,8 @@
             </div>
             <div class="flex flex-col items-end justify-between flex-shrink-0">
               <div class="text-right">
-                <div class="font-bold text-gray-900">${{ item.price }}</div>
-                <div class="text-xs text-gray-400 line-through">${{ item.originalPrice }}</div>
+                <div class="font-bold text-gray-900">₦{{ item.price.toLocaleString() }}</div>
+                <div class="text-xs text-gray-400 line-through">₦{{ item.originalPrice.toLocaleString() }}</div>
               </div>
               <button
                 @click="cartStore.removeFromCart(item.id)"
@@ -46,15 +46,15 @@
             <div class="space-y-3 mb-5">
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Original Price</span>
-                <span class="text-gray-900">${{ (cartStore.subtotal + cartStore.savings).toFixed(2) }}</span>
+                <span class="text-gray-900">₦{{ (cartStore.subtotal + cartStore.savings).toLocaleString() }}</span>
               </div>
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Discount</span>
-                <span class="text-green-600">-${{ cartStore.savings.toFixed(2) }}</span>
+                <span class="text-green-600">-₦{{ cartStore.savings.toLocaleString() }}</span>
               </div>
               <div class="border-t border-gray-100 pt-3 flex justify-between font-bold text-lg">
                 <span>Total</span>
-                <span class="text-purple-700">${{ cartStore.total.toFixed(2) }}</span>
+                <span class="text-purple-700">₦{{ cartStore.total.toLocaleString() }}</span>
               </div>
             </div>
 

@@ -64,7 +64,7 @@
                 :style="{ height: (bar.value / maxRevenue * 180) + 'px' }"
               >
                 <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                  ${{ bar.value.toLocaleString() }}
+                  ₦{{ bar.value.toLocaleString() }}
                 </div>
               </div>
             </div>
@@ -107,7 +107,7 @@
                 <p class="text-xs font-semibold text-gray-900 line-clamp-1">{{ course.title }}</p>
                 <p class="text-xs text-gray-500">{{ course.enrolledCount?.toLocaleString() }} enrolled</p>
               </div>
-              <span class="text-xs font-bold text-purple-700">${{ course.price }}</span>
+              <span class="text-xs font-bold text-purple-700">₦{{ course.price.toLocaleString() }}</span>
             </div>
           </div>
         </div>
@@ -177,17 +177,17 @@ const stats = computed(() => adminStore.stats)
 const mainStats = computed(() => [
   { icon: UsersIcon, label: 'Total Users', value: stats.value.totalUsers?.toLocaleString(), trend: 12, trendUp: true, bg: '#ede9fe', color: '#7c3aed' },
   { icon: AcademicCapIcon, label: 'Total Enrollments', value: stats.value.totalEnrollments?.toLocaleString(), trend: 8, trendUp: true, bg: '#fef3c7', color: '#d97706' },
-  { icon: CurrencyDollarIcon, label: 'Total Revenue', value: '$' + (stats.value.totalRevenue || 0).toFixed(0), trend: 15, trendUp: true, bg: '#d1fae5', color: '#059669' },
+  { icon: CurrencyDollarIcon, label: 'Total Revenue', value: '₦' + (stats.value.totalRevenue || 0).toLocaleString(), trend: 15, trendUp: true, bg: '#d1fae5', color: '#059669' },
   { icon: BriefcaseIcon, label: 'Active Jobs', value: stats.value.totalJobs?.toLocaleString(), trend: 5, trendUp: true, bg: '#fee2e2', color: '#dc2626' },
 ])
 
 const topCourses = computed(() => lmsStore.courses.sort((a, b) => b.enrolledCount - a.enrolledCount).slice(0, 5))
 
 const revenueData = [
-  { month: 'J', value: 18000 }, { month: 'F', value: 22000 }, { month: 'M', value: 19000 },
-  { month: 'A', value: 31000 }, { month: 'M', value: 27000 }, { month: 'J', value: 38000 },
-  { month: 'J', value: 34000 }, { month: 'A', value: 42000 }, { month: 'S', value: 36000 },
-  { month: 'O', value: 45000 }, { month: 'N', value: 51000 }, { month: 'D', value: 58000 },
+  { month: 'J', value: 1800000 }, { month: 'F', value: 2200000 }, { month: 'M', value: 1900000 },
+  { month: 'A', value: 3100000 }, { month: 'M', value: 2700000 }, { month: 'J', value: 3800000 },
+  { month: 'J', value: 3400000 }, { month: 'A', value: 4200000 }, { month: 'S', value: 3600000 },
+  { month: 'O', value: 4500000 }, { month: 'N', value: 5100000 }, { month: 'D', value: 5800000 },
 ]
 const maxRevenue = Math.max(...revenueData.map(d => d.value))
 

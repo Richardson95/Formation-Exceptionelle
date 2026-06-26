@@ -37,7 +37,7 @@
             <div
               class="w-full rounded-t-lg bg-purple-500 hover:bg-purple-600 transition-colors cursor-pointer"
               :style="{ height: bar.pct + '%' }"
-              :title="`$${bar.value}`"
+              :title="`₦${bar.value.toLocaleString()}`"
             ></div>
             <span class="text-xs text-gray-400">{{ bar.month }}</span>
           </div>
@@ -65,11 +65,11 @@
               <div class="flex flex-wrap gap-3 text-xs text-gray-500 mb-2">
                 <span class="flex items-center gap-1"><UsersIcon class="w-3.5 h-3.5" /> {{ course.enrolledCount?.toLocaleString() }} students</span>
                 <span class="flex items-center gap-1"><StarIcon class="w-3.5 h-3.5 text-gold-400" /> {{ course.rating }}</span>
-                <span class="flex items-center gap-1"><CurrencyDollarIcon class="w-3.5 h-3.5" /> ${{ ((course.price || 0) * (course.enrolledCount || 0)).toLocaleString() }} earned</span>
+                <span class="flex items-center gap-1"><CurrencyDollarIcon class="w-3.5 h-3.5" /> ₦{{ ((course.price || 0) * (course.enrolledCount || 0)).toLocaleString() }} earned</span>
               </div>
               <div class="flex flex-wrap items-center gap-2">
                 <span class="badge text-xs" :class="course.price > 0 ? 'badge-purple' : 'bg-green-100 text-green-700'">
-                  {{ course.price > 0 ? '$' + course.price : 'Free' }}
+                  {{ course.price > 0 ? '₦' + course.price.toLocaleString() : 'Free' }}
                 </span>
                 <span class="badge bg-gray-100 text-gray-600 text-xs">{{ course.level }}</span>
                 <span class="badge text-xs capitalize" :class="{
@@ -139,17 +139,17 @@ const avgRating = computed(() => {
 const instructorStats = computed(() => [
   { icon: UsersIcon, label: 'Total Students', value: totalStudents.value.toLocaleString(), trend: 12, bg: '#ede9fe', color: '#7c3aed' },
   { icon: AcademicCapIcon, label: 'Total Courses', value: instructorCourses.value.length, bg: '#fef3c7', color: '#d97706' },
-  { icon: CurrencyDollarIcon, label: 'Total Revenue', value: '$' + totalRevenue.value.toLocaleString(), trend: 8, bg: '#d1fae5', color: '#059669' },
+  { icon: CurrencyDollarIcon, label: 'Total Revenue', value: '₦' + totalRevenue.value.toLocaleString(), trend: 8, bg: '#d1fae5', color: '#059669' },
   { icon: StarIcon, label: 'Avg. Rating', value: avgRating.value, trend: 2, bg: '#fee2e2', color: '#dc2626' },
 ])
 
 const revenueData = [
-  { month: 'Jan', value: 1200, pct: 40 },
-  { month: 'Feb', value: 1800, pct: 60 },
-  { month: 'Mar', value: 1500, pct: 50 },
-  { month: 'Apr', value: 2400, pct: 80 },
-  { month: 'May', value: 2000, pct: 67 },
-  { month: 'Jun', value: 3000, pct: 100 },
-  { month: 'Jul', value: 2700, pct: 90 },
+  { month: 'Jan', value: 1200000, pct: 40 },
+  { month: 'Feb', value: 1800000, pct: 60 },
+  { month: 'Mar', value: 1500000, pct: 50 },
+  { month: 'Apr', value: 2400000, pct: 80 },
+  { month: 'May', value: 2000000, pct: 67 },
+  { month: 'Jun', value: 3000000, pct: 100 },
+  { month: 'Jul', value: 2700000, pct: 90 },
 ]
 </script>

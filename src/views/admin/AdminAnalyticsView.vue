@@ -113,7 +113,7 @@ const keyMetrics = [
   { icon: EyeIcon, label: 'Page Views', value: '48,239', change: 18, bg: '#ede9fe', color: '#7c3aed' },
   { icon: UsersIcon, label: 'Unique Visitors', value: '12,847', change: 12, bg: '#fef3c7', color: '#d97706' },
   { icon: AcademicCapIcon, label: 'New Enrollments', value: '1,284', change: 23, bg: '#d1fae5', color: '#059669' },
-  { icon: CurrencyDollarIcon, label: 'Revenue MTD', value: '$58,200', change: 15, bg: '#fee2e2', color: '#dc2626' },
+  { icon: CurrencyDollarIcon, label: 'Revenue MTD', value: '₦5,820,000', change: 15, bg: '#fee2e2', color: '#dc2626' },
 ]
 
 const enrollmentData = [

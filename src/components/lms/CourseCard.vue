@@ -5,7 +5,7 @@
   >
     <!-- Thumbnail -->
     <div class="relative overflow-hidden h-44">
-      
+      t
       <img
         :src="course.thumbnail"
         :alt="course.title"
@@ -15,7 +15,7 @@
       <!-- Price Badge -->
       <div class="absolute top-3 left-3">
         <span v-if="course.price === 0" class="badge bg-green-500 text-white text-xs font-bold px-2.5 py-1">FREE</span>
-        <span v-else class="badge bg-purple-900 text-white text-xs font-bold px-2.5 py-1">${{ course.price }}</span>
+        <span v-else class="badge bg-purple-900 text-white text-xs font-bold px-2.5 py-1">₦{{ course.price.toLocaleString() }}</span>
       </div>
       <!-- Bestseller badge -->
       <div v-if="course.enrolledCount > 50000" class="absolute top-3 right-3 badge bg-gold-500 text-white text-xs font-bold px-2.5 py-1">
@@ -79,8 +79,8 @@
         <div class="flex items-center gap-2">
           <span v-if="course.price === 0" class="text-green-600 font-bold text-base">Free</span>
           <template v-else>
-            <span class="font-bold text-gray-900 text-base">${{ course.price }}</span>
-            <span class="text-gray-400 text-sm line-through">${{ course.originalPrice }}</span>
+            <span class="font-bold text-gray-900 text-base">₦{{ course.price.toLocaleString() }}</span>
+            <span class="text-gray-400 text-sm line-through">₦{{ course.originalPrice.toLocaleString() }}</span>
           </template>
         </div>
         <div class="flex items-center gap-1 text-xs text-gray-400">

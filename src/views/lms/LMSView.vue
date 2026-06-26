@@ -202,8 +202,8 @@ const CourseListItem = {
       <div class="p-4 flex-shrink-0 text-right">
         <div v-if="course.price === 0" class="text-green-600 font-bold">Free</div>
         <template v-else>
-          <div class="font-bold text-gray-900">\${{ course.price }}</div>
-          <div class="text-xs line-through text-gray-400">\${{ course.originalPrice }}</div>
+          <div class="font-bold text-gray-900">₦{{ course.price.toLocaleString() }}</div>
+          <div class="text-xs line-through text-gray-400">₦{{ course.originalPrice.toLocaleString() }}</div>
         </template>
       </div>
     </div>

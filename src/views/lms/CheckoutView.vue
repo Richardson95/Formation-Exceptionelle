@@ -101,13 +101,13 @@
                   <p class="text-xs font-medium text-gray-900 line-clamp-2">{{ item.title }}</p>
                   <p class="text-xs text-gray-500">{{ item.instructor }}</p>
                 </div>
-                <span class="text-sm font-bold text-gray-900 flex-shrink-0">${{ item.price }}</span>
+                <span class="text-sm font-bold text-gray-900 flex-shrink-0">₦{{ item.price.toLocaleString() }}</span>
               </div>
             </div>
             <div class="border-t border-gray-100 pt-4 space-y-2 mb-5">
-              <div class="flex justify-between text-sm"><span class="text-gray-600">Subtotal</span><span>${{ cartStore.subtotal.toFixed(2) }}</span></div>
-              <div class="flex justify-between text-sm"><span class="text-gray-600">Savings</span><span class="text-green-600">-${{ cartStore.savings.toFixed(2) }}</span></div>
-              <div class="flex justify-between font-bold text-lg pt-1"><span>Total</span><span class="text-purple-700">${{ cartStore.total.toFixed(2) }}</span></div>
+              <div class="flex justify-between text-sm"><span class="text-gray-600">Subtotal</span><span>₦{{ cartStore.subtotal.toLocaleString() }}</span></div>
+              <div class="flex justify-between text-sm"><span class="text-gray-600">Savings</span><span class="text-green-600">-₦{{ cartStore.savings.toLocaleString() }}</span></div>
+              <div class="flex justify-between font-bold text-lg pt-1"><span>Total</span><span class="text-purple-700">₦{{ cartStore.total.toLocaleString() }}</span></div>
             </div>
 
             <button
