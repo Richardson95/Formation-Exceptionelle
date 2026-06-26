@@ -1,137 +1,209 @@
 <template>
-  <section class="section-padding bg-white" id="faculty">
-    <div class="container-custom">
-      <div class="text-center mb-16" data-aos="fade-up">
+  <section class="section-padding bg-white relative overflow-hidden" id="faculty">
+    <!-- Background decoration -->
+    <div class="absolute inset-0 pointer-events-none opacity-50">
+      <div class="absolute top-10 right-1/4 w-72 h-72 bg-purple-100 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 left-1/4 w-72 h-72 bg-gold-100 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="container-custom relative z-10">
+      <div class="text-center mb-14" data-aos="fade-up">
         <span class="badge-gold text-sm px-4 py-2 mb-4 inline-block">World-Class Experts</span>
         <h2 class="section-title mb-4">
           Meet Our <span class="gradient-text">Distinguished Faculty</span>
         </h2>
         <p class="section-subtitle">
-          Learn from industry veterans, academic scholars, and thought leaders who are shaping the future of their fields.
+          Seasoned partners, general counsel and industry leaders who facilitate our programmes and
+          share real-world expertise from the boardroom and the courtroom.
         </p>
       </div>
 
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div
-          v-for="(faculty, i) in facultyMembers"
-          :key="faculty.name"
-          data-aos="fade-up"
-          :data-aos-delay="i * 100"
-          class="card card-hover text-center group"
-        >
-          <!-- Avatar -->
-          <div class="relative">
-            <div class="w-full h-52 bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center relative overflow-hidden">
-              <div
-                class="w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold text-white shadow-fe"
-                :style="{ background: faculty.gradient }"
-              >
-                {{ faculty.initials }}
-              </div>
-              <!-- Social overlay -->
-              <div class="absolute inset-0 bg-purple-900/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                <a v-for="s in faculty.socials" :key="s" href="#" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
-                  <GlobeAltIcon class="w-4 h-4 text-white" />
-                </a>
-              </div>
-            </div>
-          </div>
+      <!-- Moving faculty marquee -->
+      <div class="relative" data-aos="fade-up" data-aos-delay="100">
+        <!-- Edge fades -->
+        <div class="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-32 bg-gradient-to-r from-white to-transparent z-20"></div>
+        <div class="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-32 bg-gradient-to-l from-white to-transparent z-20"></div>
 
-          <div class="p-5">
-            <div class="badge-purple text-xs mb-3">{{ faculty.specialty }}</div>
-            <h3 class="font-bold text-gray-900 text-lg group-hover:text-purple-700 transition-colors">{{ faculty.name }}</h3>
-            <p class="text-purple-600 text-sm font-medium mb-2">{{ faculty.title }}</p>
-            <p class="text-gray-500 text-xs leading-relaxed mb-4">{{ faculty.bio }}</p>
+        <div class="faculty-marquee">
+          <ul class="faculty-track">
+            <li
+              v-for="(person, i) in [...facultyMembers, ...facultyMembers]"
+              :key="i + '-' + person.name"
+              class="faculty-card"
+              :aria-hidden="i >= facultyMembers.length ? 'true' : null"
+            >
+              <div class="faculty-photo">
+                <img
+                  v-if="person.img"
+                  :src="person.img"
+                  :alt="person.name"
+                  loading="lazy"
+                  class="faculty-photo-img"
+                />
+                <div
+                  v-else
+                  class="faculty-initials"
+                  :style="{ background: person.gradient }"
+                >
+                  {{ person.initials }}
+                </div>
+                <span v-if="person.role" class="faculty-role-tag">{{ person.role }}</span>
+              </div>
 
-            <!-- Stats -->
-            <div class="flex justify-around pt-4 border-t border-gray-100">
-              <div class="text-center">
-                <div class="text-lg font-bold text-purple-700">{{ faculty.courses }}</div>
-                <div class="text-xs text-gray-500">Courses</div>
+              <div class="faculty-info">
+                <h3 class="faculty-name">{{ person.name }}</h3>
+                <p v-if="person.title" class="faculty-title">{{ person.title }}</p>
+                <p v-if="person.org" class="faculty-org">{{ person.org }}</p>
               </div>
-              <div class="text-center">
-                <div class="text-lg font-bold text-purple-700">{{ faculty.students }}</div>
-                <div class="text-xs text-gray-500">Students</div>
-              </div>
-              <div class="text-center">
-                <div class="text-lg font-bold text-gold-500">{{ faculty.rating }}</div>
-                <div class="text-xs text-gray-500">Rating</div>
-              </div>
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
-      </div>
-
-      <!-- Join as Instructor CTA -->
-      <div data-aos="fade-up" class="mt-16 bg-gradient-to-r from-purple-900 to-purple-700 rounded-3xl p-10 text-center relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10" style="background: url('data:image/svg+xml,...') center/cover"></div>
-        <h3 class="text-2xl md:text-3xl font-bold text-white mb-4 relative z-10">
-          Are You an Industry Expert?
-        </h3>
-        <p class="text-purple-200 max-w-xl mx-auto mb-8 relative z-10">
-          Join our faculty of world-class instructors and share your expertise with thousands of eager learners across Africa and the world.
-        </p>
-        <RouterLink to="/become-instructor" class="btn-gold text-base px-8 py-4 relative z-10">
-          Apply to Teach
-          <ArrowRightIcon class="w-5 h-5 ml-2" />
-        </RouterLink>
       </div>
     </div>
   </section>
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router'
-import { GlobeAltIcon, ArrowRightIcon } from '@heroicons/vue/24/outline'
-
+// Real faculty / facilitators. Photos live in /public (referenced from root).
+// People without a photo yet fall back to an initials avatar — drop a matching
+// file in /public and set `img` to show their headshot.
 const facultyMembers = [
-  {
-    name: 'Barr. (Mrs.) Adaeze Okafor, SAN',
-    initials: 'AO',
-    title: 'Lead Faculty, Corporate Transactions',
-    specialty: 'M&A, Financing & ADR',
-    bio: 'Senior Advocate with 20+ years advising on mergers, acquisitions, deal financing and complex commercial dispute resolution.',
-    courses: 9,
-    students: '4.2K',
-    rating: '4.9',
-    gradient: 'linear-gradient(135deg, #7c3aed, #a78bfa)',
-    socials: ['linkedin', 'twitter'],
-  },
-  {
-    name: 'Dr. Ngozi Eze',
-    initials: 'NE',
-    title: 'Director, Governance & Strategy',
-    specialty: 'Corporate Governance',
-    bio: 'Board adviser and governance scholar. Former executive director with deep expertise in strategy, ethics and stakeholder management.',
-    courses: 7,
-    students: '3.5K',
-    rating: '4.9',
-    gradient: 'linear-gradient(135deg, #d97706, #fbbf24)',
-    socials: ['linkedin'],
-  },
-  {
-    name: 'Mr. Chukwuma Nwankwo, FCA',
-    initials: 'CN',
-    title: 'Faculty Lead, Capital Markets',
-    specialty: 'Finance & Capital Markets',
-    bio: 'Chartered Accountant and capital markets specialist. 15+ years in corporate financing, regulation and compliance.',
-    courses: 6,
-    students: '3.1K',
-    rating: '4.8',
-    gradient: 'linear-gradient(135deg, #059669, #34d399)',
-    socials: ['linkedin', 'twitter'],
-  },
-  {
-    name: 'Mr. Gbenga Adeyinka, FCTI',
-    initials: 'GA',
-    title: 'Faculty Lead, Taxation',
-    specialty: 'Tax Law & Policy',
-    bio: 'Chartered tax practitioner advising businesses on tax reform, compliance and strategic tax planning across sectors.',
-    courses: 5,
-    students: '3.0K',
-    rating: '4.8',
-    gradient: 'linear-gradient(135deg, #dc2626, #f87171)',
-    socials: ['linkedin', 'instagram'],
-  },
+  { name: 'Funmilayo Otsemobor', role: 'Partner', title: 'Partner', org: 'Aluko & Oyebode', img: '/FUNMILAYO%20OTSEMOBOR.jpeg' },
+  { name: 'Dr. Ayodele Oni', role: 'Partner', title: 'Partner', org: 'Bloomfield Law Practice', img: null, initials: 'AO', gradient: 'linear-gradient(135deg, #7c3aed, #a78bfa)' },
+  { name: 'Desmond Ogba', role: 'Partner', title: 'Partner', org: 'Templars Law', img: '/DESMOND%20OGBA.jpeg' },
+  { name: 'Adedoyin Afun', role: 'Partner', title: 'Partner', org: 'Bloomfield Law Practice', img: '/ADEDOYIN%20AFUN.jpeg' },
+  { name: 'Dipo Akinbode', role: 'General Counsel', title: 'Group Deputy, General Counsel', org: 'Aradel Holdings Plc', img: null, initials: 'DA', gradient: 'linear-gradient(135deg, #d97706, #fbbf24)' },
+  { name: 'Oluwadare Agbelese', role: 'Group Head', title: 'Group Head, Legal & Supply Chain Management', org: 'Waltersmith', img: '/OLUWADARE%20AGBELESE.jpeg' },
+  { name: 'Akindeji Oyebode', role: 'Partner', title: 'Partner', org: 'Banwo & Ighodalo', img: '/AKINDEJI%20OYEBODE.jpeg' },
+  { name: 'Boonyameen Babajide Lawal', role: 'Partner', title: 'Partner', org: 'Babalakin & Co', img: '/BOOYAMEEN%20LAWAL.jpeg' },
+  { name: 'Stella Duru', role: 'Partner', title: 'Partner', org: 'Banwo & Ighodalo', img: '/STELLA%20DURU.jpeg' },
+  { name: 'Dipo Okuribido', role: 'General Counsel', title: 'Senior Vice President & General Counsel', org: 'Verod Capital Management', img: '/DIPO%20OKURIBIDO.jpeg' },
+  { name: 'Tosin Baruwa', role: null, title: null, org: null, img: null, initials: 'TB', gradient: 'linear-gradient(135deg, #059669, #34d399)' },
+  { name: 'Seyi Bella', role: 'Partner', title: 'Partner', org: 'Banwo & Ighodalo', img: '/SEYI%20BELLA.jpeg' },
+  { name: 'Chinedum Umeche', role: 'Partner', title: 'Partner', org: 'Banwo & Ighodalo', img: '/CHINEDUM%20UMECHE.jpeg' },
+  { name: 'Okechukwu Okoro', role: 'Partner', title: 'Partner', org: 'G. Elias', img: '/OKECHUKWU%20OKORO.jpeg' },
+  { name: 'Adeola Sunmola', role: 'Partner', title: 'Partner', org: 'Udo Udoma & Belo-Osagie', img: '/ADEOLA%20SUNMOLA.jpeg' },
 ]
 </script>
+
+<style scoped>
+.faculty-marquee {
+  width: 100%;
+  overflow: hidden;
+  padding: 0.5rem 0 1rem;
+}
+
+.faculty-track {
+  display: flex;
+  width: max-content;
+  gap: 1.5rem;
+  animation: faculty-scroll 70s linear infinite;
+}
+
+.faculty-marquee:hover .faculty-track {
+  animation-play-state: paused;
+}
+
+.faculty-card {
+  flex: 0 0 auto;
+  width: 16rem;
+  background: #ffffff;
+  border: 1px solid #ede9fe;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 8px 22px -12px rgba(76, 29, 149, 0.25);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.faculty-card:hover {
+  transform: translateY(-6px);
+  border-color: #c4b5fd;
+  box-shadow: 0 18px 36px -14px rgba(76, 29, 149, 0.4);
+}
+
+.faculty-photo {
+  position: relative;
+  width: 100%;
+  height: 17rem;
+  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+}
+
+.faculty-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.faculty-initials {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+}
+
+.faculty-role-tag {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #4c1d95;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 2px 8px -2px rgba(76, 29, 149, 0.35);
+  backdrop-filter: blur(2px);
+}
+
+.faculty-info {
+  padding: 1rem 1.1rem 1.25rem;
+  text-align: center;
+}
+
+.faculty-name {
+  font-weight: 800;
+  font-size: 1.05rem;
+  line-height: 1.25;
+  color: #1f2937;
+}
+
+.faculty-title {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #7c3aed;
+  line-height: 1.3;
+}
+
+.faculty-org {
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  color: #6b7280;
+  line-height: 1.3;
+}
+
+@keyframes faculty-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faculty-track {
+    animation: none;
+  }
+  .faculty-marquee {
+    overflow-x: auto;
+  }
+}
+</style>
