@@ -268,17 +268,17 @@
 
               <div v-if="form.isPaid" class="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Course Price (USD) *</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Course Price (NGN) *</label>
                   <div class="relative">
-                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-medium">$</span>
-                    <input v-model.number="form.price" type="number" min="0" step="0.01" placeholder="49.99" class="input-field pl-8" required />
+                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₦</span>
+                    <input v-model.number="form.price" type="number" min="0" step="1" placeholder="30000" class="input-field pl-8" required />
                   </div>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Original Price (USD)</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Original Price (NGN)</label>
                   <div class="relative">
-                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-medium">$</span>
-                    <input v-model.number="form.originalPrice" type="number" min="0" step="0.01" placeholder="99.99" class="input-field pl-8" />
+                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₦</span>
+                    <input v-model.number="form.originalPrice" type="number" min="0" step="1" placeholder="48000" class="input-field pl-8" />
                   </div>
                   <p class="text-xs text-gray-400 mt-1">Shown as crossed out original price</p>
                 </div>

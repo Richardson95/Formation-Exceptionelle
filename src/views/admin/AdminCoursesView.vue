@@ -158,16 +158,16 @@
 
           <div v-if="form.isPaid" class="grid grid-cols-2 gap-4 mb-5">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Price (USD)</label>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Price (NGN)</label>
               <div class="relative">
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">₦</span>
                 <input v-model.number="form.price" type="number" min="0" step="1" class="input-field pl-7" />
               </div>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Original Price</label>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Original Price (NGN)</label>
               <div class="relative">
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">₦</span>
                 <input v-model.number="form.originalPrice" type="number" min="0" step="1" class="input-field pl-7" />
               </div>
             </div>

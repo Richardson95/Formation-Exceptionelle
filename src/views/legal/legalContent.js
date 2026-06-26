@@ -49,7 +49,7 @@ export const LEGAL_DOCS = {
       {
         heading: 'Payments, Refunds, and Pricing',
         body: [
-          'Paid courses are billed in US Dollars (USD) unless otherwise stated. Job-related compensation figures are displayed for informational purposes only.',
+          'Paid courses are billed in Nigerian Naira (₦) unless otherwise stated. Job-related compensation figures are displayed for informational purposes only.',
           'Where applicable, we offer a 30-day refund window on eligible paid courses, subject to our refund policy. Promotional prices are time-limited and may change without notice.',
           'You authorize us and our payment processors to charge your selected payment method for any purchases you make.',
         ],
