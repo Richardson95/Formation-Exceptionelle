@@ -29,14 +29,14 @@
         <div class="marquee mb-5">
           <ul class="marquee-track">
             <li v-for="(client, i) in row1" :key="'a' + i" class="client-card">
-              <span class="client-logo">
+              <span class="client-logo" :class="{ 'client-logo--img': client.logo }">
                 <img v-if="client.logo" :src="client.logo" :alt="client.name + ' logo'" class="client-logo-img" />
                 <span v-else>{{ client.short }}</span>
               </span>
               <span class="client-name">{{ client.name }}</span>
             </li>
             <li v-for="(client, i) in row1" :key="'a2' + i" class="client-card" aria-hidden="true">
-              <span class="client-logo">
+              <span class="client-logo" :class="{ 'client-logo--img': client.logo }">
                 <img v-if="client.logo" :src="client.logo" :alt="''" class="client-logo-img" />
                 <span v-else>{{ client.short }}</span>
               </span>
@@ -49,14 +49,14 @@
         <div class="marquee">
           <ul class="marquee-track marquee-track--reverse">
             <li v-for="(client, i) in row2" :key="'b' + i" class="client-card">
-              <span class="client-logo">
+              <span class="client-logo" :class="{ 'client-logo--img': client.logo }">
                 <img v-if="client.logo" :src="client.logo" :alt="client.name + ' logo'" class="client-logo-img" />
                 <span v-else>{{ client.short }}</span>
               </span>
               <span class="client-name">{{ client.name }}</span>
             </li>
             <li v-for="(client, i) in row2" :key="'b2' + i" class="client-card" aria-hidden="true">
-              <span class="client-logo">
+              <span class="client-logo" :class="{ 'client-logo--img': client.logo }">
                 <img v-if="client.logo" :src="client.logo" :alt="''" class="client-logo-img" />
                 <span v-else>{{ client.short }}</span>
               </span>
@@ -70,27 +70,40 @@
 </template>
 
 <script setup>
-// Each client shows a small monogram badge by default.
-// To use a real brand logo, drop the image in src/assets and set `logo`, e.g.
-//   import zenithLogo from '@/assets/clients/zenith.png'
-//   { name: 'Zenith Bank Plc', short: 'ZB', logo: zenithLogo },
+// Real brand logos (sourced from each company's official site).
+// Companies without a square brand mark keep an elegant monogram fallback.
+import geliasLogo from '@/assets/clients/gelias.png'
+import templarsLogo from '@/assets/clients/templars.png'
+import zenithLogo from '@/assets/clients/zenith.png'
+import buaLogo from '@/assets/clients/bua.png'
+import aelexLogo from '@/assets/clients/aelex.png'
+import rmbLogo from '@/assets/clients/rmb.png'
+import banwoLogo from '@/assets/clients/banwo.png'
+import bloomfieldLogo from '@/assets/clients/bloomfield.png'
+import cosgroveLogo from '@/assets/clients/cosgrove.png'
+import tetracoreLogo from '@/assets/clients/tetracore.png'
+import aradelLogo from '@/assets/clients/aradel.png'
+import karrenLogo from '@/assets/clients/karren.png'
+import doaLogo from '@/assets/clients/doa.png'
+import ekedcLogo from '@/assets/clients/ekedc.png'
+
 const clients = [
-  { name: 'G. Elias', short: 'GE', logo: null },
-  { name: 'Templars', short: 'TP', logo: null },
-  { name: 'Zenith Bank Plc', short: 'ZB', logo: null },
+  { name: 'G. Elias', short: 'GE', logo: geliasLogo },
+  { name: 'Templars', short: 'TP', logo: templarsLogo },
+  { name: 'Zenith Bank Plc', short: 'ZB', logo: zenithLogo },
   { name: 'Matrix', short: 'MX', logo: null },
-  { name: 'BUA Cement', short: 'BUA', logo: null },
-  { name: 'AELEX', short: 'AX', logo: null },
-  { name: 'Rand Merchant Bank', short: 'RMB', logo: null },
-  { name: 'Banwo & Ighodalo', short: 'B&I', logo: null },
-  { name: 'Bloomfield Legal Practice', short: 'BLP', logo: null },
-  { name: 'Cosgrove', short: 'CG', logo: null },
-  { name: 'Tetracore Energy Group', short: 'TEG', logo: null },
+  { name: 'BUA Cement', short: 'BUA', logo: buaLogo },
+  { name: 'AELEX', short: 'AX', logo: aelexLogo },
+  { name: 'Rand Merchant Bank', short: 'RMB', logo: rmbLogo },
+  { name: 'Banwo & Ighodalo', short: 'B&I', logo: banwoLogo },
+  { name: 'Bloomfield Legal Practice', short: 'BLP', logo: bloomfieldLogo },
+  { name: 'Cosgrove', short: 'CG', logo: cosgroveLogo },
+  { name: 'Tetracore Energy Group', short: 'TEG', logo: tetracoreLogo },
   { name: 'Aluko & Oyebode', short: 'A&O', logo: null },
-  { name: 'Aradel Holdings', short: 'AH', logo: null },
-  { name: 'Karren Walters Attorneys', short: 'KWA', logo: null },
-  { name: 'Duale, Ovia & Alex-Adedipe', short: 'DOA', logo: null },
-  { name: 'EKEDC', short: 'EK', logo: null },
+  { name: 'Aradel Holdings', short: 'AH', logo: aradelLogo },
+  { name: 'Karren Walters Attorneys', short: 'KWA', logo: karrenLogo },
+  { name: 'Duale, Ovia & Alex-Adedipe', short: 'DOA', logo: doaLogo },
+  { name: 'EKEDC', short: 'EK', logo: ekedcLogo },
 ]
 
 // Split into two rows for the dual-direction marquee
@@ -160,12 +173,19 @@ const row2 = clients.slice(mid)
   overflow: hidden;
 }
 
+/* Real brand marks sit on a clean white chip, a touch larger than monograms */
+.client-logo--img {
+  width: 2.75rem;
+  height: 2.75rem;
+  background: #ffffff;
+  border: 1px solid #ede9fe;
+  padding: 4px;
+}
+
 .client-logo-img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  background: #ffffff;
-  padding: 2px;
 }
 
 .client-name {
