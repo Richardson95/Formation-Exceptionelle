@@ -78,7 +78,7 @@ const facultyMembers = [
   { name: 'Boonyameen Babajide Lawal', role: 'Partner', title: 'Partner', org: 'Babalakin & Co', img: '/BOOYAMEEN%20LAWAL.jpeg' },
   { name: 'Stella Duru', role: 'Partner', title: 'Partner', org: 'Banwo & Ighodalo', img: '/STELLA%20DURU.jpeg' },
   { name: 'Dipo Okuribido', role: 'General Counsel', title: 'Senior Vice President & General Counsel', org: 'Verod Capital Management', img: '/DIPO%20OKURIBIDO.jpeg' },
-  { name: 'Tosin Baruwa', role: null, title: null, org: null, img: null, initials: 'TB', gradient: 'linear-gradient(135deg, #059669, #34d399)' },
+  { name: 'Tosin Baruwa', role: null, title: null, org: null, img: '/Tosin%20Baruwa.jpeg' },
   { name: 'Seyi Bella', role: 'Partner', title: 'Partner', org: 'Banwo & Ighodalo', img: '/SEYI%20BELLA.jpeg' },
   { name: 'Chinedum Umeche', role: 'Partner', title: 'Partner', org: 'Banwo & Ighodalo', img: '/CHINEDUM%20UMECHE.jpeg' },
   { name: 'Okechukwu Okoro', role: 'Partner', title: 'Partner', org: 'G. Elias', img: '/OKECHUKWU%20OKORO.jpeg' },
