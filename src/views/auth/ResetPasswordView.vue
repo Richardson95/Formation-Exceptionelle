@@ -138,7 +138,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import {
@@ -163,10 +163,14 @@ const stats = [
   { value: '98%', label: 'Satisfaction' },
 ]
 
-const check = authStore.verifyResetToken(token)
-const tokenValid = computed(() => check.valid)
+// Token validity is resolved on mount (async in API mode, instant in mock mode).
+const check = ref({ valid: true, reason: '' })
+onMounted(async () => {
+  check.value = await authStore.verifyResetToken(token)
+})
+const tokenValid = computed(() => check.value.valid)
 const tokenError = computed(() =>
-  check.reason === 'expired'
+  check.value.reason === 'expired'
     ? 'This reset link has expired. Please request a new one.'
     : 'This reset link is invalid or has already been used. Please request a new one.'
 )

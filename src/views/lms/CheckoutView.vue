@@ -151,11 +151,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import { useAuthStore } from '@/stores/auth'
 import { useLMSStore } from '@/stores/lms'
+import { API_ENABLED, post } from '@/services/api'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import { CreditCardIcon, LockClosedIcon, ShieldCheckIcon, CheckCircleIcon } from '@heroicons/vue/24/outline'
@@ -165,6 +166,7 @@ const cartStore = useCartStore()
 const authStore = useAuthStore()
 const lmsStore = useLMSStore()
 const router = useRouter()
+const route = useRoute()
 
 const billing = ref({ firstName: authStore.user?.firstName, lastName: authStore.user?.lastName, email: authStore.user?.email, country: 'Nigeria' })
 const card = ref({ number: '', expiry: '', cvv: '', name: authStore.fullName })
@@ -184,15 +186,66 @@ function formatCard() {
 
 async function processPayment() {
   processing.value = true
-  await new Promise(r => setTimeout(r, 2000))
+  try {
+    if (API_ENABLED) {
+      const init = await post('/payments/initialize', {
+        items: cartStore.items.map(i => i.id),
+        paymentMethod: selectedMethod.value,
+        billing: {
+          firstName: billing.value.firstName,
+          lastName: billing.value.lastName,
+          email: billing.value.email,
+          country: billing.value.country,
+        },
+      })
 
-  // Enroll in all cart courses
-  for (const item of cartStore.items) {
-    await lmsStore.enrollCourse(authStore.user.id, item.id)
+      if (init.provider === 'paystack' && init.authorizationUrl) {
+        // Remember what we're paying for so the return trip can verify + clear.
+        localStorage.setItem('fe_pending_checkout', JSON.stringify({ reference: init.reference }))
+        window.location.href = init.authorizationUrl
+        return
+      }
+
+      // Mock provider: no real gateway — verify immediately.
+      await finalizeOrder(init.reference)
+      return
+    }
+
+    // Frontend-only mock: simulate a gateway then enroll locally.
+    await new Promise(r => setTimeout(r, 2000))
+    for (const item of cartStore.items) {
+      await lmsStore.enrollCourse(authStore.user.id, item.id)
+    }
+    cartStore.clearCart()
+    orderComplete.value = true
+  } catch (err) {
+    toast.error(err.message || 'Payment could not be completed')
+  } finally {
+    processing.value = false
   }
+}
 
+// Verify a (real or mock) payment by reference, then enroll + show success.
+async function finalizeOrder(reference) {
+  await post('/payments/verify', { reference })
+  localStorage.removeItem('fe_pending_checkout')
   cartStore.clearCart()
-  processing.value = false
+  await lmsStore.fetchMyLearning(authStore.user?.id)
   orderComplete.value = true
 }
+
+// Handle the redirect back from Paystack (?reference= / ?trxref=).
+onMounted(async () => {
+  const reference = route.query.reference || route.query.trxref
+  if (API_ENABLED && reference) {
+    processing.value = true
+    try {
+      await finalizeOrder(String(reference))
+    } catch (err) {
+      toast.error(err.message || 'We could not verify your payment. Please contact support.')
+    } finally {
+      processing.value = false
+    }
+  }
+})
 </script>

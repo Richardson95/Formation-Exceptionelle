@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { toast } from 'vue3-toastify'
+import { API_ENABLED, post, get, patch } from '@/services/api'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(JSON.parse(localStorage.getItem('fe_user') || 'null'))
@@ -40,19 +41,29 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('fe_users', JSON.stringify(mockUsers.value))
   }
 
+  function persistSession(safeUser, jwt) {
+    user.value = safeUser
+    token.value = jwt
+    localStorage.setItem('fe_user', JSON.stringify(safeUser))
+    localStorage.setItem('fe_token', jwt)
+  }
+
   async function login(email, password) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        const { user: safeUser, token: jwt } = await post('/auth/login', { email, password })
+        persistSession(safeUser, jwt)
+        toast.success(`Welcome back, ${safeUser.firstName}!`)
+        return safeUser
+      }
+
       await new Promise(resolve => setTimeout(resolve, 800)) // Simulate API delay
       const foundUser = mockUsers.value.find(u => u.email === email && u.password === password)
       if (!foundUser) throw new Error('Invalid email or password')
 
       const { password: _, ...safeUser } = foundUser
-      user.value = safeUser
-      token.value = `fe-token-${foundUser.id}-${Date.now()}`
-
-      localStorage.setItem('fe_user', JSON.stringify(safeUser))
-      localStorage.setItem('fe_token', token.value)
+      persistSession(safeUser, `fe-token-${foundUser.id}-${Date.now()}`)
 
       toast.success(`Welcome back, ${safeUser.firstName}!`)
       return safeUser
@@ -67,6 +78,20 @@ export const useAuthStore = defineStore('auth', () => {
   async function register(data) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        const { user: safeUser, token: jwt } = await post('/auth/register', {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          password: data.password,
+          phone: data.phone || '',
+          profession: data.profession || '',
+        })
+        persistSession(safeUser, jwt)
+        toast.success(`Welcome to Formation Exceptionelle, ${safeUser.firstName}!`)
+        return safeUser
+      }
+
       await new Promise(resolve => setTimeout(resolve, 900))
 
       if (mockUsers.value.find(u => u.email === data.email)) {
@@ -120,6 +145,14 @@ export const useAuthStore = defineStore('auth', () => {
   async function updateProfile(data) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        const { user: updated } = await patch('/auth/me', data)
+        user.value = updated
+        localStorage.setItem('fe_user', JSON.stringify(updated))
+        toast.success('Profile updated successfully')
+        return updated
+      }
+
       await new Promise(resolve => setTimeout(resolve, 600))
       const updated = { ...user.value, ...data }
       user.value = updated
@@ -145,6 +178,14 @@ export const useAuthStore = defineStore('auth', () => {
   async function becomeInstructor(applicationData) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        const { user: updated } = await post('/auth/become-instructor', applicationData)
+        user.value = updated
+        localStorage.setItem('fe_user', JSON.stringify(updated))
+        toast.success('Congratulations! You are now an instructor.')
+        return updated
+      }
+
       await new Promise(resolve => setTimeout(resolve, 1000))
       const updated = { ...user.value, role: 'instructor', instructorData: applicationData }
       user.value = updated
@@ -177,6 +218,13 @@ export const useAuthStore = defineStore('auth', () => {
   async function forgotPassword(email) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        await post('/auth/forgot-password', { email })
+        toast.success('If an account exists for that email, a reset link has been sent.')
+        // Real backend emails the link; no token is returned to the client.
+        return { token: null }
+      }
+
       await new Promise(resolve => setTimeout(resolve, 800))
       const foundUser = mockUsers.value.find(u => u.email === email)
 
@@ -203,7 +251,16 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function verifyResetToken(token) {
+  // Async so it works both against the backend and the local mock. Callers
+  // should `await` it (see ResetPasswordView).
+  async function verifyResetToken(token) {
+    if (API_ENABLED) {
+      try {
+        return await get('/auth/verify-reset-token', { params: { token } })
+      } catch {
+        return { valid: false, reason: 'invalid' }
+      }
+    }
     const entry = resetTokens.value[token]
     if (!entry) return { valid: false, reason: 'invalid' }
     if (Date.now() > entry.expiresAt) return { valid: false, reason: 'expired' }
@@ -213,8 +270,14 @@ export const useAuthStore = defineStore('auth', () => {
   async function resetPassword(token, newPassword) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        await post('/auth/reset-password', { token, password: newPassword })
+        toast.success('Password reset successfully. You can now sign in.')
+        return true
+      }
+
       await new Promise(resolve => setTimeout(resolve, 800))
-      const check = verifyResetToken(token)
+      const check = await verifyResetToken(token)
       if (!check.valid) {
         throw new Error(check.reason === 'expired'
           ? 'This reset link has expired. Please request a new one.'

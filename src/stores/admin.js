@@ -3,12 +3,27 @@ import { ref, computed } from 'vue'
 import { useAuthStore } from './auth'
 import { useLMSStore } from './lms'
 import { useJobsStore } from './jobs'
+import { API_ENABLED, get } from '@/services/api'
 
 export const useAdminStore = defineStore('admin', () => {
   const sidebarOpen = ref(true)
   const activeSection = ref('dashboard')
 
-  const stats = computed(() => {
+  // In API mode, the dashboard figures come from the backend (server-authoritative).
+  const apiStats = ref(null)
+  async function fetchStats() {
+    if (!API_ENABLED) return
+    try {
+      const [s, analytics] = await Promise.all([
+        get('/admin/stats'),
+        get('/admin/analytics').catch(() => ({})),
+      ])
+      apiStats.value = { ...s, ...analytics }
+    } catch { /* leave previous */ }
+  }
+  if (API_ENABLED) fetchStats()
+
+  const computedStats = computed(() => {
     const authStore = useAuthStore()
     const lmsStore = useLMSStore()
     const jobsStore = useJobsStore()
@@ -70,7 +85,7 @@ export const useAdminStore = defineStore('admin', () => {
   function generateRecentActivity() {
     return [
       { id: 1, type: 'enrollment', message: 'New participant enrolled in Company Secretarial Practice', time: '2 minutes ago', icon: 'book' },
-      { id: 2, type: 'job', message: 'New job posted: Corporate / Commercial Lawyer at Adebayo & Okonkwo LP', time: '15 minutes ago', icon: 'briefcase' },
+      { id: 2, type: 'job', message: 'New job posted: Corporate / Commercial Lawyer', time: '15 minutes ago', icon: 'briefcase' },
       { id: 3, type: 'application', message: 'Application received for Legal & Compliance Intern position', time: '32 minutes ago', icon: 'document' },
       { id: 4, type: 'payment', message: 'Payment of ₦30,000 received for Capital Market course', time: '1 hour ago', icon: 'currency' },
       { id: 5, type: 'user', message: 'New faculty registered: Dr. Ngozi Eze', time: '2 hours ago', icon: 'user' },
@@ -79,7 +94,10 @@ export const useAdminStore = defineStore('admin', () => {
     ]
   }
 
+  // Prefer the backend stats when available; fall back to the local computation.
+  const stats = computed(() => (API_ENABLED && apiStats.value ? apiStats.value : computedStats.value))
+
   return {
-    sidebarOpen, activeSection, stats,
+    sidebarOpen, activeSection, stats, fetchStats,
   }
 })

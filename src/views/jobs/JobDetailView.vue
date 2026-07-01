@@ -127,8 +127,8 @@
                 <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center font-bold text-purple-700 text-lg mb-3">
                   {{ job.company[0] }}
                 </div>
-                <p class="text-gray-600 text-sm mb-3">{{ job.company }} is a leading company in the {{ job.category }} sector, committed to innovation and excellence.</p>
-                <a href="#" class="text-purple-700 text-sm font-semibold hover:underline">View all jobs at {{ job.company }}</a>
+                <p class="text-gray-600 text-sm mb-3">Formation Exceptionelle is your partner in career development, building exceptional teams across legal, finance, governance and compliance.</p>
+                <RouterLink to="/jobs" class="text-purple-700 text-sm font-semibold hover:underline">View all our openings</RouterLink>
               </div>
 
               <!-- Similar Jobs -->

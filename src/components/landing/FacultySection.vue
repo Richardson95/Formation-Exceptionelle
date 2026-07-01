@@ -69,7 +69,7 @@
 // file in /public and set `img` to show their headshot.
 const facultyMembers = [
   { name: 'Funmilayo Otsemobor', role: 'Partner', title: 'Partner', org: 'Aluko & Oyebode', img: '/FUNMILAYO%20OTSEMOBOR.jpeg' },
-  { name: 'Dr. Ayodele Oni', role: 'Partner', title: 'Partner', org: 'Bloomfield Law Practice', img: null, initials: 'AO', gradient: 'linear-gradient(135deg, #7c3aed, #a78bfa)' },
+  { name: 'Dr. Ayodele Oni', role: 'Partner', title: 'Partner', org: 'Bloomfield Law Practice', img: '/DR.%20AYODELE%20ONI.jpeg' },
   { name: 'Desmond Ogba', role: 'Partner', title: 'Partner', org: 'Templars Law', img: '/DESMOND%20OGBA.jpeg' },
   { name: 'Adedoyin Afun', role: 'Partner', title: 'Partner', org: 'Bloomfield Law Practice', img: '/ADEDOYIN%20AFUN.jpeg' },
   { name: 'Dipo Akinbode', role: 'General Counsel', title: 'Group Deputy, General Counsel', org: 'Aradel Holdings Plc', img: null, initials: 'DA', gradient: 'linear-gradient(135deg, #d97706, #fbbf24)' },
@@ -78,7 +78,7 @@ const facultyMembers = [
   { name: 'Boonyameen Babajide Lawal', role: 'Partner', title: 'Partner', org: 'Babalakin & Co', img: '/BOOYAMEEN%20LAWAL.jpeg' },
   { name: 'Stella Duru', role: 'Partner', title: 'Partner', org: 'Banwo & Ighodalo', img: '/STELLA%20DURU.jpeg' },
   { name: 'Dipo Okuribido', role: 'General Counsel', title: 'Senior Vice President & General Counsel', org: 'Verod Capital Management', img: '/DIPO%20OKURIBIDO.jpeg' },
-  { name: 'Tosin Baruwa', role: null, title: null, org: null, img: '/Tosin%20Baruwa.jpeg' },
+  { name: 'Tosin Baruwa', role: 'Head, Control & Governance Unit', title: 'Head, Control & Governance Unit, Integrated Middle Office', org: 'Standard Chartered Bank', img: '/Tosin%20Baruwa.jpeg' },
   { name: 'Seyi Bella', role: 'Partner', title: 'Partner', org: 'Banwo & Ighodalo', img: '/SEYI%20BELLA.jpeg' },
   { name: 'Chinedum Umeche', role: 'Partner', title: 'Partner', org: 'Banwo & Ighodalo', img: '/CHINEDUM%20UMECHE.jpeg' },
   { name: 'Okechukwu Okoro', role: 'Partner', title: 'Partner', org: 'G. Elias', img: '/OKECHUKWU%20OKORO.jpeg' },

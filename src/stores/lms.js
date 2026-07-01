@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { toast } from 'vue3-toastify'
+import { API_ENABLED, get, post, patch, del } from '@/services/api'
+import { useAuthStore } from '@/stores/auth'
 
 // Mock course data — professional corporate, legal & finance training programs
 const MOCK_COURSES = [
@@ -476,6 +478,56 @@ export const useLMSStore = defineStore('lms', () => {
   const categories = ['All', 'Corporate Law', 'Finance & Capital Markets', 'Mergers & Acquisitions', 'Corporate Governance', 'Taxation', 'Energy & ESG', 'Dispute Resolution']
   const levels = ['All', 'Beginner', 'Intermediate', 'Advanced', 'All Levels']
 
+  // ── Backend sync (active only when VITE_API_BASE_URL is set) ───────────────
+  // Loads the live catalog + the signed-in user's enrollments/progress so the
+  // existing synchronous getters keep working against real data.
+  async function fetchCourses() {
+    if (!API_ENABLED) return
+    try {
+      const data = await get('/courses')
+      courses.value = Array.isArray(data) ? data : (data.data || [])
+    } catch { /* keep cached catalog on failure */ }
+  }
+
+  async function fetchMyLearning(userId) {
+    if (!API_ENABLED || !userId) return
+    try {
+      const mine = await get('/enrollments/me') // [{ ...course, enrolledAt, progress }]
+      enrollments.value = mine.map((c) => ({ userId, courseId: c.id, enrolledAt: c.enrolledAt }))
+      const map = {}
+      mine.forEach((c) => {
+        map[`${userId}-${c.id}`] = c.progress || { completedLectures: [], percentage: 0 }
+        if (!courses.value.some((x) => x.id === c.id)) courses.value.push(c)
+      })
+      progress.value = map
+    } catch { /* ignore */ }
+  }
+
+  async function fetchCourseReviews(courseId) {
+    if (!API_ENABLED) return getCourseReviews(courseId)
+    try {
+      const data = await get(`/courses/${courseId}/reviews`)
+      reviews.value = [...reviews.value.filter((r) => r.courseId !== courseId), ...data]
+      return data
+    } catch {
+      return getCourseReviews(courseId)
+    }
+  }
+
+  if (API_ENABLED) {
+    fetchCourses()
+    // Re-sync the learner's data whenever they sign in/out.
+    const authStore = useAuthStore()
+    watch(
+      () => authStore.user?.id,
+      (id) => {
+        if (id) fetchMyLearning(id)
+        else { enrollments.value = []; progress.value = {} }
+      },
+      { immediate: true }
+    )
+  }
+
   // A course is publicly visible only once an admin has approved it (status
   // 'published'). Courses created before this field existed are treated as published.
   const isPublic = (c) => (c.status || 'published') === 'published'
@@ -542,6 +594,14 @@ export const useLMSStore = defineStore('lms', () => {
   async function enrollCourse(userId, courseId) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        if (!isEnrolled(userId, courseId)) {
+          await post('/enrollments', { courseId })
+          enrollments.value.push({ userId, courseId, enrolledAt: new Date().toISOString() })
+          toast.success('Successfully enrolled in course!')
+        }
+        return
+      }
       await new Promise(r => setTimeout(r, 600))
       if (!isEnrolled(userId, courseId)) {
         enrollments.value.push({ userId, courseId, enrolledAt: new Date().toISOString() })
@@ -549,13 +609,27 @@ export const useLMSStore = defineStore('lms', () => {
         toast.success('Successfully enrolled in course!')
       }
     } catch (err) {
-      toast.error('Enrollment failed')
+      toast.error(err.message || 'Enrollment failed')
     } finally {
       loading.value = false
     }
   }
 
-  function markLectureComplete(userId, courseId, lectureId) {
+  async function markLectureComplete(userId, courseId, lectureId) {
+    if (API_ENABLED) {
+      try {
+        const result = await post('/progress/complete', { courseId, lectureId })
+        const wasComplete = progress.value[`${userId}-${courseId}`]?.completedAt
+        progress.value = { ...progress.value, [`${userId}-${courseId}`]: result }
+        if (result.completedAt && !wasComplete) {
+          toast.success('Congratulations! You completed this course!')
+        }
+      } catch (err) {
+        toast.error(err.message || 'Could not save progress')
+      }
+      return
+    }
+
     const key = `${userId}-${courseId}`
     if (!progress.value[key]) progress.value[key] = { completedLectures: [], percentage: 0 }
 
@@ -584,6 +658,12 @@ export const useLMSStore = defineStore('lms', () => {
   async function addCourse(courseData, instructorId) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        const created = await post('/courses', courseData)
+        courses.value.push(created)
+        toast.success('Course submitted for review! An admin will approve it shortly.')
+        return created
+      }
       await new Promise(r => setTimeout(r, 800))
       const newCourse = {
         id: `c${Date.now()}`,
@@ -614,6 +694,13 @@ export const useLMSStore = defineStore('lms', () => {
   async function updateCourse(courseId, data) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        const updated = await patch(`/courses/${courseId}`, data)
+        const i = courses.value.findIndex(c => c.id === courseId)
+        if (i !== -1) courses.value[i] = updated
+        toast.success('Course updated successfully!')
+        return
+      }
       await new Promise(r => setTimeout(r, 600))
       const idx = courses.value.findIndex(c => c.id === courseId)
       if (idx !== -1) {
@@ -622,7 +709,7 @@ export const useLMSStore = defineStore('lms', () => {
         toast.success('Course updated successfully!')
       }
     } catch (err) {
-      toast.error('Failed to update course')
+      toast.error(err.message || 'Failed to update course')
     } finally {
       loading.value = false
     }
@@ -631,12 +718,18 @@ export const useLMSStore = defineStore('lms', () => {
   async function deleteCourse(courseId) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        await del(`/courses/${courseId}`)
+        courses.value = courses.value.filter(c => c.id !== courseId)
+        toast.success('Course removed successfully')
+        return
+      }
       await new Promise(r => setTimeout(r, 400))
       courses.value = courses.value.filter(c => c.id !== courseId)
       localStorage.setItem('fe_courses', JSON.stringify(courses.value))
       toast.success('Course removed successfully')
     } catch (err) {
-      toast.error('Failed to remove course')
+      toast.error(err.message || 'Failed to remove course')
     } finally {
       loading.value = false
     }
@@ -646,6 +739,13 @@ export const useLMSStore = defineStore('lms', () => {
   async function approveCourse(courseId) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        const updated = await post(`/admin/courses/${courseId}/approve`)
+        const i = courses.value.findIndex(c => c.id === courseId)
+        if (i !== -1) courses.value[i] = updated
+        toast.success('Course approved and published!')
+        return
+      }
       await new Promise(r => setTimeout(r, 400))
       const idx = courses.value.findIndex(c => c.id === courseId)
       if (idx !== -1) {
@@ -654,7 +754,7 @@ export const useLMSStore = defineStore('lms', () => {
         toast.success('Course approved and published!')
       }
     } catch (err) {
-      toast.error('Failed to approve course')
+      toast.error(err.message || 'Failed to approve course')
     } finally {
       loading.value = false
     }
@@ -664,6 +764,13 @@ export const useLMSStore = defineStore('lms', () => {
   async function rejectCourse(courseId, reason = '') {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        const updated = await post(`/admin/courses/${courseId}/reject`, { reason })
+        const i = courses.value.findIndex(c => c.id === courseId)
+        if (i !== -1) courses.value[i] = updated
+        toast.info('Course rejected. The instructor has been notified.')
+        return
+      }
       await new Promise(r => setTimeout(r, 400))
       const idx = courses.value.findIndex(c => c.id === courseId)
       if (idx !== -1) {
@@ -672,13 +779,30 @@ export const useLMSStore = defineStore('lms', () => {
         toast.info('Course rejected. The instructor has been notified.')
       }
     } catch (err) {
-      toast.error('Failed to reject course')
+      toast.error(err.message || 'Failed to reject course')
     } finally {
       loading.value = false
     }
   }
 
-  function addReview(userId, courseId, rating, comment, userName) {
+  async function addReview(userId, courseId, rating, comment, userName) {
+    if (API_ENABLED) {
+      try {
+        const review = await post(`/courses/${courseId}/reviews`, { rating, comment })
+        reviews.value.push(review)
+        // Refresh the course so its new rating/reviewCount reflect immediately.
+        try {
+          const fresh = await get(`/courses/${courseId}`)
+          const i = courses.value.findIndex(c => c.id === courseId)
+          if (i !== -1) courses.value[i] = fresh
+        } catch { /* non-fatal */ }
+        toast.success('Review submitted!')
+      } catch (err) {
+        toast.error(err.message || 'Failed to submit review')
+      }
+      return
+    }
+
     const review = {
       id: `r${Date.now()}`,
       userId, courseId, rating, comment, userName,
@@ -726,6 +850,7 @@ export const useLMSStore = defineStore('lms', () => {
     getCourseById, isEnrolled, getEnrolledCourses, getProgress,
     enrollCourse, markLectureComplete, addCourse, updateCourse, deleteCourse,
     approveCourse, rejectCourse, addReview,
-    getCourseReviews, getInstructorCourses
+    getCourseReviews, getInstructorCourses,
+    fetchCourses, fetchMyLearning, fetchCourseReviews
   }
 })

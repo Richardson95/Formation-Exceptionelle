@@ -90,7 +90,7 @@
                 </h3>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Why are you the right candidate? *</label>
-                  <textarea v-model="form.coverLetter" rows="6" placeholder="Tell the employer why you're the perfect fit for this role. Mention your relevant experience, skills, and what excites you about this opportunity..." class="input-field resize-none" required></textarea>
+                  <textarea v-model="form.coverLetter" rows="6" placeholder="Tell us why you're the perfect fit for this role. Mention your relevant experience, skills, and what excites you about joining Formation Exceptionelle..." class="input-field resize-none" required></textarea>
                   <p class="text-xs text-gray-400 mt-1">{{ form.coverLetter.length }} characters</p>
                 </div>
               </div>
@@ -178,12 +178,16 @@ const form = ref({
   experience: '1-2 years',
   coverLetter: '',
   cvName: '',
+  cvFile: null,
   agree: false,
 })
 
 function handleCV(e) {
   const file = e.target.files[0]
-  if (file) form.value.cvName = file.name
+  if (file) {
+    form.value.cvName = file.name
+    form.value.cvFile = file
+  }
 }
 
 async function submitApplication() {
@@ -196,6 +200,7 @@ async function submitApplication() {
     linkedin: form.value.linkedin,
     portfolio: form.value.portfolio,
     cvName: form.value.cvName,
+    cvFile: form.value.cvFile,
   })
   submitted.value = true
 }

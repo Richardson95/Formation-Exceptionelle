@@ -327,7 +327,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useLMSStore } from '@/stores/lms'
 import { useAuthStore } from '@/stores/auth'
@@ -412,6 +412,11 @@ function getRatingWidth(star) {
   const count = courseReviews.value.filter(r => r.rating === star).length
   return Math.round((count / total) * 100) + '%'
 }
+
+onMounted(() => {
+  // Load this course's reviews from the backend (no-op in mock mode).
+  lmsStore.fetchCourseReviews(route.params.id)
+})
 
 function submitReview() {
   lmsStore.addReview(

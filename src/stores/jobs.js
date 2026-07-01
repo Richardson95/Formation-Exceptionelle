@@ -1,12 +1,14 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { toast } from 'vue3-toastify'
+import { API_ENABLED, api, get, post, patch, del } from '@/services/api'
+import { useAuthStore } from '@/stores/auth'
 
 const MOCK_JOBS = [
   {
     id: 'j001',
     title: 'Corporate / Commercial Lawyer',
-    company: 'Adebayo & Okonkwo LP',
+    company: 'Formation Exceptionelle',
     companyLogo: null,
     location: 'Lagos, Nigeria',
     locationType: 'On-site',
@@ -15,7 +17,7 @@ const MOCK_JOBS = [
     salary: { min: 450000, max: 750000, currency: 'NGN', period: 'monthly' },
     experience: '3-5 years',
     level: 'Senior',
-    description: 'A leading commercial law firm seeks an experienced Corporate/Commercial Lawyer to advise clients on transactions, financing, mergers and acquisitions, and regulatory compliance.',
+    description: 'Formation Exceptionelle seeks an experienced Corporate/Commercial Lawyer to advise on transactions, financing, mergers and acquisitions, and regulatory compliance.',
     responsibilities: [
       'Advise clients on corporate and commercial transactions',
       'Draft, review and negotiate agreements',
@@ -43,7 +45,7 @@ const MOCK_JOBS = [
   {
     id: 'j002',
     title: 'Legal & Compliance Intern',
-    company: 'Meridian Capital Partners',
+    company: 'Formation Exceptionelle',
     companyLogo: null,
     location: 'Abuja, Nigeria',
     locationType: 'Hybrid',
@@ -52,7 +54,7 @@ const MOCK_JOBS = [
     salary: { min: 120000, max: 180000, currency: 'NGN', period: 'monthly' },
     experience: '0-1 year',
     level: 'Entry',
-    description: 'Join Meridian Capital Partners as a Legal & Compliance Intern and gain hands-on experience in regulatory compliance, governance and risk within a fast-paced financial services firm.',
+    description: 'Join Formation Exceptionelle as a Legal & Compliance Intern and gain hands-on experience in regulatory compliance, governance and risk within a fast-paced professional environment.',
     responsibilities: [
       'Assist with compliance monitoring and reporting',
       'Support the review of policies and procedures',
@@ -78,7 +80,7 @@ const MOCK_JOBS = [
   {
     id: 'j003',
     title: 'Company Secretary / Governance Officer',
-    company: 'Sterling Holdings Plc',
+    company: 'Formation Exceptionelle',
     companyLogo: null,
     location: 'Lagos, Nigeria',
     locationType: 'On-site',
@@ -87,7 +89,7 @@ const MOCK_JOBS = [
     salary: { min: 400000, max: 650000, currency: 'NGN', period: 'monthly' },
     experience: '4-6 years',
     level: 'Senior',
-    description: 'Sterling Holdings Plc seeks a Company Secretary/Governance Officer to administer the board, ensure statutory compliance and advise on corporate governance best practice.',
+    description: 'Formation Exceptionelle seeks a Company Secretary/Governance Officer to administer the board, ensure statutory compliance and advise on corporate governance best practice.',
     responsibilities: [
       'Administer board and committee meetings and minutes',
       'Maintain statutory registers and manage filings',
@@ -114,7 +116,7 @@ const MOCK_JOBS = [
   {
     id: 'j004',
     title: 'Tax Manager',
-    company: 'Harcourt Advisory',
+    company: 'Formation Exceptionelle',
     companyLogo: null,
     location: 'Lagos, Nigeria',
     locationType: 'Hybrid',
@@ -123,7 +125,7 @@ const MOCK_JOBS = [
     salary: { min: 500000, max: 850000, currency: 'NGN', period: 'monthly' },
     experience: '5-8 years',
     level: 'Manager',
-    description: 'Harcourt Advisory is hiring a Tax Manager to lead tax advisory and compliance engagements, advise clients on the new tax laws and develop tax-efficient strategies.',
+    description: 'Formation Exceptionelle is hiring a Tax Manager to lead tax advisory and compliance engagements, advise clients on the new tax laws and develop tax-efficient strategies.',
     responsibilities: [
       'Lead tax compliance and advisory engagements',
       'Advise clients on the implications of new tax laws',
@@ -150,7 +152,7 @@ const MOCK_JOBS = [
   {
     id: 'j005',
     title: 'Investment / Capital Markets Analyst Intern',
-    company: 'Apex Securities Limited',
+    company: 'Formation Exceptionelle',
     companyLogo: null,
     location: 'Port Harcourt, Nigeria',
     locationType: 'Hybrid',
@@ -159,7 +161,7 @@ const MOCK_JOBS = [
     salary: { min: 100000, max: 160000, currency: 'NGN', period: 'monthly' },
     experience: '0 years',
     level: 'Entry',
-    description: 'An exciting opportunity for finance graduates to gain hands-on experience in capital markets, investment analysis and corporate financing at a leading securities firm.',
+    description: 'An exciting opportunity for finance graduates to gain hands-on experience in capital markets, investment analysis and corporate financing at Formation Exceptionelle.',
     responsibilities: [
       'Support investment research and financial analysis',
       'Assist with capital raising and transaction documentation',
@@ -187,7 +189,7 @@ const MOCK_JOBS = [
 // Re-seed cached jobs when the listings change (bump this on content updates).
 // Seeded jobs are 'approved' & active; employer-posted jobs start 'pending' and
 // must be approved by an admin before they appear publicly.
-const JOBS_SEED_VERSION = '2026-06-professional-jobs-v2'
+const JOBS_SEED_VERSION = '2026-06-fe-first-party-jobs-v3'
 if (localStorage.getItem('fe_jobs_version') !== JOBS_SEED_VERSION) {
   localStorage.setItem('fe_jobs', JSON.stringify(MOCK_JOBS.map(j => ({ ...j, status: 'approved' }))))
   localStorage.setItem('fe_jobs_version', JOBS_SEED_VERSION)
@@ -206,6 +208,49 @@ export const useJobsStore = defineStore('jobs', () => {
   const types = ['All', 'Full-time', 'Part-time', 'Internship', 'Contract', 'Freelance']
   const categories = ['All', 'Legal', 'Finance', 'Compliance & Risk', 'Corporate Governance', 'Tax', 'Energy & Resources', 'Consulting']
   const locationTypes = ['All', 'Remote', 'On-site', 'Hybrid']
+
+  // ── Backend sync (active only when VITE_API_BASE_URL is set) ───────────────
+  function mergeJobs(incoming) {
+    const byId = new Map(jobs.value.map((j) => [j.id, j]))
+    incoming.forEach((j) => byId.set(j.id, j))
+    jobs.value = [...byId.values()]
+  }
+  function mergeApplications(incoming) {
+    const byId = new Map(applications.value.map((a) => [a.id, a]))
+    incoming.forEach((a) => byId.set(a.id, a))
+    applications.value = [...byId.values()]
+  }
+
+  async function fetchJobs() {
+    if (!API_ENABLED) return
+    try {
+      const data = await get('/jobs')
+      jobs.value = Array.isArray(data) ? data : (data.data || [])
+    } catch { /* keep cached */ }
+  }
+
+  async function fetchMine() {
+    if (!API_ENABLED || !useAuthStore().user?.id) return
+    try {
+      const [mineJobs, myApps, postedApps] = await Promise.all([
+        get('/jobs/mine').catch(() => []),
+        get('/applications/me').catch(() => []),
+        get('/applications/posted-by-me').catch(() => []),
+      ])
+      if (mineJobs.length) mergeJobs(mineJobs)
+      mergeApplications([...myApps, ...postedApps])
+    } catch { /* ignore */ }
+  }
+
+  if (API_ENABLED) {
+    fetchJobs()
+    const authStore = useAuthStore()
+    watch(
+      () => authStore.user?.id,
+      (id) => { if (id) fetchMine(); else applications.value = [] },
+      { immediate: true }
+    )
+  }
 
   const filteredJobs = computed(() => {
     let result = jobs.value.filter(j => j.isActive)
@@ -276,6 +321,14 @@ export const useJobsStore = defineStore('jobs', () => {
   async function updateApplicationStatus(applicationId, status) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        const updated = await patch(`/applications/${applicationId}/status`, { status })
+        const i = applications.value.findIndex(a => a.id === applicationId)
+        if (i !== -1) applications.value[i] = { ...applications.value[i], ...updated }
+        const labels = { reviewed: 'marked as reviewed', shortlisted: 'shortlisted', accepted: 'accepted', rejected: 'rejected', pending: 'reset to pending' }
+        toast.success(`Candidate ${labels[status] || ('set to ' + status)}`)
+        return
+      }
       await new Promise(r => setTimeout(r, 300))
       const idx = applications.value.findIndex(a => a.id === applicationId)
       if (idx !== -1) {
@@ -294,12 +347,29 @@ export const useJobsStore = defineStore('jobs', () => {
   async function applyForJob(userId, jobId, applicationData) {
     loading.value = true
     try {
-      await new Promise(r => setTimeout(r, 900))
-
       if (hasApplied(userId, jobId)) {
         toast.info('You have already applied for this job')
         return
       }
+
+      if (API_ENABLED) {
+        const { cvFile, ...fields } = applicationData
+        const fd = new FormData()
+        fd.append('jobId', jobId)
+        Object.entries(fields).forEach(([k, v]) => {
+          if (v !== undefined && v !== null) fd.append(k, v)
+        })
+        if (cvFile) fd.append('cv', cvFile)
+        // Let the browser set the multipart boundary.
+        const created = (await api.post('/applications', fd, { headers: { 'Content-Type': undefined } })).data
+        applications.value.push(created)
+        const j = jobs.value.findIndex(x => x.id === jobId)
+        if (j !== -1) jobs.value[j] = { ...jobs.value[j], applications: (jobs.value[j].applications || 0) + 1 }
+        toast.success('Application submitted successfully!')
+        return created
+      }
+
+      await new Promise(r => setTimeout(r, 900))
 
       const application = {
         id: `app-${Date.now()}`,
@@ -333,6 +403,12 @@ export const useJobsStore = defineStore('jobs', () => {
   async function postJob(data, userId) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        const created = await post('/jobs', data)
+        jobs.value.push(created)
+        toast.success(created.isActive ? 'Job published successfully!' : 'Job submitted for review!')
+        return created
+      }
       await new Promise(r => setTimeout(r, 700))
 
       const job = {
@@ -364,6 +440,13 @@ export const useJobsStore = defineStore('jobs', () => {
   async function updateJob(jobId, data) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        const updated = await patch(`/jobs/${jobId}`, data)
+        const i = jobs.value.findIndex(j => j.id === jobId)
+        if (i !== -1) jobs.value[i] = updated
+        toast.success('Job updated successfully!')
+        return
+      }
       await new Promise(r => setTimeout(r, 400))
       const idx = jobs.value.findIndex(j => j.id === jobId)
       if (idx !== -1) {
@@ -372,7 +455,7 @@ export const useJobsStore = defineStore('jobs', () => {
         toast.success('Job updated successfully!')
       }
     } catch (err) {
-      toast.error('Failed to update job')
+      toast.error(err.message || 'Failed to update job')
     } finally {
       loading.value = false
     }
@@ -381,12 +464,18 @@ export const useJobsStore = defineStore('jobs', () => {
   async function deleteJob(jobId) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        await del(`/jobs/${jobId}`)
+        jobs.value = jobs.value.filter(j => j.id !== jobId)
+        toast.success('Job removed successfully')
+        return
+      }
       await new Promise(r => setTimeout(r, 400))
       jobs.value = jobs.value.filter(j => j.id !== jobId)
       localStorage.setItem('fe_jobs', JSON.stringify(jobs.value))
       toast.success('Job removed successfully')
     } catch (err) {
-      toast.error('Failed to remove job')
+      toast.error(err.message || 'Failed to remove job')
     } finally {
       loading.value = false
     }
@@ -396,6 +485,13 @@ export const useJobsStore = defineStore('jobs', () => {
   async function approveJob(jobId) {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        const updated = await post(`/admin/jobs/${jobId}/approve`)
+        const i = jobs.value.findIndex(j => j.id === jobId)
+        if (i !== -1) jobs.value[i] = updated
+        toast.success('Job approved and published!')
+        return
+      }
       await new Promise(r => setTimeout(r, 400))
       const idx = jobs.value.findIndex(j => j.id === jobId)
       if (idx !== -1) {
@@ -404,7 +500,7 @@ export const useJobsStore = defineStore('jobs', () => {
         toast.success('Job approved and published!')
       }
     } catch (err) {
-      toast.error('Failed to approve job')
+      toast.error(err.message || 'Failed to approve job')
     } finally {
       loading.value = false
     }
@@ -414,6 +510,13 @@ export const useJobsStore = defineStore('jobs', () => {
   async function rejectJob(jobId, reason = '') {
     loading.value = true
     try {
+      if (API_ENABLED) {
+        const updated = await post(`/admin/jobs/${jobId}/reject`, { reason })
+        const i = jobs.value.findIndex(j => j.id === jobId)
+        if (i !== -1) jobs.value[i] = updated
+        toast.info('Job rejected.')
+        return
+      }
       await new Promise(r => setTimeout(r, 400))
       const idx = jobs.value.findIndex(j => j.id === jobId)
       if (idx !== -1) {
@@ -422,7 +525,7 @@ export const useJobsStore = defineStore('jobs', () => {
         toast.info('Job rejected. The employer has been notified.')
       }
     } catch (err) {
-      toast.error('Failed to reject job')
+      toast.error(err.message || 'Failed to reject job')
     } finally {
       loading.value = false
     }
@@ -440,6 +543,7 @@ export const useJobsStore = defineStore('jobs', () => {
     filteredJobs, featuredJobs, totalJobs, totalApplications, internships, pendingJobs,
     getJobById, hasApplied, getUserApplications, applyForJob, postJob, updateJob, deleteJob,
     approveJob, rejectJob,
-    getJobApplications, getPostedJobs, getPosterApplications, updateApplicationStatus
+    getJobApplications, getPostedJobs, getPosterApplications, updateApplicationStatus,
+    fetchJobs, fetchMine
   }
 })

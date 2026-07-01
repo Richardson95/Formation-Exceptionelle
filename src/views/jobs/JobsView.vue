@@ -5,12 +5,12 @@
     <!-- Hero -->
     <div class="bg-gradient-fe pt-24 pb-12">
       <div class="container-custom text-center">
-        <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">Find Your Dream Job</h1>
-        <p class="text-purple-200 mb-6">{{ jobsStore.totalJobs }}+ active opportunities from top employers</p>
+        <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">Join Our Team</h1>
+        <p class="text-purple-200 mb-6">{{ jobsStore.totalJobs }}+ open roles at Formation Exceptionelle</p>
         <div class="max-w-2xl mx-auto">
           <div class="relative flex-1">
             <MagnifyingGlassIcon class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input v-model="jobsStore.searchQuery" type="text" placeholder="Job title, company, or skills..." class="w-full pl-12 pr-4 py-4 rounded-2xl text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-gold-400 shadow-lg" />
+            <input v-model="jobsStore.searchQuery" type="text" placeholder="Job title, department, or skills..." class="w-full pl-12 pr-4 py-4 rounded-2xl text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-gold-400 shadow-lg" />
           </div>
         </div>
       </div>
