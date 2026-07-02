@@ -95,7 +95,7 @@
             <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
               <div
                 class="h-full rounded-full transition-all duration-700"
-                :style="{ width: (step.value / funnel[0].value * 100) + '%', background: `hsl(${270 - i * 20}, 70%, ${50 + i * 5}%)` }"
+                :style="{ width: (step.value / (funnel[0].value || 1) * 100) + '%', background: `hsl(${270 - i * 20}, 70%, ${50 + i * 5}%)` }"
               ></div>
             </div>
           </div>
@@ -106,52 +106,35 @@
 </template>
 
 <script setup>
+import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/admin/AdminLayout.vue'
+import { API_ENABLED, get } from '@/services/api'
 import { UsersIcon, EyeIcon, CurrencyDollarIcon, AcademicCapIcon } from '@heroicons/vue/24/outline'
 
-const keyMetrics = [
-  { icon: EyeIcon, label: 'Page Views', value: '48,239', change: 18, bg: '#ede9fe', color: '#7c3aed' },
-  { icon: UsersIcon, label: 'Unique Visitors', value: '12,847', change: 12, bg: '#fef3c7', color: '#d97706' },
-  { icon: AcademicCapIcon, label: 'New Enrollments', value: '1,284', change: 23, bg: '#d1fae5', color: '#059669' },
-  { icon: CurrencyDollarIcon, label: 'Revenue MTD', value: '₦5,820,000', change: 15, bg: '#fee2e2', color: '#dc2626' },
-]
+const PALETTE = ['#7c3aed', '#d97706', '#059669', '#dc2626', '#0284c7', '#9333ea', '#0891b2']
+const naira = (n) => `₦${Number(n || 0).toLocaleString()}`
+const num = (n) => Number(n || 0).toLocaleString()
 
-const enrollmentData = [
-  { month: 'J', count: 120 }, { month: 'F', count: 180 }, { month: 'M', count: 150 },
-  { month: 'A', count: 280 }, { month: 'M', count: 240 }, { month: 'J', count: 350 },
-  { month: 'J', count: 310 }, { month: 'A', count: 420 }, { month: 'S', count: 380 },
-  { month: 'O', count: 460 }, { month: 'N', count: 520 }, { month: 'D', count: 600 },
-]
-const maxEnrollment = Math.max(...enrollmentData.map(d => d.count))
+const data = ref(null)
+onMounted(async () => {
+  if (!API_ENABLED) return
+  try { data.value = await get('/admin/analytics') } catch { /* keep defaults */ }
+})
 
-const categoryRevenue = [
-  { name: 'Mergers & Acquisitions', pct: 28, color: '#7c3aed' },
-  { name: 'Corporate Governance', pct: 24, color: '#d97706' },
-  { name: 'Finance & Capital Markets', pct: 20, color: '#059669' },
-  { name: 'Taxation', pct: 16, color: '#dc2626' },
-  { name: 'Energy & ESG', pct: 12, color: '#0284c7' },
-]
+const keyMetrics = computed(() => {
+  const k = data.value?.keyMetrics || {}
+  return [
+    { icon: EyeIcon, label: 'Page Views', value: num(k.pageViews?.value), change: k.pageViews?.change || 0, bg: '#ede9fe', color: '#7c3aed' },
+    { icon: UsersIcon, label: 'Unique Visitors', value: num(k.uniqueVisitors?.value), change: k.uniqueVisitors?.change || 0, bg: '#fef3c7', color: '#d97706' },
+    { icon: AcademicCapIcon, label: 'New Enrollments', value: num(k.newEnrollments?.value), change: k.newEnrollments?.change || 0, bg: '#d1fae5', color: '#059669' },
+    { icon: CurrencyDollarIcon, label: 'Revenue MTD', value: naira(k.revenueMTD?.value), change: k.revenueMTD?.change || 0, bg: '#fee2e2', color: '#dc2626' },
+  ]
+})
 
-const trafficSources = [
-  { name: 'Organic Search', pct: 42, color: '#7c3aed' },
-  { name: 'Social Media', pct: 28, color: '#d97706' },
-  { name: 'Direct', pct: 18, color: '#059669' },
-  { name: 'Referral', pct: 12, color: '#dc2626' },
-]
-
-const demographics = [
-  { country: 'Nigeria', pct: 45 },
-  { country: 'Ghana', pct: 18 },
-  { country: 'Kenya', pct: 14 },
-  { country: 'South Africa', pct: 12 },
-  { country: 'Others', pct: 11 },
-]
-
-const funnel = [
-  { label: 'Visitors', value: 48239 },
-  { label: 'Sign Ups', value: 12847 },
-  { label: 'Course Views', value: 6420 },
-  { label: 'Add to Cart', value: 2840 },
-  { label: 'Purchases', value: 1284 },
-]
+const enrollmentData = computed(() => data.value?.enrollmentTrend || [])
+const maxEnrollment = computed(() => Math.max(1, ...enrollmentData.value.map((d) => d.count || 0)))
+const categoryRevenue = computed(() => (data.value?.revenueByCategory || []).map((c, i) => ({ ...c, color: PALETTE[i % PALETTE.length] })))
+const trafficSources = computed(() => (data.value?.trafficSources || []).map((s, i) => ({ ...s, color: PALETTE[i % PALETTE.length] })))
+const demographics = computed(() => data.value?.demographics || [])
+const funnel = computed(() => (data.value?.funnel?.length ? data.value.funnel : [{ label: '—', value: 0 }]))
 </script>

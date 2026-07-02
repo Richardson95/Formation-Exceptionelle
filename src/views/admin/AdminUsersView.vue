@@ -65,8 +65,8 @@
               </td>
               <td class="px-5 py-4">
                 <span class="flex items-center gap-1.5 text-sm">
-                  <span class="w-2 h-2 rounded-full bg-green-400"></span>
-                  <span class="text-gray-600 text-xs">Active</span>
+                  <span class="w-2 h-2 rounded-full" :class="user.status === 'suspended' ? 'bg-red-400' : 'bg-green-400'"></span>
+                  <span class="text-gray-600 text-xs capitalize">{{ user.status || 'active' }}</span>
                 </span>
               </td>
               <td class="px-5 py-4">
@@ -76,7 +76,7 @@
                     @click="changeRole(user)"
                     class="text-xs text-blue-600 hover:underline font-medium"
                   >Change Role</button>
-                  <button class="text-xs text-red-500 hover:underline font-medium">Suspend</button>
+                  <button @click="toggleSuspend(user)" class="text-xs hover:underline font-medium" :class="user.status === 'suspended' ? 'text-green-600' : 'text-red-500'">{{ user.status === 'suspended' ? 'Reactivate' : 'Suspend' }}</button>
                 </div>
               </td>
             </tr>
@@ -127,9 +127,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/admin/AdminLayout.vue'
 import { useAuthStore } from '@/stores/auth'
+import { API_ENABLED, get, patch } from '@/services/api'
 import { MagnifyingGlassIcon, UsersIcon } from '@heroicons/vue/24/outline'
 import { toast } from 'vue3-toastify'
 
@@ -138,7 +139,17 @@ const search = ref('')
 const roleFilter = ref('')
 const selectedUser = ref(null)
 
-const allUsers = computed(() => authStore.getAllUsers())
+// In API mode the list is server-authoritative; otherwise fall back to the mock store.
+const apiUsers = ref(null)
+async function loadUsers() {
+  if (!API_ENABLED) return
+  try { apiUsers.value = await get('/admin/users') } catch { /* keep previous */ }
+}
+onMounted(loadUsers)
+
+const allUsers = computed(() =>
+  API_ENABLED && apiUsers.value ? apiUsers.value : authStore.getAllUsers()
+)
 
 const filteredUsers = computed(() => {
   let users = allUsers.value
@@ -161,5 +172,25 @@ const userStats = computed(() => [
 ])
 
 function viewUser(user) { selectedUser.value = user }
-function changeRole(user) { toast.info('Role management coming soon') }
+
+const ROLE_CYCLE = { participant: 'instructor', instructor: 'admin', admin: 'participant' }
+async function changeRole(user) {
+  const next = ROLE_CYCLE[user.role] || 'participant'
+  if (!API_ENABLED) { toast.info('Connect the backend to manage roles'); return }
+  try {
+    await patch(`/admin/users/${user.id}`, { role: next })
+    toast.success(`${user.firstName} is now ${next}`)
+    await loadUsers()
+  } catch (err) { toast.error(err.message || 'Could not change role') }
+}
+
+async function toggleSuspend(user) {
+  const next = user.status === 'suspended' ? 'active' : 'suspended'
+  if (!API_ENABLED) { toast.info('Connect the backend to manage users'); return }
+  try {
+    await patch(`/admin/users/${user.id}`, { status: next })
+    toast.success(next === 'suspended' ? `${user.firstName} suspended` : `${user.firstName} reactivated`)
+    await loadUsers()
+  } catch (err) { toast.error(err.message || 'Could not update user') }
+}
 </script>

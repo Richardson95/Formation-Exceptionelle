@@ -181,15 +181,17 @@ const mainStats = computed(() => [
   { icon: BriefcaseIcon, label: 'Active Jobs', value: stats.value.totalJobs?.toLocaleString(), trend: 5, trendUp: true, bg: '#fee2e2', color: '#dc2626' },
 ])
 
-const topCourses = computed(() => lmsStore.courses.sort((a, b) => b.enrolledCount - a.enrolledCount).slice(0, 5))
+// Top courses + monthly revenue come from the backend stats in API mode.
+const topCourses = computed(() =>
+  stats.value.topCourses?.length
+    ? stats.value.topCourses
+    : lmsStore.courses.slice().sort((a, b) => b.enrolledCount - a.enrolledCount).slice(0, 5)
+)
 
-const revenueData = [
-  { month: 'J', value: 1800000 }, { month: 'F', value: 2200000 }, { month: 'M', value: 1900000 },
-  { month: 'A', value: 3100000 }, { month: 'M', value: 2700000 }, { month: 'J', value: 3800000 },
-  { month: 'J', value: 3400000 }, { month: 'A', value: 4200000 }, { month: 'S', value: 3600000 },
-  { month: 'O', value: 4500000 }, { month: 'N', value: 5100000 }, { month: 'D', value: 5800000 },
-]
-const maxRevenue = Math.max(...revenueData.map(d => d.value))
+const revenueData = computed(() =>
+  (stats.value.revenueByMonth || []).map((m) => ({ month: (m.month || '').slice(0, 1), value: m.revenue || 0 }))
+)
+const maxRevenue = computed(() => Math.max(1, ...revenueData.value.map((d) => d.value)))
 
 const quickActions = [
   { label: 'Manage Users', path: '/admin/users', icon: UsersIcon, bg: '#ede9fe', color: '#7c3aed' },
