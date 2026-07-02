@@ -11,7 +11,12 @@
  */
 import axios from 'axios'
 
-const baseURL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '')
+// Normalise: drop trailing slashes AND a trailing `/api` if present, since we
+// append `/api` below. This makes VITE_API_BASE_URL tolerant of both
+// `https://host` and `https://host/api`.
+const baseURL = (import.meta.env.VITE_API_BASE_URL || '')
+  .replace(/\/+$/, '')
+  .replace(/\/api$/, '')
 
 export const API_ENABLED = !!baseURL
 

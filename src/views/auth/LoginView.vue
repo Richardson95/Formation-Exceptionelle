@@ -57,15 +57,6 @@
           </p>
         </div>
 
-        <!-- Demo Credentials Banner -->
-        <div class="bg-purple-50 border border-purple-200 rounded-2xl p-4 mb-6">
-          <p class="text-xs font-semibold text-purple-700 mb-2">Demo Credentials</p>
-          <div class="space-y-1">
-            <p class="text-xs text-gray-600"><span class="font-medium">Admin:</span> admin@formationexceptionelle.com / Admin@2024!</p>
-            <p class="text-xs text-gray-500">Or register a new account below</p>
-          </div>
-        </div>
-
         <!-- Form -->
         <form @submit.prevent="handleLogin" class="space-y-5">
           <div>
