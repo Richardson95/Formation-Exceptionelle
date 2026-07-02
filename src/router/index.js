@@ -5,7 +5,13 @@ const router = createRouter({
   history: createWebHistory(),
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) return savedPosition
-    if (to.hash) return { el: to.hash, behavior: 'smooth' }
+    if (to.hash) {
+      // Wait for the (possibly lazy-loaded) target page to render its section
+      // before scrolling, otherwise the element isn't in the DOM yet.
+      return new Promise((resolve) => {
+        setTimeout(() => resolve({ el: to.hash, behavior: 'smooth' }), 300)
+      })
+    }
     return { top: 0, behavior: 'smooth' }
   },
   routes: [

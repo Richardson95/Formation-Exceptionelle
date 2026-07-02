@@ -276,7 +276,6 @@
                     </button>
                   </div>
 
-                  <p class="text-center text-xs text-gray-400 mt-3">30-Day Money-Back Guarantee</p>
 
                   <!-- Course Includes -->
                   <div class="mt-5 pt-5 border-t border-gray-100">

@@ -174,8 +174,8 @@
           >
             {{ item.label }}
           </RouterLink>
-          <a href="#services" class="block px-4 py-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-700 font-medium transition-colors" @click="mobileMenuOpen=false">Services</a>
-          <a href="#contact" class="block px-4 py-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-700 font-medium transition-colors" @click="mobileMenuOpen=false">Contact</a>
+          <a href="#services" class="block px-4 py-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-700 font-medium transition-colors" @click.prevent="scrollTo('#services')">Services</a>
+          <a href="#contact" class="block px-4 py-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-700 font-medium transition-colors" @click.prevent="scrollTo('#contact')">Contact</a>
 
           <div class="pt-4 border-t border-gray-100 space-y-2">
             <template v-if="authStore.isAuthenticated">
@@ -256,9 +256,14 @@ const userMenuItems = computed(() => {
 })
 
 function scrollTo(selector) {
-  const el = document.querySelector(selector)
-  if (el) el.scrollIntoView({ behavior: 'smooth' })
   mobileMenuOpen.value = false
+  if (route.path === '/') {
+    const el = document.querySelector(selector)
+    if (el) el.scrollIntoView({ behavior: 'smooth' })
+  } else {
+    // Not on the landing page — navigate home, then let the hash scroll take over.
+    router.push({ path: '/', hash: selector })
+  }
 }
 
 function handleLogout() {

@@ -37,7 +37,7 @@
           <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h2 class="text-xl font-bold text-gray-900 mb-5">Payment Method</h2>
 
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+            <div class="grid grid-cols-2 gap-3 mb-6">
               <button
                 v-for="method in paymentMethods"
                 :key="method.id"
@@ -75,17 +75,9 @@
               </div>
             </div>
 
-            <!-- PayPal / Bank Transfer -->
-            <div v-else-if="selectedMethod === 'paypal'" class="p-4 bg-blue-50 rounded-xl text-center">
-              <p class="text-blue-700 text-sm">You'll be redirected to PayPal to complete your payment.</p>
-            </div>
-            <div v-else-if="selectedMethod === 'bank'" class="space-y-3">
-              <div class="p-4 bg-gray-50 rounded-xl text-sm">
-                <p class="font-semibold mb-2">Bank Transfer Details:</p>
-                <p>Bank: First Bank Nigeria</p>
-                <p>Account: 0123456789</p>
-                <p>Account Name: Formation Exceptionelle Ltd</p>
-              </div>
+            <!-- Bank Transfer (via Paystack) -->
+            <div v-else-if="selectedMethod === 'bank'" class="p-4 bg-purple-50 rounded-xl text-center">
+              <p class="text-purple-700 text-sm">You'll be redirected to Paystack to complete your bank transfer securely.</p>
             </div>
           </div>
         </div>
@@ -126,7 +118,7 @@
             </button>
             <p class="text-center text-xs text-gray-400 mt-3">
               <ShieldCheckIcon class="w-3.5 h-3.5 inline mr-1" />
-              256-bit SSL encryption · 30-day money back guarantee
+              256-bit SSL encryption
             </p>
           </div>
         </div>
@@ -176,7 +168,6 @@ const orderComplete = ref(false)
 
 const paymentMethods = [
   { id: 'card', label: 'Credit/Debit Card', icon: CreditCardIcon },
-  { id: 'paypal', label: 'PayPal', icon: ShieldCheckIcon },
   { id: 'bank', label: 'Bank Transfer', icon: LockClosedIcon },
 ]
 

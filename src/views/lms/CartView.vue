@@ -68,7 +68,6 @@
               Checkout
             </RouterLink>
 
-            <p class="text-center text-xs text-gray-400 mt-3">30-Day Money-Back Guarantee</p>
 
             <!-- Security badges -->
             <div class="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-gray-100">

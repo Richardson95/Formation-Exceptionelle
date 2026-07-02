@@ -14,7 +14,7 @@
               </div>
               <h3 class="text-2xl font-bold mb-4">About Formation Exceptionelle</h3>
               <p class="text-purple-200 leading-relaxed mb-6">
-                Founded with a mission to democratize access to world-class career development, Formation Exceptionelle has been empowering professionals across Africa and beyond since 2015.
+                Founded with a mission to democratize access to world-class career development, Formation Exceptionelle has been empowering professionals across Africa and beyond since 2023.
               </p>
 
               <div class="grid grid-cols-2 gap-4">
@@ -101,9 +101,9 @@ import {
 } from '@heroicons/vue/24/outline'
 
 const highlights = [
-  { value: '2015', label: 'Founded' },
-  { value: '15+', label: 'Countries' },
-  { value: '500+', label: 'Partners' },
+  { value: '2023', label: 'Founded' },
+  { value: '8+', label: 'Countries' },
+  { value: '150+', label: 'Partners' },
   { value: 'Top 3', label: 'In Africa' },
 ]
 
