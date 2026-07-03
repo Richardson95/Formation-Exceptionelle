@@ -49,55 +49,20 @@
       </div>
     </div>
 
-    <!-- Traffic & Conversion -->
-    <div class="grid lg:grid-cols-3 gap-6">
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h3 class="font-bold text-gray-900 mb-5">Traffic Sources</h3>
-        <div class="space-y-3">
-          <div v-for="source in trafficSources" :key="source.name" class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <div class="w-3 h-3 rounded-full" :style="{ background: source.color }"></div>
-              <span class="text-sm text-gray-700">{{ source.name }}</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <div class="w-24 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full rounded-full" :style="{ width: source.pct + '%', background: source.color }"></div>
-              </div>
-              <span class="text-sm font-semibold text-gray-900 w-8 text-right">{{ source.pct }}%</span>
-            </div>
+    <!-- Conversion Funnel -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <h3 class="font-bold text-gray-900 mb-5">Conversion Funnel</h3>
+      <div class="space-y-3">
+        <div v-for="(step, i) in funnel" :key="step.label" class="relative">
+          <div class="flex justify-between mb-1">
+            <span class="text-sm text-gray-700">{{ step.label }}</span>
+            <span class="text-sm font-semibold text-gray-900">{{ step.value.toLocaleString() }}</span>
           </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h3 class="font-bold text-gray-900 mb-5">User Demographics</h3>
-        <div class="space-y-3">
-          <div v-for="demo in demographics" :key="demo.country">
-            <div class="flex justify-between mb-1">
-              <span class="text-sm text-gray-700">{{ demo.country }}</span>
-              <span class="text-sm font-semibold text-gray-900">{{ demo.pct }}%</span>
-            </div>
-            <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-              <div class="h-full bg-purple-500 rounded-full" :style="{ width: demo.pct + '%' }"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h3 class="font-bold text-gray-900 mb-5">Conversion Funnel</h3>
-        <div class="space-y-3">
-          <div v-for="(step, i) in funnel" :key="step.label" class="relative">
-            <div class="flex justify-between mb-1">
-              <span class="text-sm text-gray-700">{{ step.label }}</span>
-              <span class="text-sm font-semibold text-gray-900">{{ step.value.toLocaleString() }}</span>
-            </div>
-            <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
-              <div
-                class="h-full rounded-full transition-all duration-700"
-                :style="{ width: (step.value / (funnel[0].value || 1) * 100) + '%', background: `hsl(${270 - i * 20}, 70%, ${50 + i * 5}%)` }"
-              ></div>
-            </div>
+          <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+            <div
+              class="h-full rounded-full transition-all duration-700"
+              :style="{ width: (step.value / (funnel[0].value || 1) * 100) + '%', background: `hsl(${270 - i * 20}, 70%, ${50 + i * 5}%)` }"
+            ></div>
           </div>
         </div>
       </div>
@@ -134,7 +99,5 @@ const keyMetrics = computed(() => {
 const enrollmentData = computed(() => data.value?.enrollmentTrend || [])
 const maxEnrollment = computed(() => Math.max(1, ...enrollmentData.value.map((d) => d.count || 0)))
 const categoryRevenue = computed(() => (data.value?.revenueByCategory || []).map((c, i) => ({ ...c, color: PALETTE[i % PALETTE.length] })))
-const trafficSources = computed(() => (data.value?.trafficSources || []).map((s, i) => ({ ...s, color: PALETTE[i % PALETTE.length] })))
-const demographics = computed(() => data.value?.demographics || [])
 const funnel = computed(() => (data.value?.funnel?.length ? data.value.funnel : [{ label: '—', value: 0 }]))
 </script>
