@@ -114,6 +114,16 @@
                 <textarea v-model="form.motivation" rows="3" placeholder="Share your motivation..." class="input-field resize-none" required></textarea>
               </div>
 
+              <!-- Resume / CV upload -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Resume / CV *</label>
+                <div @click="$refs.resumeInput.click()" class="border-2 border-dashed border-gray-200 rounded-xl p-5 text-center cursor-pointer hover:border-purple-400 transition-colors">
+                  <DocumentArrowUpIcon class="w-6 h-6 text-gray-400 mx-auto mb-1" />
+                  <p class="text-sm text-gray-600">{{ resumeName || 'Click to upload your Resume / CV (PDF, DOC, DOCX)' }}</p>
+                </div>
+                <input ref="resumeInput" type="file" accept=".pdf,.doc,.docx" class="hidden" @change="handleResume" />
+              </div>
+
               <!-- Agreement -->
               <div class="flex items-start gap-3">
                 <input v-model="form.agree" type="checkbox" id="agree" required class="mt-1 rounded border-gray-300 text-purple-600" />
@@ -134,11 +144,11 @@
             <div class="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
               <CheckCircleIcon class="w-10 h-10 text-green-500" />
             </div>
-            <h2 class="text-2xl font-bold text-gray-900 mb-3">Application Approved!</h2>
-            <p class="text-gray-600 mb-2">You are now an instructor on Formation Exceptionelle. Start creating your first course!</p>
+            <h2 class="text-2xl font-bold text-gray-900 mb-3">Application Submitted!</h2>
+            <p class="text-gray-600 mb-2">Thanks — we've received your application and resume. Our team reviews new instructor applications within 3 business days, and you'll be notified once a decision is made.</p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center mt-8">
-              <RouterLink to="/lms/instructor" class="btn-primary px-8 py-3">Go to Dashboard</RouterLink>
-              <RouterLink to="/lms/instructor/create-course" class="btn-gold px-8 py-3">Create First Course</RouterLink>
+              <RouterLink to="/lms" class="btn-primary px-8 py-3">Browse Courses</RouterLink>
+              <RouterLink to="/" class="btn-secondary px-8 py-3">Back to Home</RouterLink>
             </div>
           </div>
         </div>
@@ -156,8 +166,9 @@ import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import {
   SparklesIcon, AcademicCapIcon, CurrencyDollarIcon, UsersIcon,
-  GlobeAltIcon, CheckCircleIcon, RocketLaunchIcon, StarIcon
+  GlobeAltIcon, CheckCircleIcon, RocketLaunchIcon, StarIcon, DocumentArrowUpIcon
 } from '@heroicons/vue/24/outline'
+import { toast } from 'vue3-toastify'
 
 const authStore = useAuthStore()
 const submitted = ref(false)
@@ -167,6 +178,17 @@ const form = ref({
   title: '', experience: '3-5 years', courseTopic: '',
   category: 'Corporate Law', linkedin: '', bio: '', motivation: '', agree: false
 })
+const resumeFile = ref(null)
+const resumeName = ref('')
+
+function handleResume(e) {
+  const file = e.target.files[0]
+  if (!file) return
+  const maxMb = 5
+  if (file.size > maxMb * 1024 * 1024) { toast.error(`Resume must be under ${maxMb}MB`); return }
+  resumeFile.value = file
+  resumeName.value = file.name
+}
 
 const benefits = [
   {
@@ -187,6 +209,7 @@ const benefits = [
 ]
 
 async function handleApply() {
+  if (!resumeFile.value) { toast.error('Please attach your Resume / CV'); return }
   await authStore.becomeInstructor({
     title: form.value.title,
     experience: form.value.experience,
@@ -194,6 +217,8 @@ async function handleApply() {
     category: form.value.category,
     linkedin: form.value.linkedin,
     bio: form.value.bio,
+    motivation: form.value.motivation,
+    resumeFile: resumeFile.value,
   })
   submitted.value = true
 }

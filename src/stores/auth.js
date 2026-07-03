@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { toast } from 'vue3-toastify'
-import { API_ENABLED, post, get, patch } from '@/services/api'
+import { API_ENABLED, post, get, patch, api } from '@/services/api'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(JSON.parse(localStorage.getItem('fe_user') || 'null'))
@@ -175,32 +175,38 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // Submit an application to become an instructor. In API mode this creates a
+  // PENDING application (with an optional resume file) that an admin reviews —
+  // approval promotes the account. In mock mode we auto-promote for the demo.
   async function becomeInstructor(applicationData) {
     loading.value = true
     try {
       if (API_ENABLED) {
-        const { user: updated } = await post('/auth/become-instructor', applicationData)
-        user.value = updated
-        localStorage.setItem('fe_user', JSON.stringify(updated))
-        toast.success('Congratulations! You are now an instructor.')
-        return updated
+        const { resumeFile, ...fields } = applicationData
+        const fd = new FormData()
+        Object.entries(fields).forEach(([k, v]) => { if (v != null) fd.append(k, v) })
+        if (resumeFile) fd.append('resume', resumeFile)
+        const application = (await api.post('/instructor-applications', fd, { headers: { 'Content-Type': undefined } })).data
+        toast.success('Application submitted! Our team will review it shortly.')
+        return application
       }
 
+      const { resumeFile, ...fields } = applicationData
       await new Promise(resolve => setTimeout(resolve, 1000))
-      const updated = { ...user.value, role: 'instructor', instructorData: applicationData }
+      const updated = { ...user.value, role: 'instructor', instructorData: fields }
       user.value = updated
       localStorage.setItem('fe_user', JSON.stringify(updated))
 
       const idx = mockUsers.value.findIndex(u => u.id === updated.id)
       if (idx !== -1) {
-        mockUsers.value[idx] = { ...mockUsers.value[idx], role: 'instructor', instructorData: applicationData }
+        mockUsers.value[idx] = { ...mockUsers.value[idx], role: 'instructor', instructorData: fields }
         localStorage.setItem('fe_users', JSON.stringify(mockUsers.value))
       }
 
       toast.success('Congratulations! You are now an instructor.')
       return updated
     } catch (err) {
-      toast.error('Application failed. Please try again.')
+      toast.error(err.response?.data?.error?.message || err.message || 'Application failed. Please try again.')
       throw err
     } finally {
       loading.value = false

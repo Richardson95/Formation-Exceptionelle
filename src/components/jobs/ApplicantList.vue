@@ -124,8 +124,12 @@ function toggle(id) {
   expanded.value = { ...expanded.value, [id]: !expanded.value[id] }
 }
 
-function downloadCv() {
-  toast.info('CV download will be available once the backend file storage is connected.')
+function downloadCv(app) {
+  if (app.cvUrl) {
+    window.open(app.cvUrl, '_blank', 'noopener')
+  } else {
+    toast.info('This applicant did not attach a downloadable CV.')
+  }
 }
 
 async function setStatus(app, status) {

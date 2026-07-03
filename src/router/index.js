@@ -153,6 +153,12 @@ const router = createRouter({
       meta: { title: 'User Management | Admin', requiresAuth: true, requiresAdmin: true }
     },
     {
+      path: '/admin/instructor-applications',
+      name: 'admin-instructor-applications',
+      component: () => import('@/views/admin/AdminInstructorApplicationsView.vue'),
+      meta: { title: 'Instructor Applications | Admin', requiresAuth: true, requiresAdmin: true }
+    },
+    {
       path: '/admin/courses',
       name: 'admin-courses',
       component: () => import('@/views/admin/AdminCoursesView.vue'),

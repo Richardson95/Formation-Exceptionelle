@@ -111,7 +111,8 @@ import { RouterLink, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import {
   HomeIcon, UsersIcon, AcademicCapIcon, BriefcaseIcon, ChartBarIcon,
-  CurrencyDollarIcon, Bars3Icon, XMarkIcon, BellIcon, ArrowLeftOnRectangleIcon, Cog6ToothIcon
+  CurrencyDollarIcon, Bars3Icon, XMarkIcon, BellIcon, ArrowLeftOnRectangleIcon, Cog6ToothIcon,
+  UserPlusIcon
 } from '@heroicons/vue/24/outline'
 
 const authStore = useAuthStore()
@@ -128,6 +129,7 @@ watch(() => route.path, () => { mobileOpen.value = false })
 const navItems = [
   { path: '/admin', label: 'Dashboard', icon: HomeIcon },
   { path: '/admin/users', label: 'Users', icon: UsersIcon, badge: null },
+  { path: '/admin/instructor-applications', label: 'Instructor Apps', icon: UserPlusIcon },
   { path: '/admin/courses', label: 'Courses', icon: AcademicCapIcon },
   { path: '/admin/jobs', label: 'Jobs', icon: BriefcaseIcon },
   { path: '/admin/analytics', label: 'Analytics', icon: ChartBarIcon },
