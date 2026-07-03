@@ -220,6 +220,7 @@ import {
   BriefcaseIcon,
   AcademicCapIcon,
   DocumentTextIcon,
+  PlusCircleIcon,
 } from '@heroicons/vue/24/outline'
 
 const authStore = useAuthStore()
@@ -248,10 +249,14 @@ const userMenuItems = computed(() => {
     { path: '/jobs', label: 'Browse Jobs', icon: BriefcaseIcon },
     { path: '/jobs/my-applications', label: 'My Applications', icon: DocumentTextIcon },
   ]
-  if (authStore.isInstructor) {
+  const role = authStore.user?.role
+  if (role === 'instructor') {
+    // Approved instructors get their course/video posting area instead.
     items.push({ path: '/lms/instructor', label: 'Instructor Dashboard', icon: AcademicCapIcon })
+    items.push({ path: '/lms/instructor/create-course', label: 'Create a Course', icon: PlusCircleIcon })
+  } else if (role === 'participant') {
+    items.push({ path: '/become-instructor', label: 'Become an Instructor', icon: AcademicCapIcon })
   }
-  items.push({ path: '/become-instructor', label: 'Become an Instructor', icon: AcademicCapIcon })
   return items
 })
 

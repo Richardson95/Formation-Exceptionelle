@@ -142,6 +142,21 @@ export const useAuthStore = defineStore('auth', () => {
     toast.info('You have been signed out')
   }
 
+  // Re-sync the signed-in user from the server so role/status changes made
+  // elsewhere (e.g. an admin approving an instructor application) show up.
+  async function refreshUser() {
+    if (!API_ENABLED || !token.value) return
+    try {
+      const { user: fresh } = await get('/auth/me')
+      user.value = fresh
+      localStorage.setItem('fe_user', JSON.stringify(fresh))
+      return fresh
+    } catch { /* stale/expired token handled by the request interceptor */ }
+  }
+
+  // Refresh once on load if there's an existing session.
+  if (API_ENABLED && token.value) refreshUser()
+
   async function updateProfile(data) {
     loading.value = true
     try {
@@ -314,6 +329,6 @@ export const useAuthStore = defineStore('auth', () => {
     user, token, loading,
     isAuthenticated, isAdmin, isInstructor, isParticipant, fullName, initials,
     login, register, logout, updateProfile, becomeInstructor, getAllUsers,
-    forgotPassword, verifyResetToken, resetPassword
+    forgotPassword, verifyResetToken, resetPassword, refreshUser
   }
 })
