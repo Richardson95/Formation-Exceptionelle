@@ -65,7 +65,7 @@
               <h2 class="text-lg font-bold text-gray-900 mb-2">Questions?</h2>
               <p class="text-gray-600">
                 If you have any questions about this {{ doc.shortName }}, contact us at
-                <a href="mailto:legal@formationexceptionelle.com" class="text-purple-700 font-medium hover:underline">legal@formationexceptionelle.com</a>.
+                <a href="mailto:info@formationexceptionelle.com" class="text-purple-700 font-medium hover:underline">info@formationexceptionelle.com</a>.
               </p>
             </div>
           </div>
