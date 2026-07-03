@@ -14,7 +14,8 @@
       <ContactSection />
     </main>
     <AppFooter />
-    <IntroModal />
+    <!-- Intro welcome video modal — temporarily disabled; uncomment to re-enable. -->
+    <!-- <IntroModal /> -->
   </div>
 </template>
 
