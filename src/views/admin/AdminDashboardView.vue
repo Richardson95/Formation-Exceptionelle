@@ -24,13 +24,10 @@
         class="stat-card relative overflow-hidden"
       >
         <div class="absolute top-0 right-0 w-16 h-16 rounded-full opacity-10" :style="{ background: stat.color, transform: 'translate(30%, -30%)' }"></div>
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center mb-4">
           <div class="w-11 h-11 rounded-xl flex items-center justify-center" :style="{ background: stat.bg }">
             <component :is="stat.icon" class="w-5 h-5" :style="{ color: stat.color }" />
           </div>
-          <span class="text-xs font-semibold px-2 py-1 rounded-full" :class="stat.trendUp ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'">
-            {{ stat.trendUp ? '+' : '' }}{{ stat.trend }}%
-          </span>
         </div>
         <div class="text-2xl font-bold text-gray-900 mb-1">{{ stat.value }}</div>
         <div class="text-sm text-gray-500">{{ stat.label }}</div>
@@ -175,10 +172,10 @@ const jobsStore = useJobsStore()
 const stats = computed(() => adminStore.stats)
 
 const mainStats = computed(() => [
-  { icon: UsersIcon, label: 'Total Users', value: stats.value.totalUsers?.toLocaleString(), trend: 12, trendUp: true, bg: '#ede9fe', color: '#7c3aed' },
-  { icon: AcademicCapIcon, label: 'Total Enrollments', value: stats.value.totalEnrollments?.toLocaleString(), trend: 8, trendUp: true, bg: '#fef3c7', color: '#d97706' },
-  { icon: CurrencyDollarIcon, label: 'Total Revenue', value: '₦' + (stats.value.totalRevenue || 0).toLocaleString(), trend: 15, trendUp: true, bg: '#d1fae5', color: '#059669' },
-  { icon: BriefcaseIcon, label: 'Active Jobs', value: stats.value.totalJobs?.toLocaleString(), trend: 5, trendUp: true, bg: '#fee2e2', color: '#dc2626' },
+  { icon: UsersIcon, label: 'Total Users', value: (stats.value.totalUsers || 0).toLocaleString(), bg: '#ede9fe', color: '#7c3aed' },
+  { icon: AcademicCapIcon, label: 'Total Enrollments', value: (stats.value.totalEnrollments || 0).toLocaleString(), bg: '#fef3c7', color: '#d97706' },
+  { icon: CurrencyDollarIcon, label: 'Total Revenue', value: '₦' + (stats.value.totalRevenue || 0).toLocaleString(), bg: '#d1fae5', color: '#059669' },
+  { icon: BriefcaseIcon, label: 'Active Jobs', value: (stats.value.totalJobs || 0).toLocaleString(), bg: '#fee2e2', color: '#dc2626' },
 ])
 
 // Top courses + monthly revenue come from the backend stats in API mode.
@@ -222,10 +219,16 @@ const activityColors = {
   review: { bg: 'bg-yellow-100', text: 'text-yellow-600' },
 }
 
-const platformSummary = computed(() => [
-  { icon: UsersIcon, label: 'Active Users', value: stats.value.totalUsers, pct: 78, bg: '#ede9fe', color: '#7c3aed' },
-  { icon: AcademicCapIcon, label: 'Paid Students', value: stats.value.paidStudents, pct: 45, bg: '#fef3c7', color: '#d97706' },
-  { icon: BriefcaseIcon, label: 'Job Applications', value: stats.value.totalApplications, pct: 62, bg: '#d1fae5', color: '#059669' },
-  { icon: ChartBarIcon, label: 'Page Views', value: stats.value.pageViews?.toLocaleString(), pct: 88, bg: '#fee2e2', color: '#dc2626' },
-])
+const platformSummary = computed(() => {
+  // Real counts from the backend. Bars are sized relative to the largest value
+  // in the group so widths always reflect the actual numbers.
+  const rows = [
+    { icon: UsersIcon, label: 'Total Users', value: Number(stats.value.totalUsers) || 0, bg: '#ede9fe', color: '#7c3aed' },
+    { icon: AcademicCapIcon, label: 'Paid Students', value: Number(stats.value.paidStudents) || 0, bg: '#fef3c7', color: '#d97706' },
+    { icon: BriefcaseIcon, label: 'Job Applications', value: Number(stats.value.totalApplications) || 0, bg: '#d1fae5', color: '#059669' },
+    { icon: ChartBarIcon, label: 'Total Courses', value: Number(stats.value.totalCourses) || 0, bg: '#e0f2fe', color: '#0284c7' },
+  ]
+  const max = Math.max(1, ...rows.map((r) => r.value))
+  return rows.map((r) => ({ ...r, pct: Math.round((r.value / max) * 100), value: r.value.toLocaleString() }))
+})
 </script>

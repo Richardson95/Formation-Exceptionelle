@@ -6,13 +6,12 @@
     </div>
 
     <!-- Key Metrics -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="grid grid-cols-2 gap-4 mb-8">
       <div v-for="metric in keyMetrics" :key="metric.label" class="stat-card">
-        <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center mb-3">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center" :style="{ background: metric.bg }">
             <component :is="metric.icon" class="w-5 h-5" :style="{ color: metric.color }" />
           </div>
-          <span class="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">+{{ metric.change }}%</span>
         </div>
         <div class="text-2xl font-bold text-gray-900">{{ metric.value }}</div>
         <div class="text-sm text-gray-500">{{ metric.label }}</div>
@@ -74,7 +73,7 @@
 import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/admin/AdminLayout.vue'
 import { API_ENABLED, get } from '@/services/api'
-import { UsersIcon, EyeIcon, CurrencyDollarIcon, AcademicCapIcon } from '@heroicons/vue/24/outline'
+import { CurrencyDollarIcon, AcademicCapIcon } from '@heroicons/vue/24/outline'
 
 const PALETTE = ['#7c3aed', '#d97706', '#059669', '#dc2626', '#0284c7', '#9333ea', '#0891b2']
 const naira = (n) => `₦${Number(n || 0).toLocaleString()}`
@@ -89,10 +88,8 @@ onMounted(async () => {
 const keyMetrics = computed(() => {
   const k = data.value?.keyMetrics || {}
   return [
-    { icon: EyeIcon, label: 'Page Views', value: num(k.pageViews?.value), change: k.pageViews?.change || 0, bg: '#ede9fe', color: '#7c3aed' },
-    { icon: UsersIcon, label: 'Unique Visitors', value: num(k.uniqueVisitors?.value), change: k.uniqueVisitors?.change || 0, bg: '#fef3c7', color: '#d97706' },
-    { icon: AcademicCapIcon, label: 'New Enrollments', value: num(k.newEnrollments?.value), change: k.newEnrollments?.change || 0, bg: '#d1fae5', color: '#059669' },
-    { icon: CurrencyDollarIcon, label: 'Revenue MTD', value: naira(k.revenueMTD?.value), change: k.revenueMTD?.change || 0, bg: '#fee2e2', color: '#dc2626' },
+    { icon: AcademicCapIcon, label: 'New Enrollments (MTD)', value: num(k.newEnrollments?.value), change: k.newEnrollments?.change || 0, bg: '#d1fae5', color: '#059669' },
+    { icon: CurrencyDollarIcon, label: 'Revenue (MTD)', value: naira(k.revenueMTD?.value), change: k.revenueMTD?.change || 0, bg: '#fee2e2', color: '#dc2626' },
   ]
 })
 
