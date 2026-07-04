@@ -42,8 +42,19 @@
         <!-- Video Player -->
         <div class="bg-black relative">
           <div v-if="currentLecture?.type === 'video'" class="w-full aspect-video">
+            <!-- Bunny Stream embed player (adaptive HLS, cross-browser). -->
+            <iframe
+              v-if="currentEmbedUrl"
+              :key="currentEmbedUrl"
+              :src="currentEmbedUrl"
+              class="w-full h-full"
+              loading="lazy"
+              allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
+              allowfullscreen
+            ></iframe>
+            <!-- Fallback: direct file / session-preview upload in a native player. -->
             <video
-              v-if="currentVideoSrc && !videoError"
+              v-else-if="currentVideoSrc && !videoError"
               ref="videoEl"
               :src="currentVideoSrc"
               :poster="currentLecture.videoAsset?.thumbnail || undefined"
@@ -293,8 +304,10 @@
             </div>
           </div>
           <div class="p-5 flex gap-3">
-            <button @click="downloadCertificate" class="btn-primary flex-1">
-              <ArrowDownTrayIcon class="w-5 h-5 mr-2" /> Download Certificate
+            <button @click="downloadCertificate" :disabled="generatingCert" class="btn-primary flex-1 disabled:opacity-60">
+              <ArrowPathIcon v-if="generatingCert" class="w-5 h-5 mr-2 animate-spin" />
+              <ArrowDownTrayIcon v-else class="w-5 h-5 mr-2" />
+              {{ generatingCert ? 'Preparing…' : 'Download Certificate' }}
             </button>
             <button @click="showCertificate = false" class="btn-secondary px-6">Close</button>
           </div>
@@ -314,10 +327,10 @@ import { StarIcon as StarSolid } from '@heroicons/vue/24/solid'
 import {
   ArrowLeftIcon, Bars3Icon, TrophyIcon, ChevronLeftIcon, ChevronRightIcon,
   ChevronDownIcon, CheckIcon, PlayCircleIcon, QuestionMarkCircleIcon,
-  DocumentTextIcon, ArrowDownTrayIcon, FilmIcon
+  DocumentTextIcon, ArrowDownTrayIcon, FilmIcon, ArrowPathIcon
 } from '@heroicons/vue/24/outline'
 import QuizComponent from '@/components/lms/QuizComponent.vue'
-import { getPlaybackUrl } from '@/services/videoService'
+import { getPlaybackUrl, getEmbedUrl } from '@/services/videoService'
 
 const route = useRoute()
 const lmsStore = useLMSStore()
@@ -370,6 +383,10 @@ const currentVideoSrc = computed(() => {
   if (!lecture) return ''
   return getPlaybackUrl(lecture.videoAsset) || lecture.videoUrl || ''
 })
+
+// Bunny Stream assets provide an iframe embed URL (used in preference to the raw
+// video src, which for HLS can't play cross-browser / is blocked by Bunny).
+const currentEmbedUrl = computed(() => getEmbedUrl(currentLecture.value?.videoAsset))
 
 // Reset the error state whenever we switch lectures.
 watch(currentLecture, () => { videoError.value = false })
@@ -440,8 +457,46 @@ function submitReview() {
   reviewForm.value = { rating: 5, comment: '' }
 }
 
-function downloadCertificate() {
-  toast.success('Certificate downloaded successfully!')
-  showCertificate.value = false
+const generatingCert = ref(false)
+
+async function triggerDownload(url, filename) {
+  try {
+    // Fetch as a blob so the browser saves the file directly. Falls back to
+    // opening in a new tab if the storage host blocks cross-origin fetch.
+    const res = await fetch(url)
+    if (!res.ok) throw new Error('fetch failed')
+    const blob = await res.blob()
+    const objectUrl = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = objectUrl
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(objectUrl)
+  } catch {
+    window.open(url, '_blank', 'noopener')
+  }
+}
+
+async function downloadCertificate() {
+  const courseId = course.value?.id
+  if (!courseId || generatingCert.value) return
+  generatingCert.value = true
+  try {
+    const cert = await lmsStore.generateCertificate(courseId)
+    if (cert?.pdfUrl) {
+      await triggerDownload(cert.pdfUrl, `${cert.code || 'certificate'}.pdf`)
+      toast.success('Your certificate is ready!')
+      showCertificate.value = false
+    } else {
+      // Mock mode (no backend configured) — nothing to download.
+      toast.info('This is a preview. Your certificate downloads once the platform is fully live.')
+    }
+  } catch (err) {
+    toast.error(err.message || 'Could not generate your certificate. Please try again.')
+  } finally {
+    generatingCert.value = false
+  }
 }
 </script>

@@ -30,27 +30,15 @@
             </h2>
           </div>
 
-          <!-- Video -->
-          <div class="relative bg-black w-full flex-1 min-h-0 flex items-center justify-center">
-            <video
-              ref="videoRef"
-              :src="videoSrc"
-              class="w-full h-[55vh] sm:h-[64vh] lg:h-[72vh] max-h-[calc(95vh-140px)] object-cover bg-black"
-              autoplay
-              muted
-              playsinline
-              controls
-              @ended="close"
-            ></video>
-
-            <!-- Tap to unmute -->
-            <button
-              v-if="muted"
-              @click="unmute"
-              class="absolute bottom-14 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/90 hover:bg-white text-gray-900 text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg backdrop-blur transition-all"
-            >
-              <SpeakerXMarkIcon class="w-4 h-4" /> Tap for sound
-            </button>
+          <!-- Video (Bunny Stream embed player) -->
+          <div class="relative bg-black w-full" style="aspect-ratio: 16 / 9;">
+            <iframe
+              :src="embedUrl"
+              class="absolute inset-0 w-full h-full"
+              loading="lazy"
+              allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
+              allowfullscreen
+            ></iframe>
           </div>
 
           <!-- Footer -->
@@ -70,27 +58,27 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { XMarkIcon, SpeakerXMarkIcon } from '@heroicons/vue/24/outline'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { XMarkIcon } from '@heroicons/vue/24/outline'
 
-// Placeholder intro video. To use your own, drop a file in /public (e.g. public/intro.mp4)
-// and change this to '/intro.mp4', or paste a direct .mp4 URL here.
-const videoSrc = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+// ── Bunny Stream intro video ────────────────────────────────────────────────
+// Library "Formation Exceptionelle" (id 696965). Upload the intro video to that
+// library, copy its Video ID (GUID), and paste it below. Until a GUID is set the
+// modal stays hidden, so it's safe to ship without a video.
+const BUNNY_LIBRARY_ID = 696965
+const VIDEO_GUID = 'bf8bc7f2-e581-4a25-aa49-4d91ff7977a1' // Free Trade Zones (intro)
+
+const embedUrl = computed(
+  () =>
+    `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${VIDEO_GUID}` +
+    `?autoplay=true&muted=true&preload=true&responsive=false`
+)
 
 const SESSION_KEY = 'fe_intro_seen'      // once per session
 const DISMISS_KEY = 'fe_intro_dismissed' // permanently dismissed via "Don't show again"
 
 const show = ref(false)
-const muted = ref(true)
 const dontShowAgain = ref(false)
-const videoRef = ref(null)
-
-function unmute() {
-  if (!videoRef.value) return
-  videoRef.value.muted = false
-  muted.value = false
-  videoRef.value.play().catch(() => {})
-}
 
 function close() {
   show.value = false
@@ -106,6 +94,9 @@ function onKeydown(e) {
 }
 
 onMounted(() => {
+  // No video configured yet → never show the modal.
+  if (!VIDEO_GUID) return
+
   let dismissed = false
   let seen = false
   try {

@@ -192,6 +192,16 @@ export function getPlaybackUrl(asset) {
 }
 
 /**
+ * The embeddable player URL for a stored asset, when the backend provides one
+ * (Bunny Stream iframe player). Bunny serves HLS that a raw <video> can't play
+ * cross-browser, so when embedUrl exists the player should render an <iframe>.
+ * Mock/session uploads have no embedUrl — the caller falls back to <video>.
+ */
+export function getEmbedUrl(asset) {
+  return asset?.embedUrl || ''
+}
+
+/**
  * Whether the asset can actually be played right now. In mock mode an uploaded
  * asset becomes unplayable after a page reload (its blob is gone); a real
  * backend keeps it playable forever.

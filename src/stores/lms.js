@@ -655,6 +655,16 @@ export const useLMSStore = defineStore('lms', () => {
     localStorage.setItem('fe_progress', JSON.stringify(progress.value))
   }
 
+  // Generate (or fetch) the completion certificate. The backend verifies 100%
+  // completion, renders the branded PDF, emails it, and returns the record with
+  // a durable `pdfUrl`. In mock mode there is no backend PDF, so returns null.
+  async function generateCertificate(courseId) {
+    if (API_ENABLED) {
+      return await post('/certificates/generate', { courseId })
+    }
+    return null
+  }
+
   async function addCourse(courseData, instructorId) {
     loading.value = true
     try {
@@ -848,7 +858,7 @@ export const useLMSStore = defineStore('lms', () => {
     categories, levels,
     filteredCourses, featuredCourses, pendingCourses, totalCourses, totalEnrollments, totalRevenue,
     getCourseById, isEnrolled, getEnrolledCourses, getProgress,
-    enrollCourse, markLectureComplete, addCourse, updateCourse, deleteCourse,
+    enrollCourse, markLectureComplete, generateCertificate, addCourse, updateCourse, deleteCourse,
     approveCourse, rejectCourse, addReview,
     getCourseReviews, getInstructorCourses,
     fetchCourses, fetchMyLearning, fetchCourseReviews

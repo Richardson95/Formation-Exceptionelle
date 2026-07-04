@@ -14,8 +14,8 @@
       <ContactSection />
     </main>
     <AppFooter />
-    <!-- Intro welcome video modal — temporarily disabled; uncomment to re-enable. -->
-    <!-- <IntroModal /> -->
+    <!-- Intro welcome video modal — shows once per session on landing. -->
+    <IntroModal />
   </div>
 </template>
 
