@@ -229,6 +229,16 @@ export const useJobsStore = defineStore('jobs', () => {
     } catch { /* keep cached */ }
   }
 
+  // `/jobs` only returns approved + active listings, so a closed or rejected job
+  // would vanish from the admin table. `/admin/jobs` returns every job, and is
+  // the only list that carries `applicantCount`.
+  async function fetchAdminJobs() {
+    if (!API_ENABLED) return
+    try {
+      mergeJobs(await get('/admin/jobs'))
+    } catch { /* keep cached */ }
+  }
+
   async function fetchMine() {
     if (!API_ENABLED || !useAuthStore().user?.id) return
     try {
@@ -252,8 +262,12 @@ export const useJobsStore = defineStore('jobs', () => {
     )
   }
 
+  // Mirrors the backend's public filter. The store now also holds closed/rejected
+  // jobs for the admin table, so public getters must gate on both flags.
+  const isLive = (j) => j.isActive && (j.status || 'approved') === 'approved'
+
   const filteredJobs = computed(() => {
-    let result = jobs.value.filter(j => j.isActive)
+    let result = jobs.value.filter(isLive)
 
     if (searchQuery.value) {
       const q = searchQuery.value.toLowerCase()
@@ -278,7 +292,7 @@ export const useJobsStore = defineStore('jobs', () => {
     return result
   })
 
-  const featuredJobs = computed(() => jobs.value.filter(j => j.isFeatured && j.isActive).slice(0, 6))
+  const featuredJobs = computed(() => jobs.value.filter(j => j.isFeatured && isLive(j)).slice(0, 6))
 
   function getJobById(id) {
     return jobs.value.find(j => j.id === id)
@@ -531,9 +545,9 @@ export const useJobsStore = defineStore('jobs', () => {
     }
   }
 
-  const totalJobs = computed(() => jobs.value.filter(j => j.isActive).length)
+  const totalJobs = computed(() => jobs.value.filter(isLive).length)
   const totalApplications = computed(() => applications.value.length)
-  const internships = computed(() => jobs.value.filter(j => j.type === 'Internship' && j.isActive))
+  const internships = computed(() => jobs.value.filter(j => j.type === 'Internship' && isLive(j)))
   const pendingJobs = computed(() => jobs.value.filter(j => j.status === 'pending'))
 
   return {
@@ -544,6 +558,6 @@ export const useJobsStore = defineStore('jobs', () => {
     getJobById, hasApplied, getUserApplications, applyForJob, postJob, updateJob, deleteJob,
     approveJob, rejectJob,
     getJobApplications, getPostedJobs, getPosterApplications, updateApplicationStatus,
-    fetchJobs, fetchMine
+    fetchJobs, fetchAdminJobs, fetchMine
   }
 })

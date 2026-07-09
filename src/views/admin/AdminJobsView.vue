@@ -155,7 +155,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/admin/AdminLayout.vue'
 import { useJobsStore } from '@/stores/jobs'
 import { RouterLink } from 'vue-router'
@@ -164,6 +164,10 @@ import ApplicantList from '@/components/jobs/ApplicantList.vue'
 
 const jobsStore = useJobsStore()
 const search = ref('')
+
+// Load every job (incl. closed/rejected) plus applicant counts, not just the
+// approved+active listings the public endpoint returns.
+onMounted(() => jobsStore.fetchAdminJobs())
 
 const removing = ref(null)
 const rejecting = ref(null)
