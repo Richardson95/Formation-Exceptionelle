@@ -189,15 +189,16 @@ const MOCK_JOBS = [
 // Re-seed cached jobs when the listings change (bump this on content updates).
 // Seeded jobs are 'approved' & active; employer-posted jobs start 'pending' and
 // must be approved by an admin before they appear publicly.
+// Demo listings for no-backend mode only — never seeded into a live install.
 const JOBS_SEED_VERSION = '2026-06-fe-first-party-jobs-v3'
-if (localStorage.getItem('fe_jobs_version') !== JOBS_SEED_VERSION) {
+if (!API_ENABLED && localStorage.getItem('fe_jobs_version') !== JOBS_SEED_VERSION) {
   localStorage.setItem('fe_jobs', JSON.stringify(MOCK_JOBS.map(j => ({ ...j, status: 'approved' }))))
   localStorage.setItem('fe_jobs_version', JOBS_SEED_VERSION)
 }
 
 export const useJobsStore = defineStore('jobs', () => {
-  const jobs = ref(JSON.parse(localStorage.getItem('fe_jobs') || JSON.stringify(MOCK_JOBS)))
-  const applications = ref(JSON.parse(localStorage.getItem('fe_applications') || '[]'))
+  const jobs = ref(API_ENABLED ? [] : JSON.parse(localStorage.getItem('fe_jobs') || JSON.stringify(MOCK_JOBS)))
+  const applications = ref(API_ENABLED ? [] : JSON.parse(localStorage.getItem('fe_applications') || '[]'))
   const loading = ref(false)
   const searchQuery = ref('')
   const selectedType = ref('All')

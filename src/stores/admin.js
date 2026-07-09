@@ -5,6 +5,8 @@ import { useLMSStore } from './lms'
 import { useJobsStore } from './jobs'
 import { API_ENABLED, get } from '@/services/api'
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
 export const useAdminStore = defineStore('admin', () => {
   const sidebarOpen = ref(true)
   const activeSection = ref('dashboard')
@@ -23,79 +25,54 @@ export const useAdminStore = defineStore('admin', () => {
   }
   if (API_ENABLED) fetchStats()
 
-  const computedStats = computed(() => {
+  // Fallback for mock mode (and for the moment before /admin/stats resolves).
+  // Every field is counted from records the app actually holds; a metric with no
+  // real source reports zero or an empty list rather than a plausible-looking
+  // number. An admin must never be shown a figure that was invented.
+  const localStats = computed(() => {
     const authStore = useAuthStore()
     const lmsStore = useLMSStore()
     const jobsStore = useJobsStore()
 
     const users = authStore.getAllUsers()
-    const instructors = users.filter(u => u.role === 'instructor')
-    const participants = users.filter(u => u.role === 'participant')
-    const paidStudents = lmsStore.enrollments.filter(e => {
-      const course = lmsStore.getCourseById(e.courseId)
-      return course && course.price > 0
-    })
+    const paidStudents = new Set(
+      lmsStore.enrollments
+        .filter((e) => (lmsStore.getCourseById(e.courseId)?.price || 0) > 0)
+        .map((e) => e.userId)
+    )
 
-    const revenueByMonth = generateMonthlyRevenue()
-    const enrollmentsByMonth = generateMonthlyEnrollments()
+    const rated = lmsStore.courses.filter((c) => c.reviewCount > 0)
+    const avgCourseRating = rated.length
+      ? Math.round((rated.reduce((s, c) => s + c.rating, 0) / rated.length) * 10) / 10
+      : 0
 
     return {
       totalUsers: users.length,
-      totalInstructors: instructors.length,
-      totalParticipants: participants.length,
+      totalInstructors: users.filter((u) => u.role === 'instructor').length,
+      totalParticipants: users.filter((u) => u.role === 'participant').length,
       totalCourses: lmsStore.totalCourses,
       totalEnrollments: lmsStore.totalEnrollments,
       totalRevenue: lmsStore.totalRevenue,
-      paidStudents: paidStudents.length,
+      paidStudents: paidStudents.size,
       totalJobs: jobsStore.totalJobs,
       totalApplications: jobsStore.totalApplications,
       internships: jobsStore.internships.length,
       pendingCourses: lmsStore.pendingCourses.length,
       pendingJobs: jobsStore.pendingJobs.length,
       pendingApprovals: lmsStore.pendingCourses.length + jobsStore.pendingJobs.length,
-      pageViews: 48239,
-      weeklyVisitors: 12847,
-      conversionRate: 3.2,
-      avgCourseRating: 4.7,
-      revenueByMonth,
-      enrollmentsByMonth,
-      topCourses: lmsStore.courses
-        .sort((a, b) => b.enrolledCount - a.enrolledCount)
-        .slice(0, 5),
-      recentActivity: generateRecentActivity(),
+      conversionRate: users.length
+        ? Math.round((paidStudents.size / users.length) * 1000) / 10
+        : 0,
+      avgCourseRating,
+      // No local order history to derive these from, so they stay empty.
+      revenueByMonth: MONTHS.map((month) => ({ month, revenue: 0 })),
+      enrollmentsByMonth: MONTHS.map((month) => ({ month, count: 0 })),
+      topCourses: [...lmsStore.courses].sort((a, b) => b.enrolledCount - a.enrolledCount).slice(0, 5),
+      recentActivity: [],
     }
   })
 
-  function generateMonthlyRevenue() {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    return months.map((month, i) => ({
-      month,
-      revenue: Math.floor(Math.random() * 5000000) + 2000000 + (i * 300000),
-    }))
-  }
-
-  function generateMonthlyEnrollments() {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    return months.map((month, i) => ({
-      month,
-      count: Math.floor(Math.random() * 500) + 200 + (i * 30),
-    }))
-  }
-
-  function generateRecentActivity() {
-    return [
-      { id: 1, type: 'enrollment', message: 'New participant enrolled in Company Secretarial Practice', time: '2 minutes ago', icon: 'book' },
-      { id: 2, type: 'job', message: 'New job posted: Corporate / Commercial Lawyer', time: '15 minutes ago', icon: 'briefcase' },
-      { id: 3, type: 'application', message: 'Application received for Legal & Compliance Intern position', time: '32 minutes ago', icon: 'document' },
-      { id: 4, type: 'payment', message: 'Payment of ₦30,000 received for Capital Market course', time: '1 hour ago', icon: 'currency' },
-      { id: 5, type: 'user', message: 'New faculty registered: Dr. Ngozi Eze', time: '2 hours ago', icon: 'user' },
-      { id: 6, type: 'certificate', message: 'Certificate generated for Strategic Leadership & Corporate Governance', time: '3 hours ago', icon: 'badge' },
-      { id: 7, type: 'review', message: 'New 5-star review on The New Tax Laws', time: '4 hours ago', icon: 'star' },
-    ]
-  }
-
-  // Prefer the backend stats when available; fall back to the local computation.
-  const stats = computed(() => (API_ENABLED && apiStats.value ? apiStats.value : computedStats.value))
+  const stats = computed(() => (API_ENABLED && apiStats.value ? apiStats.value : localStats.value))
 
   return {
     sidebarOpen, activeSection, stats, fetchStats,

@@ -20,29 +20,12 @@
             <div class="w-10 h-10 rounded-xl flex items-center justify-center" :style="{ background: stat.bg }">
               <component :is="stat.icon" class="w-5 h-5" :style="{ color: stat.color }" />
             </div>
-            <span v-if="stat.trend" class="text-xs font-semibold" :class="stat.trend > 0 ? 'text-green-600' : 'text-red-500'">
-              {{ stat.trend > 0 ? '+' : '' }}{{ stat.trend }}%
-            </span>
           </div>
           <div class="text-2xl font-bold text-gray-900">{{ stat.value }}</div>
           <div class="text-sm text-gray-500">{{ stat.label }}</div>
         </div>
       </div>
 
-      <!-- Revenue Chart placeholder -->
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
-        <h2 class="text-xl font-bold text-gray-900 mb-5">Revenue Overview</h2>
-        <div class="flex gap-2 items-end h-40 border-b border-l border-gray-200 pl-4 pb-2">
-          <div v-for="(bar, i) in revenueData" :key="i" class="flex-1 flex flex-col items-center gap-1">
-            <div
-              class="w-full rounded-t-lg bg-purple-500 hover:bg-purple-600 transition-colors cursor-pointer"
-              :style="{ height: bar.pct + '%' }"
-              :title="`₦${bar.value.toLocaleString()}`"
-            ></div>
-            <span class="text-xs text-gray-400">{{ bar.month }}</span>
-          </div>
-        </div>
-      </div>
 
       <!-- My Courses -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -145,19 +128,9 @@ const avgRating = computed(() => {
 })
 
 const instructorStats = computed(() => [
-  { icon: UsersIcon, label: 'Total Students', value: totalStudents.value.toLocaleString(), trend: 12, bg: '#ede9fe', color: '#7c3aed' },
+  { icon: UsersIcon, label: 'Total Students', value: totalStudents.value.toLocaleString(), bg: '#ede9fe', color: '#7c3aed' },
   { icon: AcademicCapIcon, label: 'Total Courses', value: instructorCourses.value.length, bg: '#fef3c7', color: '#d97706' },
-  { icon: CurrencyDollarIcon, label: 'Total Revenue', value: '₦' + totalRevenue.value.toLocaleString(), trend: 8, bg: '#d1fae5', color: '#059669' },
-  { icon: StarIcon, label: 'Avg. Rating', value: avgRating.value, trend: 2, bg: '#fee2e2', color: '#dc2626' },
+  { icon: CurrencyDollarIcon, label: 'Total Revenue', value: '₦' + totalRevenue.value.toLocaleString(), bg: '#d1fae5', color: '#059669' },
+  { icon: StarIcon, label: 'Avg. Rating', value: avgRating.value, bg: '#fee2e2', color: '#dc2626' },
 ])
-
-const revenueData = [
-  { month: 'Jan', value: 1200000, pct: 40 },
-  { month: 'Feb', value: 1800000, pct: 60 },
-  { month: 'Mar', value: 1500000, pct: 50 },
-  { month: 'Apr', value: 2400000, pct: 80 },
-  { month: 'May', value: 2000000, pct: 67 },
-  { month: 'Jun', value: 3000000, pct: 100 },
-  { month: 'Jul', value: 2700000, pct: 90 },
-]
 </script>

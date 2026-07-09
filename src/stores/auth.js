@@ -20,11 +20,12 @@ export const useAuthStore = defineStore('auth', () => {
     return `${user.value.firstName?.[0] || ''}${user.value.lastName?.[0] || ''}`.toUpperCase()
   })
 
-  // Simulate API calls with localStorage persistence
-  const mockUsers = ref(JSON.parse(localStorage.getItem('fe_users') || '[]'))
+  // Simulate API calls with localStorage persistence (no-backend mode only).
+  const mockUsers = ref(API_ENABLED ? [] : JSON.parse(localStorage.getItem('fe_users') || '[]'))
 
-  // Seed admin user if not exists
-  if (!mockUsers.value.find(u => u.email === 'admin@formationexceptionelle.com')) {
+  // Seed admin user if not exists. Never in API mode — real accounts live on the
+  // server, and this would plant a fake one (with its password) in the browser.
+  if (!API_ENABLED && !mockUsers.value.find(u => u.email === 'admin@formationexceptionelle.com')) {
     mockUsers.value.push({
       id: 'admin-001',
       firstName: 'Admin',

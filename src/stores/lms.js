@@ -458,17 +458,20 @@ const MOCK_COURSES = [
 // Re-seed cached courses when the catalog changes (bump this on content updates).
 // Seeded courses are 'published' (approved & live); instructor-created courses
 // start as 'pending' and must be approved by an admin before going public.
+// The demo catalog exists only so the app runs with no backend. Once a real API is
+// configured it must never appear: it would render invented courses before the
+// real fetch resolves, and keep rendering them if that fetch ever failed.
 const SEED_VERSION = '2026-06-professional-catalog-v2'
-if (localStorage.getItem('fe_courses_version') !== SEED_VERSION) {
+if (!API_ENABLED && localStorage.getItem('fe_courses_version') !== SEED_VERSION) {
   localStorage.setItem('fe_courses', JSON.stringify(MOCK_COURSES.map(c => ({ ...c, status: 'published' }))))
   localStorage.setItem('fe_courses_version', SEED_VERSION)
 }
 
 export const useLMSStore = defineStore('lms', () => {
-  const courses = ref(JSON.parse(localStorage.getItem('fe_courses') || JSON.stringify(MOCK_COURSES)))
-  const enrollments = ref(JSON.parse(localStorage.getItem('fe_enrollments') || '[]'))
-  const progress = ref(JSON.parse(localStorage.getItem('fe_progress') || '{}'))
-  const reviews = ref(JSON.parse(localStorage.getItem('fe_reviews') || '[]'))
+  const courses = ref(API_ENABLED ? [] : JSON.parse(localStorage.getItem('fe_courses') || JSON.stringify(MOCK_COURSES)))
+  const enrollments = ref(API_ENABLED ? [] : JSON.parse(localStorage.getItem('fe_enrollments') || '[]'))
+  const progress = ref(API_ENABLED ? {} : JSON.parse(localStorage.getItem('fe_progress') || '{}'))
+  const reviews = ref(API_ENABLED ? [] : JSON.parse(localStorage.getItem('fe_reviews') || '[]'))
   const loading = ref(false)
   const searchQuery = ref('')
   const selectedCategory = ref('All')

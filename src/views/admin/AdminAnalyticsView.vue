@@ -6,7 +6,7 @@
     </div>
 
     <!-- Key Metrics -->
-    <div class="grid grid-cols-2 gap-4 mb-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       <div v-for="metric in keyMetrics" :key="metric.label" class="stat-card">
         <div class="flex items-center mb-3">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center" :style="{ background: metric.bg }">
@@ -36,7 +36,8 @@
       <!-- Revenue by Category -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <h3 class="font-bold text-gray-900 mb-5">Revenue by Category</h3>
-        <div class="space-y-4">
+        <p v-if="!categoryRevenue.length" class="text-sm text-gray-400">No paid orders yet.</p>
+        <div v-else class="space-y-4">
           <div v-for="cat in categoryRevenue" :key="cat.name" class="flex items-center gap-4">
             <span class="text-sm text-gray-700 w-32 flex-shrink-0">{{ cat.name }}</span>
             <div class="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
@@ -48,24 +49,6 @@
       </div>
     </div>
 
-    <!-- Conversion Funnel -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-      <h3 class="font-bold text-gray-900 mb-5">Conversion Funnel</h3>
-      <div class="space-y-3">
-        <div v-for="(step, i) in funnel" :key="step.label" class="relative">
-          <div class="flex justify-between mb-1">
-            <span class="text-sm text-gray-700">{{ step.label }}</span>
-            <span class="text-sm font-semibold text-gray-900">{{ step.value.toLocaleString() }}</span>
-          </div>
-          <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
-            <div
-              class="h-full rounded-full transition-all duration-700"
-              :style="{ width: (step.value / (funnel[0].value || 1) * 100) + '%', background: `hsl(${270 - i * 20}, 70%, ${50 + i * 5}%)` }"
-            ></div>
-          </div>
-        </div>
-      </div>
-    </div>
   </AdminLayout>
 </template>
 
@@ -73,7 +56,7 @@
 import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/admin/AdminLayout.vue'
 import { API_ENABLED, get } from '@/services/api'
-import { CurrencyDollarIcon, AcademicCapIcon } from '@heroicons/vue/24/outline'
+import { CurrencyDollarIcon, AcademicCapIcon, UsersIcon, CreditCardIcon } from '@heroicons/vue/24/outline'
 
 const PALETTE = ['#7c3aed', '#d97706', '#059669', '#dc2626', '#0284c7', '#9333ea', '#0891b2']
 const naira = (n) => `₦${Number(n || 0).toLocaleString()}`
@@ -85,16 +68,20 @@ onMounted(async () => {
   try { data.value = await get('/admin/analytics') } catch { /* keep defaults */ }
 })
 
+// Every figure below is computed by the backend from real orders, enrollments and
+// users. Traffic metrics (page views, visitors, conversion funnel) are absent on
+// purpose: nothing tracks them, so there is nothing honest to show.
 const keyMetrics = computed(() => {
   const k = data.value?.keyMetrics || {}
   return [
-    { icon: AcademicCapIcon, label: 'New Enrollments (MTD)', value: num(k.newEnrollments?.value), change: k.newEnrollments?.change || 0, bg: '#d1fae5', color: '#059669' },
-    { icon: CurrencyDollarIcon, label: 'Revenue (MTD)', value: naira(k.revenueMTD?.value), change: k.revenueMTD?.change || 0, bg: '#fee2e2', color: '#dc2626' },
+    { icon: AcademicCapIcon, label: 'New Enrollments (MTD)', value: num(k.newEnrollments), bg: '#d1fae5', color: '#059669' },
+    { icon: CurrencyDollarIcon, label: 'Revenue (MTD)', value: naira(k.revenueMTD), bg: '#fee2e2', color: '#dc2626' },
+    { icon: UsersIcon, label: 'Sign Ups', value: num(k.signUps), bg: '#ede9fe', color: '#7c3aed' },
+    { icon: CreditCardIcon, label: 'Paying Students', value: num(k.paidStudents), bg: '#fef3c7', color: '#d97706' },
   ]
 })
 
 const enrollmentData = computed(() => data.value?.enrollmentTrend || [])
 const maxEnrollment = computed(() => Math.max(1, ...enrollmentData.value.map((d) => d.count || 0)))
 const categoryRevenue = computed(() => (data.value?.revenueByCategory || []).map((c, i) => ({ ...c, color: PALETTE[i % PALETTE.length] })))
-const funnel = computed(() => (data.value?.funnel?.length ? data.value.funnel : [{ label: '—', value: 0 }]))
 </script>

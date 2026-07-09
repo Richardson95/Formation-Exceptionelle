@@ -242,11 +242,6 @@
                     </template>
                   </div>
 
-                  <p class="text-red-600 text-sm font-medium mb-4">
-                    <FireIcon class="w-4 h-4 inline mr-1" />
-                    <span v-if="course.price > 0">{{ timeLeft }} left at this price!</span>
-                  </p>
-
                   <!-- CTA Buttons -->
                   <div class="space-y-3">
                     <button
@@ -337,7 +332,7 @@ import { StarIcon as StarSolid } from '@heroicons/vue/24/solid'
 import {
   ChevronRightIcon, ClockIcon, PlayCircleIcon, GlobeAltIcon, ChartBarIcon,
   CalendarIcon, CheckIcon, PlayIcon, UsersIcon, ShoppingCartIcon, HeartIcon,
-  FireIcon, ArrowRightIcon, QuestionMarkCircleIcon, DocumentTextIcon,
+  ArrowRightIcon, QuestionMarkCircleIcon, DocumentTextIcon,
   ChevronDownIcon, XMarkIcon,
   DevicePhoneMobileIcon, TrophyIcon, DocumentCheckIcon
 } from '@heroicons/vue/24/outline'
@@ -362,11 +357,6 @@ const discount = computed(() => {
   if (!course.value?.price) return 0
   return Math.round((1 - course.value.price / course.value.originalPrice) * 100)
 })
-const timeLeft = computed(() => {
-  const hours = Math.floor(Math.random() * 24) + 1
-  return `${hours} hours`
-})
-
 const courseReviews = computed(() => lmsStore.getCourseReviews(course.value?.id))
 const hasReviewed = computed(() =>
   courseReviews.value.some(r => r.userId === authStore.user?.id)
