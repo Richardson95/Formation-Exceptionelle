@@ -459,23 +459,34 @@ function submitReview() {
 
 const generatingCert = ref(false)
 
+function clickLink(href, filename) {
+  const a = document.createElement('a')
+  a.href = href
+  if (filename) a.download = filename
+  a.rel = 'noopener'
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+}
+
 async function triggerDownload(url, filename) {
+  const sameOrigin = new URL(url, window.location.href).origin === window.location.origin
+
+  // Cross-origin storage (R2) serves no CORS headers, so fetching into a blob
+  // always rejects; window.open would then be popup-blocked, since the user's
+  // click is long spent by the time the PDF has been generated. Certificates are
+  // stored with `Content-Disposition: attachment`, so a plain link click saves
+  // the file without opening a tab.
+  if (!sameOrigin) return clickLink(url, filename)
+
   try {
-    // Fetch as a blob so the browser saves the file directly. Falls back to
-    // opening in a new tab if the storage host blocks cross-origin fetch.
     const res = await fetch(url)
     if (!res.ok) throw new Error('fetch failed')
-    const blob = await res.blob()
-    const objectUrl = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = objectUrl
-    a.download = filename
-    document.body.appendChild(a)
-    a.click()
-    a.remove()
+    const objectUrl = URL.createObjectURL(await res.blob())
+    clickLink(objectUrl, filename)
     URL.revokeObjectURL(objectUrl)
   } catch {
-    window.open(url, '_blank', 'noopener')
+    clickLink(url, filename)
   }
 }
 
