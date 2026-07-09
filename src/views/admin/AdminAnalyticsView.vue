@@ -59,8 +59,16 @@ import { API_ENABLED, get } from '@/services/api'
 import { CurrencyDollarIcon, AcademicCapIcon, UsersIcon, CreditCardIcon } from '@heroicons/vue/24/outline'
 
 const PALETTE = ['#7c3aed', '#d97706', '#059669', '#dc2626', '#0284c7', '#9333ea', '#0891b2']
-const naira = (n) => `₦${Number(n || 0).toLocaleString()}`
-const num = (n) => Number(n || 0).toLocaleString()
+
+// Never let a missing or unexpected field reach the page as NaN. `Number({})` is
+// NaN, and an older backend wrapped these metrics as `{ value, change }`, so a
+// deploy where the frontend is ahead of the API must still render a real figure.
+const toNum = (n) => {
+  const v = typeof n === 'object' && n !== null ? n.value : n
+  return Number.isFinite(Number(v)) ? Number(v) : 0
+}
+const naira = (n) => `₦${toNum(n).toLocaleString()}`
+const num = (n) => toNum(n).toLocaleString()
 
 const data = ref(null)
 onMounted(async () => {
