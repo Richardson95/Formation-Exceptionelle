@@ -72,7 +72,6 @@ const facultyMembers = [
   { name: 'Dr. Ayodele Oni', role: 'Partner', title: 'Partner', org: 'Bloomfield Law Practice', img: '/DR.%20AYODELE%20ONI.jpeg' },
   { name: 'Desmond Ogba', role: 'Partner', title: 'Partner', org: 'Templars Law', img: '/DESMOND%20OGBA.jpeg' },
   { name: 'Adedoyin Afun', role: 'Partner', title: 'Partner', org: 'Bloomfield Law Practice', img: '/ADEDOYIN%20AFUN.jpeg' },
-  { name: 'Dipo Akinbode', role: 'General Counsel', title: 'Group Deputy, General Counsel', org: 'Aradel Holdings Plc', img: null, initials: 'DA', gradient: 'linear-gradient(135deg, #d97706, #fbbf24)' },
   { name: 'Oluwadare Agbelese', role: 'Group Head', title: 'Group Head, Legal & Supply Chain Management', org: 'Waltersmith', img: '/OLUWADARE%20AGBELESE.jpeg' },
   { name: 'Akindeji Oyebode', role: 'Partner', title: 'Partner', org: 'Banwo & Ighodalo', img: '/AKINDEJI%20OYEBODE.jpeg' },
   { name: 'Boonyameen Babajide Lawal', role: 'Partner', title: 'Partner', org: 'Babalakin & Co', img: '/BOOYAMEEN%20LAWAL.jpeg' },

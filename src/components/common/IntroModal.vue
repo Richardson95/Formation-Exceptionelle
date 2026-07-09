@@ -35,7 +35,6 @@
             <iframe
               :src="embedUrl"
               class="absolute inset-0 w-full h-full"
-              loading="lazy"
               allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
               allowfullscreen
             ></iframe>
@@ -68,10 +67,13 @@ import { XMarkIcon } from '@heroicons/vue/24/outline'
 const BUNNY_LIBRARY_ID = 696965
 const VIDEO_GUID = 'bf8bc7f2-e581-4a25-aa49-4d91ff7977a1' // Free Trade Zones (intro)
 
+// Muted autoplay is the only form browsers allow without a user gesture, so the
+// video must stay muted to start on its own on every device. `preload=true` primes
+// the stream and `loop=false` lets it play through once.
 const embedUrl = computed(
   () =>
     `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${VIDEO_GUID}` +
-    `?autoplay=true&muted=true&preload=true&responsive=false`
+    `?autoplay=true&muted=true&preload=true&loop=false&responsive=false`
 )
 
 const SESSION_KEY = 'fe_intro_seen'      // once per session

@@ -188,6 +188,16 @@
                   <p class="text-sm text-gray-500 capitalize">{{ authStore.user?.role }}</p>
                 </div>
               </div>
+              <RouterLink
+                v-for="item in userMenuItems"
+                :key="item.path"
+                :to="item.path"
+                @click="mobileMenuOpen = false"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-700 font-medium transition-colors"
+              >
+                <component :is="item.icon" class="w-5 h-5" />
+                {{ item.label }}
+              </RouterLink>
               <RouterLink v-if="authStore.isAdmin" to="/admin" @click="mobileMenuOpen=false" class="btn-gold w-full text-center">Admin Panel</RouterLink>
               <button @click="handleLogout" class="w-full px-4 py-3 text-left text-red-600 hover:bg-red-50 rounded-xl font-medium">Sign Out</button>
             </template>
