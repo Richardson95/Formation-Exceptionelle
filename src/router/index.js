@@ -258,4 +258,21 @@ router.beforeEach(async (to, from, next) => {
   next()
 })
 
+// Views are lazy-loaded. After a redeploy the old chunk filenames are gone, so a
+// tab still running the previous index.html cannot import them: the navigation
+// rejects and the click appears to do nothing. Fetch the new build by reloading
+// at the target route. The sessionStorage guard means a genuinely missing chunk
+// fails loudly instead of reloading forever.
+const RELOAD_KEY = 'fe_chunk_reload'
+router.onError((error, to) => {
+  const stale = /dynamically imported module|Importing a module script failed|error loading/i.test(
+    error?.message || ''
+  )
+  if (!stale || !to?.fullPath) return
+  if (sessionStorage.getItem(RELOAD_KEY) === to.fullPath) return
+  sessionStorage.setItem(RELOAD_KEY, to.fullPath)
+  window.location.assign(to.fullPath)
+})
+router.afterEach(() => sessionStorage.removeItem(RELOAD_KEY))
+
 export default router
