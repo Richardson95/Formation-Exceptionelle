@@ -526,6 +526,19 @@ export const useLMSStore = defineStore('lms', () => {
     } catch { /* ignore */ }
   }
 
+  // Authoritative per-course answer. `isEnrolled` reads the enrollments list,
+  // which may not have loaded yet (or at all, if the request failed), so a course
+  // page must not decide "not enrolled" from its emptiness alone.
+  async function checkEnrollment(courseId) {
+    if (!API_ENABLED || !courseId) return false
+    try {
+      const { enrolled } = await get(`/enrollments/check?courseId=${encodeURIComponent(courseId)}`)
+      return !!enrolled
+    } catch {
+      return false
+    }
+  }
+
   async function fetchCourseReviews(courseId) {
     if (!API_ENABLED) return getCourseReviews(courseId)
     try {
@@ -884,6 +897,6 @@ export const useLMSStore = defineStore('lms', () => {
     enrollCourse, markLectureComplete, generateCertificate, addCourse, updateCourse, deleteCourse,
     approveCourse, rejectCourse, addReview,
     getCourseReviews, getInstructorCourses,
-    fetchCourses, fetchAdminCourses, fetchInstructorCourses, fetchMyLearning, fetchCourseReviews
+    fetchCourses, fetchAdminCourses, fetchInstructorCourses, fetchMyLearning, fetchCourseReviews, checkEnrollment
   }
 })

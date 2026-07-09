@@ -245,7 +245,7 @@
                   <!-- CTA Buttons -->
                   <div class="space-y-3">
                     <button
-                      v-if="isEnrolled"
+                      v-if="canAccess"
                       @click="goToLearn"
                       class="btn-primary w-full py-4 text-base"
                     >
@@ -349,9 +349,24 @@ const showPreviewModal = ref(false)
 const openSections = ref([0])
 const reviewForm = ref({ rating: 5, comment: '' })
 
+// Asked of the server on mount. The store's enrollment list is loaded in the
+// background and can still be empty here, which would wrongly offer to sell a
+// course the student already paid for.
+const enrolledOnServer = ref(false)
+
 const isEnrolled = computed(() =>
-  authStore.isAuthenticated && lmsStore.isEnrolled(authStore.user?.id, course.value?.id)
+  authStore.isAuthenticated &&
+  (enrolledOnServer.value || lmsStore.isEnrolled(authStore.user?.id, course.value?.id))
 )
+
+// An instructor already owns their course, and an admin can open anything.
+const isOwner = computed(() => {
+  const me = authStore.user?.id
+  if (!me || !course.value) return false
+  return String(course.value.instructorId ?? course.value.instructor?.id) === String(me)
+})
+const canAccess = computed(() => isEnrolled.value || isOwner.value || authStore.isAdmin)
+
 const inCart = computed(() => cartStore.isInCart(course.value?.id))
 const discount = computed(() => {
   if (!course.value?.price) return 0
@@ -379,11 +394,16 @@ function playPreview(lecture) {
   if (lecture.videoUrl) showPreviewModal.value = true
 }
 
+// Belt and braces: the buttons are hidden when `canAccess`, but a stale render or
+// a cart added from elsewhere must not lead to paying twice. The backend refuses
+// the order regardless.
 function addToCart() {
+  if (canAccess.value) return goToLearn()
   cartStore.addToCart(course.value)
 }
 
 function buyNow() {
+  if (canAccess.value) return goToLearn()
   cartStore.addToCart(course.value)
   router.push('/lms/checkout')
 }
@@ -402,9 +422,13 @@ function getRatingWidth(star) {
   return Math.round((count / total) * 100) + '%'
 }
 
-onMounted(() => {
+onMounted(async () => {
   // Load this course's reviews from the backend (no-op in mock mode).
   lmsStore.fetchCourseReviews(route.params.id)
+
+  if (authStore.isAuthenticated) {
+    enrolledOnServer.value = await lmsStore.checkEnrollment(route.params.id)
+  }
 })
 
 function submitReview() {
