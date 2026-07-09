@@ -489,6 +489,26 @@ export const useLMSStore = defineStore('lms', () => {
     } catch { /* keep cached catalog on failure */ }
   }
 
+  // `/courses` only ever returns published courses, so the admin review queue and
+  // the instructor's own dashboard need endpoints that include drafts/pending.
+  async function fetchAdminCourses() {
+    if (!API_ENABLED) return
+    try {
+      const data = await get('/admin/courses')
+      courses.value = Array.isArray(data) ? data : (data.data || [])
+    } catch { /* keep cached catalog on failure */ }
+  }
+
+  async function fetchInstructorCourses(instructorId) {
+    if (!API_ENABLED || !instructorId) return
+    try {
+      const mine = await get(`/courses/instructor/${instructorId}`)
+      const byId = new Map(courses.value.map((c) => [c.id, c]))
+      mine.forEach((c) => byId.set(c.id, c))
+      courses.value = [...byId.values()]
+    } catch { /* ignore */ }
+  }
+
   async function fetchMyLearning(userId) {
     if (!API_ENABLED || !userId) return
     try {
@@ -861,6 +881,6 @@ export const useLMSStore = defineStore('lms', () => {
     enrollCourse, markLectureComplete, generateCertificate, addCourse, updateCourse, deleteCourse,
     approveCourse, rejectCourse, addReview,
     getCourseReviews, getInstructorCourses,
-    fetchCourses, fetchMyLearning, fetchCourseReviews
+    fetchCourses, fetchAdminCourses, fetchInstructorCourses, fetchMyLearning, fetchCourseReviews
   }
 })

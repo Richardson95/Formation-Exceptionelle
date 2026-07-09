@@ -108,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useLMSStore } from '@/stores/lms'
@@ -120,6 +120,14 @@ import {
 
 const authStore = useAuthStore()
 const lmsStore = useLMSStore()
+
+// The public catalog omits pending/draft courses, so pull this instructor's own
+// submissions in — otherwise they vanish from "My Courses" on reload.
+watch(
+  () => authStore.user?.id,
+  (id) => { if (id) lmsStore.fetchInstructorCourses(id) },
+  { immediate: true }
+)
 
 const instructorCourses = computed(() =>
   lmsStore.getInstructorCourses(authStore.user?.id)

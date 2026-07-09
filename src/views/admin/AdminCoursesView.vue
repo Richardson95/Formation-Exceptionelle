@@ -235,7 +235,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/admin/AdminLayout.vue'
 import { useLMSStore } from '@/stores/lms'
 import { RouterLink } from 'vue-router'
@@ -251,6 +251,9 @@ const removing = ref(null)
 const rejecting = ref(null)
 const rejectReason = ref('')
 const form = ref({ isPaid: true, price: 0, originalPrice: 0, featured: false })
+
+// Load the full catalog (incl. pending submissions), not just the published one.
+onMounted(() => lmsStore.fetchAdminCourses())
 
 const statusOf = (course) => course.status || 'published'
 
