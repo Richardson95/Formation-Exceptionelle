@@ -142,6 +142,13 @@ export const useAuthStore = defineStore('auth', () => {
     toast.info('You have been signed out')
   }
 
+  // The API client clears storage when the backend rejects our token; mirror that
+  // into the store so the header and route guards agree with it.
+  window.addEventListener('fe:session-expired', () => {
+    user.value = null
+    token.value = null
+  })
+
   // Re-sync the signed-in user from the server so role/status changes made
   // elsewhere (e.g. an admin approving an instructor application) show up.
   async function refreshUser() {

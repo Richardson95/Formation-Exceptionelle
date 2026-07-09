@@ -47,10 +47,14 @@ api.interceptors.response.use(
     normalised.code = data?.error?.code
     normalised.status = error.response?.status
     normalised.details = data?.error?.details
-    // Auto sign-out on an expired/invalid token.
-    if (error.response?.status === 401 && localStorage.getItem('fe_token')) {
+    // Auto sign-out on an expired/invalid token. Only when the request actually
+    // carried one — a 401 from an anonymous call says nothing about our session.
+    // The event lets the auth store drop its in-memory user too, so the UI can't
+    // sit there looking signed in against a session that no longer exists.
+    if (error.response?.status === 401 && error.config?.headers?.Authorization) {
       localStorage.removeItem('fe_token')
       localStorage.removeItem('fe_user')
+      window.dispatchEvent(new Event('fe:session-expired'))
     }
     return Promise.reject(normalised)
   }
